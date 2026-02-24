@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vantage</title>
+  <meta name="description" content="Never sweat a parlay alone. The player props betting platform." />
+  <link rel="icon" type="image/png" href="Logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════
+       INTRO OVERLAY
+  ═══════════════════════════════════════ -->
+  <div id="intro">
+    <canvas id="intro-canvas"></canvas>
+    <div id="intro-logo">
+      <img src="Logo.png" alt="Vantage" id="intro-logo-img" onerror="this.style.display='none'" />
+      <span id="intro-logo-text">VANTAGE</span>
+    </div>
+    <div id="intro-tagline">Never sweat a parlay alone.</div>
+    <div id="intro-odds">
+      <span class="odds-label">PARLAY ODDS</span>
+      <div class="odds-display">
+        <span class="odds-prefix">+</span><span id="odds-number">100</span>
+      </div>
+      <div class="odds-picks">
+        <span class="pick-dot" id="dot-1"></span>
+        <span class="pick-dot" id="dot-2"></span>
+        <span class="pick-dot" id="dot-3"></span>
+        <span class="pick-dot" id="dot-4"></span>
+        <span class="pick-dot" id="dot-5"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       MAIN SITE (revealed after intro)
+  ═══════════════════════════════════════ -->
+  <div id="site" style="opacity:0;visibility:hidden;">
+
+    <!-- Scroll progress -->
+    <div id="scroll-progress" aria-hidden="true"></div>
+
+    <!-- NAV -->
+    <nav id="nav">
+      <a href="#" class="nav-logo">
+        <img src="Logo.png" alt="Vantage" onerror="this.style.display='none'" />
+        <span class="logo-text">VANTAGE</span>
+      </a>
+      <a href="#waitlist" class="btn btn-nav">Join Waitlist</a>
+    </nav>
+
+    <!-- ═══ HERO ═══ -->
+    <section id="hero">
+
+      <!-- Ticker tape -->
+      <div id="ticker-wrap" aria-hidden="true">
+        <div id="ticker">
+          <span class="tick tick-green">🏈 J. Allen OVER 284.5 yds ✓</span>
+          <span class="tick tick-gold">💰 +$47.50</span>
+          <span class="tick">NBA · LeBron PTS OVER 22.5</span>
+          <span class="tick tick-green">⚾ Ohtani K's OVER 7.5 ✓</span>
+          <span class="tick tick-red">❌ CMC Rush UNDER 74.5</span>
+          <span class="tick tick-gold">🔥 5-pick parlay · 8.2x payout</span>
+          <span class="tick">NHL · McDavid Points OVER 1.5</span>
+          <span class="tick tick-green">🏀 Curry 3PM OVER 3.5 ✓</span>
+          <span class="tick tick-gold">💰 +$122.00</span>
+          <span class="tick">NFL · Kelce Rec Yds OVER 68.5</span>
+          <!-- dupe for seamless loop -->
+          <span class="tick tick-green">🏈 J. Allen OVER 284.5 yds ✓</span>
+          <span class="tick tick-gold">💰 +$47.50</span>
+          <span class="tick">NBA · LeBron PTS OVER 22.5</span>
+          <span class="tick tick-green">⚾ Ohtani K's OVER 7.5 ✓</span>
+          <span class="tick tick-red">❌ CMC Rush UNDER 74.5</span>
+          <span class="tick tick-gold">🔥 5-pick parlay · 8.2x payout</span>
+          <span class="tick">NHL · McDavid Points OVER 1.5</span>
+          <span class="tick tick-green">🏀 Curry 3PM OVER 3.5 ✓</span>
+          <span class="tick tick-gold">💰 +$122.00</span>
+          <span class="tick">NFL · Kelce Rec Yds OVER 68.5</span>
+        </div>
+      </div>
+
+      <!-- Big vertical text decoration -->
+      <div class="hero-vert-text" aria-hidden="true">VANTAGE</div>
+
+      <div class="hero-inner">
+        <div class="hero-left">
+          <div class="hero-eyebrow" id="eyebrow">
+            <span class="eyebrow-dot"></span>
+            <span>Now in private beta</span>
+          </div>
+
+          <h1 class="hero-headline" id="hero-headline">
+            Never<br>sweat a<br>parlay<br>alone.
+          </h1>
+
+          <p class="hero-sub" id="hero-sub">
+            Pick over or under on any player. Every sport. Every night. Your picks, your call.
+          </p>
+
+          <div class="hero-actions" id="hero-actions">
+            <a href="#waitlist" class="btn btn-primary magnetic">Join the Waitlist</a>
+            <div class="hero-social-proof">
+              <div class="avatar-stack">
+                <div class="avatar">J</div>
+                <div class="avatar">M</div>
+                <div class="avatar">R</div>
+                <div class="avatar">K</div>
+              </div>
+              <span><strong id="counter-el">1,200+</strong> on the list</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- PROP CARD STACK -->
+        <div class="card-stack" id="card-stack" aria-hidden="true">
+
+          <!-- Background cards (decoration) -->
+          <div class="prop-card prop-card-bg prop-card-bg-2"></div>
+          <div class="prop-card prop-card-bg prop-card-bg-1"></div>
+
+          <!-- Main interactive card -->
+          <div class="prop-card prop-card-main" id="main-prop-card">
+            <div class="prop-card-header">
+              <div class="prop-sport-badge">
+                <span class="live-dot"></span>NFL
+              </div>
+              <span class="prop-game">BUF @ MIA · 4:25 PM</span>
+              <span class="prop-slate-count">14 props live</span>
+            </div>
+
+            <div class="prop-player">
+              <div class="prop-player-avatar">JA</div>
+              <div class="prop-player-info">
+                <span class="prop-player-name">Josh Allen</span>
+                <span class="prop-player-pos">QB · Buffalo Bills</span>
+              </div>
+              <div class="prop-confidence">
+                <span class="conf-label">Edge</span>
+                <span class="conf-value">HIGH</span>
+              </div>
+            </div>
+
+            <div class="prop-stat-row">
+              <span class="prop-stat-label">Passing Yards</span>
+              <div class="prop-line-display">
+                <span class="prop-line-num">284.5</span>
+                <span class="prop-line-label">LINE</span>
+              </div>
+            </div>
+
+            <div class="prop-bar-wrap">
+              <div class="prop-bar-track">
+                <div class="prop-bar-fill" id="prop-bar" style="width:67%"></div>
+              </div>
+              <div class="prop-bar-labels">
+                <span>UNDER</span>
+                <span class="prop-bar-pct">67% backing OVER</span>
+                <span>OVER</span>
+              </div>
+            </div>
+
+            <div class="prop-ou-row">
+              <button class="ou-btn ou-under" id="btn-under">
+                <span class="ou-label">UNDER</span>
+                <span class="ou-odds">-110</span>
+              </button>
+              <div class="ou-divider"></div>
+              <button class="ou-btn ou-over selected" id="btn-over">
+                <span class="ou-label">OVER</span>
+                <span class="ou-odds">-110</span>
+              </button>
+            </div>
+
+            <div class="prop-footer">
+              <div class="prop-parlay-count">
+                <span class="parlay-num">3</span> picks in parlay
+              </div>
+              <div class="prop-payout">
+                <span class="payout-label">Est. payout</span>
+                <span class="payout-num">$56.00</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Floating notification chips -->
+          <div class="notif notif-1">
+            <span class="notif-icon">✓</span>
+            <div>
+              <div class="notif-title">Parlay hit!</div>
+              <div class="notif-sub">+$47.50 · 3 picks</div>
+            </div>
+          </div>
+          <div class="notif notif-2">
+            <span class="notif-icon notif-fire">🔥</span>
+            <div>
+              <div class="notif-title">Hot pick · Allen OVER</div>
+              <div class="notif-sub">67% of users agree</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══ WAITLIST ═══ -->
+    <section id="waitlist">
+      <div class="orb orb-1" aria-hidden="true"></div>
+      <div class="orb orb-2" aria-hidden="true"></div>
+
+      <div class="waitlist-inner">
+        <div class="waitlist-text">
+          <div class="wl-eyebrow">Early Access</div>
+          <h2 class="wl-heading" id="wl-heading">Get in before<br>everyone else.</h2>
+          <p class="wl-sub">Vantage is launching soon. Join the waitlist for early access and be the first to bet player props when we go live.</p>
+          <ul class="wl-perks">
+            <li class="perk-item">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Over / under on any player, any game
+            </li>
+            <li class="perk-item">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              NFL, NBA, MLB, NHL coverage
+            </li>
+            <li class="perk-item">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Early access &amp; locked-in launch pricing
+            </li>
+          </ul>
+        </div>
+
+        <div class="waitlist-form-wrap" id="wl-form-wrap">
+          <form id="waitlist-form" class="waitlist-form">
+            <label class="form-label" for="email-input">Your email</label>
+            <div class="form-row">
+              <input type="email" name="email" id="email-input" placeholder="you@example.com" required autocomplete="email" />
+            </div>
+            <button type="submit" class="btn btn-submit magnetic">Join the Waitlist →</button>
+            <p class="form-note">No spam. Unsubscribe anytime.</p>
+          </form>
+          <div id="form-success" class="form-success" hidden>
+            <div class="success-check">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <h3>You're in.</h3>
+            <p>We'll hit you up when Vantage is ready. Stay locked in.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ FOOTER ═══ -->
+    <footer id="footer">
+      <div class="footer-inner">
+        <a href="#" class="nav-logo footer-logo">
+          <img src="Logo.png" alt="Vantage" onerror="this.style.display='none'" />
+          <span class="logo-text">VANTAGE</span>
+        </a>
+        <p class="footer-copy">&copy; 2026 Vantage. All rights reserved.</p>
+        <div class="footer-links">
+          <a href="#">Privacy</a>
+          <a href="#">Terms</a>
+        </div>
+      </div>
+    </footer>
+
+  </div><!-- /#site -->
+
+  <!-- Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/SplitText.min.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
