@@ -1550,7 +1550,7 @@ body.cursor-on-link #cursor-ring {
 
 #waitlist {
     position: relative;
-    padding: 7.2rem 2.5rem 9rem;
+    padding: 7.2rem 2.5rem 4rem;
     overflow: hidden;
     margin-top: -1px;
     border-top: 0 !important;
