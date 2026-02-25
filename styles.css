@@ -514,7 +514,7 @@ body.cursor-on-link #cursor-ring {
     flex-direction: column;
     align-items: center;
     gap: 0.6rem;
-    margin-top: 0.5rem;
+    margin-top: 0;
 }
 
 .odds-label {
