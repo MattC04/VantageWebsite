@@ -2,7 +2,9 @@
    VANTAGE — main.js
    ============================================================ */
 
-const FORM_ENDPOINT = "";
+const EMAILJS_PUBLIC_KEY  = "RoMIm4lkSVsJtGG_m";
+const EMAILJS_SERVICE_ID  = "service_k2qc7us";
+const EMAILJS_TEMPLATE_ID = "template_xbaufb8";
 
 /* ══════════════════════════════════════════════════════════════
    1. INTRO CANVAS — animated betting numbers rain + logo reveal
@@ -461,35 +463,34 @@ function startMainAnimations() {
   const form = document.getElementById("waitlist-form");
   const successEl = document.getElementById("form-success");
 
+  emailjs.init(EMAILJS_PUBLIC_KEY);
+
   if (form) {
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       const email = document.getElementById("email-input").value.trim();
       if (!email) return;
+
+      // Basic email format check
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showError("Please enter a valid email address.");
+        return;
+      }
+
       const btn = form.querySelector('[type="submit"]');
       const orig = btn.textContent;
       btn.textContent = "Joining...";
       btn.disabled = true;
 
-      if (FORM_ENDPOINT) {
-        try {
-          const res = await fetch(FORM_ENDPOINT, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Accept: "application/json",
-            },
-            body: JSON.stringify({ email }),
-          });
-          res.ok
-            ? showSuccess()
-            : (showError("Something went wrong."), resetBtn(btn, orig));
-        } catch {
-          showError("Network error.");
-          resetBtn(btn, orig);
-        }
-      } else {
+      try {
+        await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+          to_email: email,
+          to_name: email.split("@")[0],
+        });
         showSuccess();
+      } catch {
+        showError("Something went wrong. Please try again.");
+        resetBtn(btn, orig);
       }
     });
   }
