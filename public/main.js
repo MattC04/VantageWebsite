@@ -477,8 +477,11 @@ function startMainAnimations() {
           return;
         }
 
-        // Save email so squad page can display masked version
-        try { localStorage.setItem("vantage_email", email.toLowerCase().trim()); } catch {}
+        // Save email + share_code so squad page can identify the owner
+        try {
+          localStorage.setItem("vantage_email", email.toLowerCase().trim());
+          if (data.share_code) localStorage.setItem("vantage_share_code", data.share_code);
+        } catch {}
 
         const squadUrl = "/squad/" + data.share_code;
         const viewBtn = document.getElementById("view-squad-btn");

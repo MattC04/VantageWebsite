@@ -11,6 +11,7 @@ export default function SquadPage() {
   const [error, setError]       = useState(null);
   const [copied, setCopied]     = useState(false);
   const [ownerEmail, setOwnerEmail] = useState('');
+  const [isOwner, setIsOwner]   = useState(false);
 
   // Owner edit state
   const [editOpen, setEditOpen]       = useState(false);
@@ -26,6 +27,7 @@ export default function SquadPage() {
   const [joinEmail, setJoinEmail]   = useState('');
   const [joinStatus, setJoinStatus] = useState(null); // null | 'joining' | 'joined' | 'error'
   const [joinError, setJoinError]   = useState('');
+  const [joinedEmail, setJoinedEmail] = useState(''); // email of the person who just joined, for "You" badge
 
   const shareUrl = typeof window !== 'undefined' && share_code
     ? `${window.location.origin}/?ref=${share_code}`
@@ -35,7 +37,9 @@ export default function SquadPage() {
     if (typeof window === 'undefined') return;
     const stored = localStorage.getItem('vantage_email');
     if (stored) setOwnerEmail(stored);
-  }, []);
+    const storedCode = localStorage.getItem('vantage_share_code');
+    if (storedCode && share_code && storedCode === share_code) setIsOwner(true);
+  }, [share_code]);
 
   const fetchSquad = useCallback(async () => {
     if (!share_code) return;
@@ -173,8 +177,20 @@ export default function SquadPage() {
         setJoinStatus('error');
         return;
       }
-      try { localStorage.setItem('vantage_email', joinEmail.toLowerCase().trim()); } catch {}
+      const normalizedJoin = joinEmail.toLowerCase().trim();
+      try { localStorage.setItem('vantage_email', normalizedJoin); } catch {}
+      setJoinedEmail(normalizedJoin);
       setJoinStatus('joined');
+      // Optimistically add member to list so it appears immediately
+      setData((prev) => {
+        if (!prev) return prev;
+        const alreadyIn = prev.members.some((m) => m.email.toLowerCase() === normalizedJoin);
+        if (alreadyIn) return prev;
+        return {
+          ...prev,
+          members: [...prev.members, { id: `optimistic-${Date.now()}`, email: normalizedJoin, joined_at: new Date().toISOString() }],
+        };
+      });
       fetchSquad();
     } catch {
       setJoinError('Network error. Please try again.');
@@ -313,8 +329,9 @@ export default function SquadPage() {
                   <ul className="member-list">
                     {members.map((m) => {
                       const ms = memberEdit[m.id] || {};
+                      const isYou = joinedEmail && m.email.toLowerCase() === joinedEmail;
                       return (
-                        <li key={m.id} className="member-row">
+                        <li key={m.id} className={`member-row${isYou ? ' member-row-you' : ''}`}>
                           {ms.open ? (
                             <form className="member-edit-form" onSubmit={(e) => handleMemberEditSave(e, m.id)}>
                               <input
@@ -342,6 +359,7 @@ export default function SquadPage() {
                             <>
                               <span className="member-email">{maskEmail(m.email)}</span>
                               <div className="member-actions">
+                                {isYou && <span className="you-badge">You</span>}
                                 <button className="btn-member-action" onClick={() => openMemberEdit(m.id)}>Edit</button>
                                 <button className="btn-member-remove" onClick={() => handleRemoveMember(m.id)}>Remove</button>
                               </div>
@@ -353,35 +371,37 @@ export default function SquadPage() {
                   </ul>
                 )}
 
-                {/* Join squad form */}
-                {joinStatus !== 'joined' ? (
-                  <form className="join-form" onSubmit={handleJoinSquad}>
-                    <p className="join-label">JOIN THIS SQUAD</p>
-                    <div className="join-row">
-                      <input
-                        type="email"
-                        className="join-input"
-                        placeholder="your@email.com"
-                        value={joinEmail}
-                        onChange={(e) => setJoinEmail(e.target.value)}
-                        required
-                        disabled={joinStatus === 'joining'}
-                      />
-                      <button
-                        type="submit"
-                        className="join-btn"
-                        disabled={joinStatus === 'joining'}
-                      >
-                        {joinStatus === 'joining' ? 'Joining…' : 'Join →'}
-                      </button>
+                {/* Join squad form — only visible to non-owners (people who arrived via share link) */}
+                {!isOwner && (
+                  joinStatus === 'joined' ? (
+                    <div className="join-success">
+                      <span className="join-success-check">✓</span>
+                      <span>You&apos;re in the squad!</span>
                     </div>
-                    {joinError && <p className="edit-error">{joinError}</p>}
-                  </form>
-                ) : (
-                  <div className="join-success">
-                    <span className="join-success-check">✓</span>
-                    <span>You&apos;re in the squad!</span>
-                  </div>
+                  ) : (
+                    <form className="join-form" onSubmit={handleJoinSquad}>
+                      <p className="join-label">JOIN THIS SQUAD</p>
+                      <div className="join-row">
+                        <input
+                          type="email"
+                          className="join-input"
+                          placeholder="your@email.com"
+                          value={joinEmail}
+                          onChange={(e) => setJoinEmail(e.target.value)}
+                          required
+                          disabled={joinStatus === 'joining'}
+                        />
+                        <button
+                          type="submit"
+                          className="join-btn"
+                          disabled={joinStatus === 'joining'}
+                        >
+                          {joinStatus === 'joining' ? 'Joining…' : 'Join →'}
+                        </button>
+                      </div>
+                      {joinError && <p className="edit-error">{joinError}</p>}
+                    </form>
+                  )
                 )}
 
                 {/* Joined date */}
@@ -499,8 +519,10 @@ export default function SquadPage() {
 
         .member-list { list-style: none; padding: 0; margin: 0 0 1.25rem; display: flex; flex-direction: column; gap: 0.4rem; }
         .member-row { background: #0d0b07; border: 1px solid #1a1510; border-radius: 10px; padding: 0.65rem 0.85rem; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
+        .member-row-you { border-color: rgba(201,168,76,0.35); background: rgba(201,168,76,0.05); }
         .member-email { font-size: 0.82rem; color: #8a8278; font-family: 'Courier New', monospace; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .member-actions { display: flex; gap: 0.4rem; flex-shrink: 0; }
+        .member-actions { display: flex; align-items: center; gap: 0.4rem; flex-shrink: 0; }
+        .you-badge { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #c9a84c; background: rgba(201,168,76,0.12); border: 1px solid rgba(201,168,76,0.3); border-radius: 4px; padding: 0.15rem 0.45rem; }
         .member-edit-form { width: 100%; }
 
         .btn-member-action { background: transparent; border: 1px solid #2a2416; border-radius: 5px; color: #5a5040; font-family: 'Space Grotesk', sans-serif; font-size: 0.68rem; font-weight: 600; padding: 0.28rem 0.6rem; cursor: pointer; transition: border-color 0.2s, color 0.2s; }
