@@ -17,7 +17,6 @@ export default async function handler(req, res) {
   const now = new Date().toISOString();
 
   try {
-    // 1. Find valid token
     const { data: tokenRow, error: tokenErr } = await db
       .from('email_verification_tokens')
       .select('id, waitlist_user_id, expires_at, used_at')
@@ -43,19 +42,16 @@ export default async function handler(req, res) {
       return res.redirect(302, '/?verify=expired');
     }
 
-    // 2. Mark token used
     await db
       .from('email_verification_tokens')
       .update({ used_at: now })
       .eq('id', tokenRow.id);
 
-    // 3. Mark user verified
     await db
       .from('waitlist_users')
       .update({ status: 'VERIFIED', verified_at: now })
       .eq('id', tokenRow.waitlist_user_id);
 
-    // 4. If this user was referred, upgrade their referral to VERIFIED
     const { data: referral } = await db
       .from('referrals')
       .select('id, inviter_waitlist_user_id')
@@ -68,11 +64,9 @@ export default async function handler(req, res) {
         .update({ status: 'VERIFIED', verified_at: now })
         .eq('id', referral.id);
 
-      // 5. Recompute inviter's tier unlocks
       await recomputeTierUnlocks(db, referral.inviter_waitlist_user_id);
     }
 
-    // 6. Get share code and redirect to squad page
     const { data: squad } = await db
       .from('squads')
       .select('share_code')
@@ -88,10 +82,8 @@ export default async function handler(req, res) {
   }
 }
 
-// Recompute and update tier unlocks for an inviter after a new verified referral
 async function recomputeTierUnlocks(db, inviterUserId) {
   try {
-    // Count verified referrals for this inviter
     const { count: verifiedCount } = await db
       .from('referrals')
       .select('id', { count: 'exact', head: true })
@@ -104,7 +96,6 @@ async function recomputeTierUnlocks(db, inviterUserId) {
       .eq('inviter_waitlist_user_id', inviterUserId)
       .eq('status', 'ACTIVATED');
 
-    // Get all reward tiers
     const { data: tiers } = await db
       .from('reward_tiers')
       .select('tier_number, required_verified');
@@ -117,7 +108,6 @@ async function recomputeTierUnlocks(db, inviterUserId) {
       const shouldUnlock = (verifiedCount || 0) >= tier.required_verified;
       const shouldPayable = (activatedCount || 0) >= tier.required_verified;
 
-      // Get existing unlock record
       const { data: existing } = await db
         .from('reward_unlocks')
         .select('id, status')
@@ -135,7 +125,6 @@ async function recomputeTierUnlocks(db, inviterUserId) {
             payable_at:       shouldPayable ? now : null,
           });
         }
-        // else leave it — no record means LOCKED
       } else if (existing.status === 'UNLOCKED' && shouldPayable) {
         await db.from('reward_unlocks')
           .update({ status: 'PAYABLE', payable_at: now })

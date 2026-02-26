@@ -14,7 +14,6 @@ export default async function handler(req, res) {
   const db = getServiceClient();
 
   try {
-    // 1. Find squad by share code
     const { data: squad, error: squadErr } = await db
       .from('squads')
       .select('id, owner_waitlist_user_id, share_code, created_at')
@@ -25,34 +24,29 @@ export default async function handler(req, res) {
       return res.status(404).json({ error: 'Squad not found.' });
     }
 
-    // 2. Get owner status
     const { data: owner } = await db
       .from('waitlist_users')
       .select('status, created_at')
       .eq('id', squad.owner_waitlist_user_id)
       .maybeSingle();
 
-    // 3. Count verified referrals
     const { count: verifiedCount } = await db
       .from('referrals')
       .select('id', { count: 'exact', head: true })
       .eq('inviter_waitlist_user_id', squad.owner_waitlist_user_id)
       .in('status', ['VERIFIED', 'ACTIVATED']);
 
-    // 4. Count activated referrals
     const { count: activatedCount } = await db
       .from('referrals')
       .select('id', { count: 'exact', head: true })
       .eq('inviter_waitlist_user_id', squad.owner_waitlist_user_id)
       .eq('status', 'ACTIVATED');
 
-    // 5. Get reward tiers config
     const { data: tiers } = await db
       .from('reward_tiers')
       .select('tier_number, required_verified, reward_title, reward_description, requires_activation')
       .order('tier_number');
 
-    // 6. Get owner's reward unlocks
     const { data: unlocks } = await db
       .from('reward_unlocks')
       .select('tier_number, status, unlocked_at, payable_at')
@@ -61,29 +55,27 @@ export default async function handler(req, res) {
     const unlockMap = {};
     (unlocks || []).forEach((u) => { unlockMap[u.tier_number] = u; });
 
-    // 7. Build sanitized tier list
     const tierList = (tiers || []).map((tier) => {
       const unlock = unlockMap[tier.tier_number];
       const unlockStatus = unlock?.status || 'LOCKED';
       return {
-        tier_number:          tier.tier_number,
-        required_verified:    tier.required_verified,
-        reward_title:         tier.reward_title,
-        reward_description:   tier.reward_description,
-        requires_activation:  tier.requires_activation,
-        status:               unlockStatus,
-        unlocked_at:          unlock?.unlocked_at || null,
+        tier_number:         tier.tier_number,
+        required_verified:   tier.required_verified,
+        reward_title:        tier.reward_title,
+        reward_description:  tier.reward_description,
+        requires_activation: tier.requires_activation,
+        status:              unlockStatus,
+        unlocked_at:         unlock?.unlocked_at || null,
       };
     });
 
-    // Return sanitized data — never return raw emails, IPs, or token data
     return res.status(200).json({
-      share_code:         squad.share_code,
-      owner_status:       owner?.status || 'PENDING',
-      verified_count:     verifiedCount || 0,
-      activated_count:    activatedCount || 0,
-      tiers:              tierList,
-      joined_at:          squad.created_at,
+      share_code:     squad.share_code,
+      owner_status:   owner?.status || 'PENDING',
+      verified_count: verifiedCount || 0,
+      activated_count: activatedCount || 0,
+      tiers:          tierList,
+      joined_at:      squad.created_at,
     });
 
   } catch (err) {

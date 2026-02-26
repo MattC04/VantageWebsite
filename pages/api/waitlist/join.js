@@ -10,7 +10,6 @@ export default async function handler(req, res) {
   const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.socket?.remoteAddress || 'unknown';
   const userAgent = req.headers['user-agent'] || '';
 
-  // Rate limit: 5 requests per minute per IP
   if (!rateLimit(`join:ip:${ip}`, 5, 60_000)) {
     return res.status(429).json({ error: 'Too many requests. Please wait a moment.' });
   }
@@ -27,7 +26,6 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Please enter a valid email address.' });
   }
 
-  // Rate limit: 3 requests per minute per email
   if (!rateLimit(`join:email:${normalizedEmail}`, 3, 60_000)) {
     return res.status(429).json({ error: 'Too many requests for this email.' });
   }
@@ -35,7 +33,6 @@ export default async function handler(req, res) {
   const db = getServiceClient();
 
   try {
-    // 1. Upsert waitlist user
     let userId;
     let existingUser;
 
@@ -46,7 +43,6 @@ export default async function handler(req, res) {
       .maybeSingle();
 
     if (existing?.status === 'VERIFIED') {
-      // Already verified — just return their squad info, don't resend
       const { data: squad } = await db
         .from('squads')
         .select('share_code')
@@ -63,13 +59,12 @@ export default async function handler(req, res) {
       userId = existing.id;
       existingUser = existing;
     } else {
-      // Create new user
       const { data: newUser, error: insertErr } = await db
         .from('waitlist_users')
         .insert({
-          email:           normalizedEmail,
-          status:          'PENDING',
-          ip_first:        ip,
+          email:            normalizedEmail,
+          status:           'PENDING',
+          ip_first:         ip,
           user_agent_first: userAgent,
         })
         .select('id')
@@ -79,7 +74,6 @@ export default async function handler(req, res) {
       userId = newUser.id;
     }
 
-    // 2. Ensure squad exists for this user
     let shareCode;
     const { data: existingSquad } = await db
       .from('squads')
@@ -90,7 +84,6 @@ export default async function handler(req, res) {
     if (existingSquad) {
       shareCode = existingSquad.share_code;
     } else {
-      // Generate unique share code
       let attempts = 0;
       let newCode;
       while (attempts < 10) {
@@ -114,7 +107,6 @@ export default async function handler(req, res) {
       shareCode = newSquad.share_code;
     }
 
-    // 3. Handle referral if a ref code was passed
     if (refCode && typeof refCode === 'string') {
       const { data: refSquad } = await db
         .from('squads')
@@ -123,7 +115,6 @@ export default async function handler(req, res) {
         .maybeSingle();
 
       if (refSquad && refSquad.owner_waitlist_user_id !== userId) {
-        // Check invitee not already referred
         const { data: existingRef } = await db
           .from('referrals')
           .select('id')
@@ -132,21 +123,19 @@ export default async function handler(req, res) {
 
         if (!existingRef) {
           await db.from('referrals').insert({
-            squad_id:                   refSquad.id,
-            inviter_waitlist_user_id:   refSquad.owner_waitlist_user_id,
-            invitee_waitlist_user_id:   userId,
-            status:                     'PENDING',
+            squad_id:                 refSquad.id,
+            inviter_waitlist_user_id: refSquad.owner_waitlist_user_id,
+            invitee_waitlist_user_id: userId,
+            status:                   'PENDING',
           });
         }
       }
     }
 
-    // 4. Generate verification token
     const token = generateToken();
     const tokenHash = hashToken(token);
-    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
-    // Invalidate old tokens
     await db
       .from('email_verification_tokens')
       .update({ used_at: new Date().toISOString() })
@@ -159,7 +148,6 @@ export default async function handler(req, res) {
       expires_at:       expiresAt.toISOString(),
     });
 
-    // 5. Build verify URL and send email
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `https://${req.headers.host}`;
     const verifyUrl = `${baseUrl}/api/waitlist/confirm?token=${token}`;
 
@@ -171,7 +159,6 @@ export default async function handler(req, res) {
       });
     } catch (emailErr) {
       console.error('Email send failed:', emailErr);
-      // Don't fail the request — user can resend
     }
 
     return res.status(200).json({ share_code: shareCode });

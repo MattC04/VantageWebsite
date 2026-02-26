@@ -13,7 +13,6 @@ export default function Document() {
           href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Barlow+Condensed:wght@700;800;900&display=swap"
           rel="stylesheet"
         />
-        {/* External CDN scripts loaded in order */}
         <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js" />
         <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" />
         <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" />

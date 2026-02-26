@@ -1,14 +1,7 @@
-/* ============================================================
-   VANTAGE — main.js
-   ============================================================ */
-
 const EMAILJS_PUBLIC_KEY  = "RoMIm4lkSVsJtGG_m";
 const EMAILJS_SERVICE_ID  = "service_k2qc7us";
 const EMAILJS_TEMPLATE_ID = "template_xbaufb8";
 
-/* ══════════════════════════════════════════════════════════════
-   1. INTRO CANVAS — animated betting numbers rain + logo reveal
-   ══════════════════════════════════════════════════════════════ */
 (function initIntro() {
   const canvas = document.getElementById("intro-canvas");
   const ctx = canvas.getContext("2d");
@@ -24,7 +17,6 @@ const EMAILJS_TEMPLATE_ID = "template_xbaufb8";
   resize();
   window.addEventListener("resize", resize);
 
-  // Betting symbols that rain down
   const symbols = [
     "OVER",
     "UNDER",
@@ -116,18 +108,14 @@ const EMAILJS_TEMPLATE_ID = "template_xbaufb8";
   }
   animateRain();
 
-  // Odds ticker + pick dots progress indicator
   const oddsEl = document.getElementById("odds-number");
   const dots = [1, 2, 3, 4, 5].map((i) => document.getElementById(`dot-${i}`));
 
-  // Final parlay odds value that it counts up to
   const FINAL_ODDS = 1247;
-  // Milestones when each pick "locks in" (as % of duration)
   const dotMilestones = [0.15, 0.32, 0.5, 0.68, 0.84];
   const lockedDots = new Set();
 
   let oddsTickInterval = setInterval(() => {
-    // Random scramble while loading
     oddsEl.textContent = Math.floor(100 + Math.random() * 1800);
   }, 60);
 
@@ -138,22 +126,18 @@ const EMAILJS_TEMPLATE_ID = "template_xbaufb8";
   function updateProgress(now) {
     progress = Math.min((now - startTime) / duration, 1);
 
-    // Logo fades in at 20%
     if (progress > 0.2)
       logoEl.style.opacity = Math.min((progress - 0.2) / 0.3, 1);
 
-    // Tagline wipes in at 50%
     if (progress > 0.5) {
       const p = Math.min((progress - 0.5) / 0.35, 1);
       tagEl.style.clipPath = `inset(0 ${(1 - p) * 100}% 0 0)`;
       tagEl.style.opacity = "1";
     }
 
-    // Lock in pick dots at milestones
     dotMilestones.forEach((milestone, i) => {
       if (progress >= milestone && !lockedDots.has(i)) {
         lockedDots.add(i);
-        // Brief "active" flash before locking green
         dots[i].classList.add("active");
         setTimeout(() => {
           dots[i].classList.remove("active");
@@ -162,7 +146,6 @@ const EMAILJS_TEMPLATE_ID = "template_xbaufb8";
       }
     });
 
-    // At 90% — stop scrambling, count up to final value
     if (progress >= 0.9 && oddsTickInterval) {
       clearInterval(oddsTickInterval);
       oddsTickInterval = null;
@@ -186,7 +169,6 @@ const EMAILJS_TEMPLATE_ID = "template_xbaufb8";
     if (progress < 1) {
       requestAnimationFrame(updateProgress);
     } else {
-      // Outro — flash then wipe
       setTimeout(() => {
         cancelAnimationFrame(rainRaf);
 
@@ -195,18 +177,15 @@ const EMAILJS_TEMPLATE_ID = "template_xbaufb8";
           "position:fixed;inset:-25% -35%;z-index:9998;pointer-events:none;background:linear-gradient(106deg,#070707 22%,rgba(7,7,7,0.95) 44%,rgba(7,7,7,0.15) 70%,transparent 100%);transform:translateX(-145%) rotate(-10deg);transition:transform 0.95s cubic-bezier(0.22,1,0.36,1);";
         document.body.appendChild(sweep);
 
-        // Make site visible beneath intro before sweep starts
         siteEl.style.visibility = "visible";
         siteEl.style.opacity = "0";
 
-        // Start intro fade slightly after sweep begins
         setTimeout(() => {
           introEl.style.transition = "opacity 0.45s ease";
           introEl.style.opacity = "0";
           introEl.style.pointerEvents = "none";
         }, 300);
 
-        // Trigger sweep
         requestAnimationFrame(() => {
           sweep.style.transform = "translateX(145%) rotate(-10deg)";
         });
@@ -214,7 +193,6 @@ const EMAILJS_TEMPLATE_ID = "template_xbaufb8";
         setTimeout(() => {
           introEl.remove();
           sweep.remove();
-          // Reveal site instantly — GSAP timeline handles all element entrances
           siteEl.style.transition = "none";
           siteEl.style.opacity = "1";
           siteEl.classList.add("entering");

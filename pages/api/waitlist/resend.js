@@ -9,7 +9,6 @@ export default async function handler(req, res) {
 
   const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.socket?.remoteAddress || 'unknown';
 
-  // Hard rate limit: 1 per minute per email, 3 per hour
   const { email } = req.body || {};
 
   if (!email || typeof email !== 'string') {
@@ -43,12 +42,10 @@ export default async function handler(req, res) {
       .eq('email', normalizedEmail)
       .maybeSingle();
 
-    // Don't leak whether email exists — always return success
     if (!user || user.status === 'VERIFIED') {
       return res.status(200).json({ ok: true });
     }
 
-    // Invalidate old tokens
     const now = new Date().toISOString();
     await db
       .from('email_verification_tokens')
@@ -56,7 +53,6 @@ export default async function handler(req, res) {
       .eq('waitlist_user_id', user.id)
       .is('used_at', null);
 
-    // Create new token
     const token = generateToken();
     const tokenHash = hashToken(token);
     const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
