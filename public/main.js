@@ -499,6 +499,9 @@ function startMainAnimations() {
           return;
         }
 
+        // Save email so squad page can display masked version
+        try { localStorage.setItem("vantage_email", email.toLowerCase().trim()); } catch {}
+
         // Show success animation then redirect to squad page
         shootBasketball();
         gsap.to(form, {
