@@ -2391,7 +2391,49 @@ body.cursor-on-link #cursor-ring {
 
 @media (max-width: 600px) {
     #cards-field {
+        position: relative;
+        inset: auto;
+        height: auto;
+        margin-top: 2rem;
+        perspective: none;
+        z-index: 1;
+        order: 2;
+    }
+
+    .hero-scene {
+        width: 100%;
+        justify-content: center;
+        padding: 0;
+    }
+
+    .hero-props {
         display: none;
+    }
+
+    .hero-phone-wrap {
+        margin-top: 0;
+    }
+
+    .hero-phone {
+        width: min(220px, 55vw);
+        transform: rotateY(-10deg) rotateX(8deg) rotateZ(-3deg) scale(1);
+    }
+
+    .hero-phone-glow {
+        width: 280px;
+        height: 280px;
+    }
+
+    #hero {
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        padding-bottom: 3rem;
+    }
+
+    .hero-center {
+        order: 1;
+        padding: 1rem 1.5rem 0;
     }
 
     .hero-headline {
