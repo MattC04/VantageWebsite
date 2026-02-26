@@ -71,8 +71,12 @@ export default async function handler(req, res) {
       shareCode = newUser.share_code;
 
       // Send welcome email to new users (fire-and-forget, don't block response)
-      sendWaitlistWelcome({ toEmail: normalizedEmail, toName: normalizedEmail.split('@')[0] })
-        .catch((err) => console.error('Email send error:', err));
+      const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://vantage.com';
+      sendWaitlistWelcome({
+        toEmail:  normalizedEmail,
+        toName:   normalizedEmail.split('@')[0],
+        squadUrl: `${baseUrl}/squad/${newCode}`,
+      }).catch((err) => console.error('Email send error:', err));
     }
 
     if (isReferral) {
