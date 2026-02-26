@@ -1,5 +1,6 @@
 import { getServiceClient } from '../../../lib/supabase';
 import { generateShareCode, normalizeEmail, isValidEmail, rateLimit } from '../../../lib/utils';
+import { sendWaitlistWelcome } from '../../../lib/email';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -68,6 +69,10 @@ export default async function handler(req, res) {
       if (insertErr) throw insertErr;
       userId    = newUser.id;
       shareCode = newUser.share_code;
+
+      // Send welcome email to new users (fire-and-forget, don't block response)
+      sendWaitlistWelcome({ toEmail: normalizedEmail, toName: normalizedEmail.split('@')[0] })
+        .catch((err) => console.error('Email send error:', err));
     }
 
     if (isReferral) {
