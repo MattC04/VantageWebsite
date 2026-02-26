@@ -269,7 +269,7 @@ export default function Home() {
                   </svg>
                 </div>
                 <h3>You&apos;re in.</h3>
-                <p>Check your email to verify and unlock your squad room.</p>
+                <p>You&apos;re on the list. Share your squad link to earn rewards.</p>
               </div>
             </div>
           </div>

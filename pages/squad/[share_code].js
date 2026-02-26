@@ -2,14 +2,11 @@ import Head from 'next/head';
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { useRouter } from 'next/router';
 
-// How many avatar slots to show in the room panel
-const SLOT_COUNT = 4;
-// Tiers require [2, 4, 6, 8] verified invites — first 4 fill the visible avatar slots
 const TIER_THRESHOLDS = [2, 4, 6, 8];
 
 export default function SquadPage() {
   const router = useRouter();
-  const { share_code, pending, verified } = router.query;
+  const { share_code } = router.query;
 
   const [data, setData]         = useState(null);
   const [loading, setLoading]   = useState(true);
@@ -108,7 +105,7 @@ export default function SquadPage() {
         setEditEmail('');
         // Redirect to new squad page if share code changed
         if (json.new_share_code && json.new_share_code !== share_code) {
-          router.replace(`/squad/${json.new_share_code}?pending=1`);
+          router.replace(`/squad/${json.new_share_code}`);
         }
       }, 1500);
     } catch {
@@ -117,8 +114,6 @@ export default function SquadPage() {
     }
   };
 
-  const isVerified   = data?.owner_status === 'VERIFIED';
-  const justVerified = verified === '1';
   const verifiedCount = data?.verified_count || 0;
 
   // Mask email: show first 2 chars + domain
@@ -187,29 +182,14 @@ export default function SquadPage() {
 
               {/* Eyebrow */}
               <p className="eyebrow">
-                {isVerified ? (
-                  <><span className="dot dot-green"></span>Squad Active</>
-                ) : (
-                  <><span className="dot dot-amber"></span>Check your email</>
-                )}
+                <span className="dot dot-green"></span>Squad Active
               </p>
 
               {/* Headline */}
               <h1 className="headline">You&apos;re IN.</h1>
 
               {/* Sub */}
-              <p className="sub">
-                {isVerified
-                  ? 'Your email is confirmed. Share your link to earn rewards.'
-                  : 'Check your email to confirm your spot and unlock your squad link.'}
-              </p>
-
-              {/* Verified flash */}
-              {justVerified && isVerified && (
-                <div className="verified-flash">
-                  Email verified — your squad is live.
-                </div>
-              )}
+              <p className="sub">Share your link to earn rewards.</p>
 
               {/* Blurb */}
               <p className="blurb">
@@ -484,11 +464,6 @@ export default function SquadPage() {
           box-shadow: 0 0 8px rgba(62,207,142,0.6);
           animation: pulse 2s ease-in-out infinite;
         }
-        .dot-amber {
-          background: #c9a84c;
-          box-shadow: 0 0 8px rgba(201,168,76,0.5);
-          animation: pulse 2.5s ease-in-out infinite;
-        }
         @keyframes pulse {
           0%, 100% { opacity: 1; transform: scale(1); }
           50% { opacity: 0.4; transform: scale(0.65); }
@@ -513,17 +488,6 @@ export default function SquadPage() {
           max-width: 380px;
         }
 
-        .verified-flash {
-          display: inline-block;
-          background: rgba(62,207,142,0.1);
-          border: 1px solid rgba(62,207,142,0.25);
-          border-radius: 8px;
-          padding: 0.55rem 1rem;
-          font-size: 0.82rem;
-          color: #3ecf8e;
-          font-weight: 600;
-          margin-bottom: 1.25rem;
-        }
 
         .blurb {
           font-size: 0.88rem;

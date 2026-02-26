@@ -1,6 +1,5 @@
 import { getServiceClient } from '../../../lib/supabase';
-import { generateShareCode, generateToken, hashToken, normalizeEmail, isValidEmail, rateLimit } from '../../../lib/utils';
-import { sendVerificationEmail } from '../../../lib/email';
+import { generateShareCode, normalizeEmail, isValidEmail, rateLimit } from '../../../lib/utils';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -34,7 +33,6 @@ export default async function handler(req, res) {
 
   try {
     let userId;
-    let existingUser;
 
     const { data: existing } = await db
       .from('waitlist_users')
@@ -42,28 +40,23 @@ export default async function handler(req, res) {
       .eq('email', normalizedEmail)
       .maybeSingle();
 
-    if (existing?.status === 'VERIFIED') {
-      const { data: squad } = await db
-        .from('squads')
-        .select('share_code')
-        .eq('owner_waitlist_user_id', existing.id)
-        .maybeSingle();
-
-      return res.status(200).json({
-        already_verified: true,
-        share_code: squad?.share_code,
-      });
-    }
-
     if (existing) {
       userId = existing.id;
-      existingUser = existing;
+
+      // If somehow still pending, upgrade to verified
+      if (existing.status === 'PENDING') {
+        await db
+          .from('waitlist_users')
+          .update({ status: 'VERIFIED', verified_at: new Date().toISOString() })
+          .eq('id', userId);
+      }
     } else {
       const { data: newUser, error: insertErr } = await db
         .from('waitlist_users')
         .insert({
           email:            normalizedEmail,
-          status:           'PENDING',
+          status:           'VERIFIED',
+          verified_at:      new Date().toISOString(),
           ip_first:         ip,
           user_agent_first: userAgent,
         })
@@ -126,39 +119,13 @@ export default async function handler(req, res) {
             squad_id:                 refSquad.id,
             inviter_waitlist_user_id: refSquad.owner_waitlist_user_id,
             invitee_waitlist_user_id: userId,
-            status:                   'PENDING',
+            status:                   'VERIFIED',
+            verified_at:              new Date().toISOString(),
           });
+
+          await recomputeTierUnlocks(db, refSquad.owner_waitlist_user_id);
         }
       }
-    }
-
-    const token = generateToken();
-    const tokenHash = hashToken(token);
-    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
-
-    await db
-      .from('email_verification_tokens')
-      .update({ used_at: new Date().toISOString() })
-      .eq('waitlist_user_id', userId)
-      .is('used_at', null);
-
-    await db.from('email_verification_tokens').insert({
-      waitlist_user_id: userId,
-      token_hash:       tokenHash,
-      expires_at:       expiresAt.toISOString(),
-    });
-
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `https://${req.headers.host}`;
-    const verifyUrl = `${baseUrl}/api/waitlist/confirm?token=${token}`;
-
-    try {
-      await sendVerificationEmail({
-        toEmail:   normalizedEmail,
-        toName:    normalizedEmail.split('@')[0],
-        verifyUrl,
-      });
-    } catch (emailErr) {
-      console.error('Email send failed:', emailErr);
     }
 
     return res.status(200).json({ share_code: shareCode });
@@ -166,5 +133,45 @@ export default async function handler(req, res) {
   } catch (err) {
     console.error('Join error:', err);
     return res.status(500).json({ error: 'Something went wrong. Please try again.' });
+  }
+}
+
+async function recomputeTierUnlocks(db, inviterUserId) {
+  try {
+    const { count: verifiedCount } = await db
+      .from('referrals')
+      .select('id', { count: 'exact', head: true })
+      .eq('inviter_waitlist_user_id', inviterUserId)
+      .in('status', ['VERIFIED', 'ACTIVATED']);
+
+    const { data: tiers } = await db
+      .from('reward_tiers')
+      .select('tier_number, required_verified');
+
+    if (!tiers) return;
+
+    const now = new Date().toISOString();
+
+    for (const tier of tiers) {
+      const shouldUnlock = (verifiedCount || 0) >= tier.required_verified;
+
+      const { data: existing } = await db
+        .from('reward_unlocks')
+        .select('id, status')
+        .eq('waitlist_user_id', inviterUserId)
+        .eq('tier_number', tier.tier_number)
+        .maybeSingle();
+
+      if (!existing && shouldUnlock) {
+        await db.from('reward_unlocks').insert({
+          waitlist_user_id: inviterUserId,
+          tier_number:      tier.tier_number,
+          status:           'UNLOCKED',
+          unlocked_at:      now,
+        });
+      }
+    }
+  } catch (err) {
+    console.error('recomputeTierUnlocks error:', err);
   }
 }
