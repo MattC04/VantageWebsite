@@ -22,6 +22,11 @@ export default function SquadPage() {
   // Member edit state: { [memberId]: { open, email, status, error } }
   const [memberEdit, setMemberEdit] = useState({});
 
+  // Join squad form state
+  const [joinEmail, setJoinEmail]   = useState('');
+  const [joinStatus, setJoinStatus] = useState(null); // null | 'joining' | 'joined' | 'error'
+  const [joinError, setJoinError]   = useState('');
+
   const shareUrl = typeof window !== 'undefined' && share_code
     ? `${window.location.origin}/?ref=${share_code}`
     : '';
@@ -149,6 +154,32 @@ export default function SquadPage() {
       });
       fetchSquad();
     } catch { /* silent */ }
+  };
+
+  const handleJoinSquad = async (e) => {
+    e.preventDefault();
+    if (!joinEmail || joinStatus === 'joining') return;
+    setJoinStatus('joining');
+    setJoinError('');
+    try {
+      const res = await fetch('/api/waitlist/join', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: joinEmail, share_code }),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        setJoinError(json.error || 'Something went wrong.');
+        setJoinStatus('error');
+        return;
+      }
+      try { localStorage.setItem('vantage_email', joinEmail.toLowerCase().trim()); } catch {}
+      setJoinStatus('joined');
+      fetchSquad();
+    } catch {
+      setJoinError('Network error. Please try again.');
+      setJoinStatus('error');
+    }
   };
 
   const maskEmail = (email) => {
@@ -322,6 +353,37 @@ export default function SquadPage() {
                   </ul>
                 )}
 
+                {/* Join squad form */}
+                {joinStatus !== 'joined' ? (
+                  <form className="join-form" onSubmit={handleJoinSquad}>
+                    <p className="join-label">JOIN THIS SQUAD</p>
+                    <div className="join-row">
+                      <input
+                        type="email"
+                        className="join-input"
+                        placeholder="your@email.com"
+                        value={joinEmail}
+                        onChange={(e) => setJoinEmail(e.target.value)}
+                        required
+                        disabled={joinStatus === 'joining'}
+                      />
+                      <button
+                        type="submit"
+                        className="join-btn"
+                        disabled={joinStatus === 'joining'}
+                      >
+                        {joinStatus === 'joining' ? 'Joining…' : 'Join →'}
+                      </button>
+                    </div>
+                    {joinError && <p className="edit-error">{joinError}</p>}
+                  </form>
+                ) : (
+                  <div className="join-success">
+                    <span className="join-success-check">✓</span>
+                    <span>You&apos;re in the squad!</span>
+                  </div>
+                )}
+
                 {/* Joined date */}
                 <div className="joined-at">
                   <span className="joined-label">Joined</span>
@@ -448,6 +510,72 @@ export default function SquadPage() {
         .btn-member-remove:hover { border-color: #6a2020; color: #e05050; }
 
         /* Joined date */
+        .join-form {
+          margin-bottom: 1.25rem;
+          padding: 1.1rem;
+          background: #0a0907;
+          border: 1px solid #1e1a10;
+          border-radius: 12px;
+        }
+        .join-label {
+          font-size: 0.62rem;
+          font-weight: 700;
+          letter-spacing: 0.16em;
+          color: #3a3020;
+          text-transform: uppercase;
+          margin: 0 0 0.75rem;
+        }
+        .join-row {
+          display: flex;
+          gap: 0.5rem;
+        }
+        .join-input {
+          flex: 1;
+          background: #111008;
+          border: 1px solid #2a2416;
+          border-radius: 8px;
+          padding: 0.65rem 0.9rem;
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 0.85rem;
+          color: #f0ebe1;
+          outline: none;
+          transition: border-color 0.2s;
+          min-width: 0;
+        }
+        .join-input:focus { border-color: #c9a84c; }
+        .join-btn {
+          background: #c9a84c;
+          color: #070707;
+          border: none;
+          border-radius: 8px;
+          padding: 0.65rem 1.1rem;
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 0.85rem;
+          font-weight: 700;
+          cursor: pointer;
+          white-space: nowrap;
+          transition: background 0.2s;
+          flex-shrink: 0;
+        }
+        .join-btn:hover { background: #d4bc82; }
+        .join-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .join-success {
+          display: flex;
+          align-items: center;
+          gap: 0.6rem;
+          font-size: 0.85rem;
+          color: #3ecf8e;
+          font-weight: 600;
+          margin-bottom: 1.25rem;
+          padding: 0.85rem 1.1rem;
+          background: rgba(62,207,142,0.06);
+          border: 1px solid rgba(62,207,142,0.2);
+          border-radius: 10px;
+        }
+        .join-success-check {
+          font-size: 1rem;
+        }
+
         .joined-at { display: flex; align-items: center; justify-content: space-between; padding-top: 1rem; border-top: 1px solid #141008; }
         .joined-label { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #3a3020; }
         .joined-date { font-size: 0.82rem; color: #8a8278; }

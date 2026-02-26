@@ -6,10 +6,10 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    // Read ?ref= from URL to pass to join API
-    const refCode = router.query.ref || '';
-    if (typeof window !== 'undefined') {
-      window.__VANTAGE_REF_CODE__ = refCode;
+    // If a ref code is present, redirect straight to that squad room
+    const refCode = router.query.ref;
+    if (refCode) {
+      router.replace(`/squad/${refCode}`);
     }
   }, [router.query.ref]);
 
