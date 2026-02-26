@@ -480,7 +480,10 @@ function startMainAnimations() {
         // Save email so squad page can display masked version
         try { localStorage.setItem("vantage_email", email.toLowerCase().trim()); } catch {}
 
-        // Show success animation then redirect to squad page
+        const squadUrl = "/squad/" + data.share_code;
+        const viewBtn = document.getElementById("view-squad-btn");
+        if (viewBtn) viewBtn.href = squadUrl;
+
         shootBasketball();
         gsap.to(form, {
           opacity: 0, y: -16, duration: 0.4, ease: "power2.in",
@@ -488,10 +491,7 @@ function startMainAnimations() {
             form.hidden = true;
             successEl.hidden = false;
             gsap.from(successEl, { opacity: 0, y: 20, duration: 0.6, ease: "back.out(1.5)" });
-            // Redirect to squad page after brief delay
-            setTimeout(() => {
-              window.location.href = "/squad/" + data.share_code + "?pending=1";
-            }, 2400);
+            setTimeout(() => { window.location.href = squadUrl; }, 2400);
           },
         });
 

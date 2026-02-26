@@ -2,8 +2,6 @@ import Head from 'next/head';
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { useRouter } from 'next/router';
 
-const TIER_THRESHOLDS = [2, 4, 6, 8];
-
 export default function SquadPage() {
   const router = useRouter();
   const { share_code } = router.query;
@@ -14,18 +12,20 @@ export default function SquadPage() {
   const [copied, setCopied]     = useState(false);
   const [ownerEmail, setOwnerEmail] = useState('');
 
-  // Edit address state
+  // Owner edit state
   const [editOpen, setEditOpen]       = useState(false);
   const [editEmail, setEditEmail]     = useState('');
-  const [editStatus, setEditStatus]   = useState(null); // null | 'saving' | 'sent' | 'error'
+  const [editStatus, setEditStatus]   = useState(null);
   const [editError, setEditError]     = useState('');
   const editInputRef = useRef(null);
+
+  // Member edit state: { [memberId]: { open, email, status, error } }
+  const [memberEdit, setMemberEdit] = useState({});
 
   const shareUrl = typeof window !== 'undefined' && share_code
     ? `${window.location.origin}/?ref=${share_code}`
     : '';
 
-  // Pull email from localStorage (set at join time)
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const stored = localStorage.getItem('vantage_email');
@@ -53,9 +53,7 @@ export default function SquadPage() {
   }, [fetchSquad]);
 
   useEffect(() => {
-    if (editOpen && editInputRef.current) {
-      editInputRef.current.focus();
-    }
+    if (editOpen && editInputRef.current) editInputRef.current.focus();
   }, [editOpen]);
 
   const handleShare = async () => {
@@ -64,20 +62,19 @@ export default function SquadPage() {
       try {
         await navigator.share({
           title: 'Join me on Vantage',
-          text: 'I\'m on the Vantage waitlist — the best sports betting platform coming soon. Join through my link:',
+          text: "I'm on the Vantage waitlist — the best sports betting platform coming soon. Join through my link:",
           url: shareUrl,
         });
         return;
-      } catch { /* user cancelled or not supported */ }
+      } catch { /* cancelled */ }
     }
-    // Fallback: copy to clipboard
     navigator.clipboard.writeText(shareUrl).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
     });
   };
 
-  const handleEditSave = async (e) => {
+  const handleOwnerEditSave = async (e) => {
     e.preventDefault();
     if (!editEmail || editStatus === 'saving') return;
     setEditStatus('saving');
@@ -89,21 +86,12 @@ export default function SquadPage() {
         body: JSON.stringify({ share_code, new_email: editEmail }),
       });
       const json = await res.json();
-      if (!res.ok) {
-        setEditError(json.error || 'Something went wrong.');
-        setEditStatus('error');
-        return;
-      }
-      // Save new email locally, update UI
+      if (!res.ok) { setEditError(json.error || 'Something went wrong.'); setEditStatus('error'); return; }
       localStorage.setItem('vantage_email', editEmail.toLowerCase().trim());
       setOwnerEmail(editEmail.toLowerCase().trim());
       setEditStatus('sent');
-      // Close after a moment
       setTimeout(() => {
-        setEditOpen(false);
-        setEditStatus(null);
-        setEditEmail('');
-        // Redirect to new squad page if share code changed
+        setEditOpen(false); setEditStatus(null); setEditEmail('');
         if (json.new_share_code && json.new_share_code !== share_code) {
           router.replace(`/squad/${json.new_share_code}`);
         }
@@ -114,33 +102,71 @@ export default function SquadPage() {
     }
   };
 
-  const verifiedCount = data?.verified_count || 0;
+  const openMemberEdit = (memberId) => {
+    setMemberEdit((prev) => ({
+      ...prev,
+      [memberId]: { open: true, email: '', status: null, error: '' },
+    }));
+  };
 
-  // Mask email: show first 2 chars + domain
-  const maskedEmail = ownerEmail
-    ? (() => {
-        const [local, domain] = ownerEmail.split('@');
-        if (!domain) return ownerEmail;
-        const visible = local.slice(0, 2);
-        const masked  = '*'.repeat(Math.max(0, local.length - 2));
-        return `${visible}${masked}@${domain}`;
-      })()
-    : null;
+  const closeMemberEdit = (memberId) => {
+    setMemberEdit((prev) => ({ ...prev, [memberId]: { open: false, email: '', status: null, error: '' } }));
+  };
 
-  // Build the 4 avatar slots — fills based on how many people have joined
-  // We show slots 1–4 as "filled" when verified_count reaches their tier thresholds
-  // Slot fill is proportional: slot N is "full" when verifiedCount >= TIER_THRESHOLDS[N-1]
-  const slots = TIER_THRESHOLDS.map((threshold, i) => {
-    const fraction = Math.min(verifiedCount / threshold, 1);
-    const full = verifiedCount >= threshold;
-    return { index: i, threshold, fraction, full };
-  });
+  const handleMemberEmailChange = (memberId, val) => {
+    setMemberEdit((prev) => ({ ...prev, [memberId]: { ...prev[memberId], email: val } }));
+  };
+
+  const handleMemberEditSave = async (e, memberId) => {
+    e.preventDefault();
+    const state = memberEdit[memberId] || {};
+    if (!state.email || state.status === 'saving') return;
+    setMemberEdit((prev) => ({ ...prev, [memberId]: { ...prev[memberId], status: 'saving', error: '' } }));
+    try {
+      const res = await fetch('/api/waitlist/change-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ share_code, new_email: state.email, member_id: memberId }),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        setMemberEdit((prev) => ({ ...prev, [memberId]: { ...prev[memberId], status: 'error', error: json.error || 'Something went wrong.' } }));
+        return;
+      }
+      setMemberEdit((prev) => ({ ...prev, [memberId]: { ...prev[memberId], status: 'sent' } }));
+      setTimeout(() => { closeMemberEdit(memberId); fetchSquad(); }, 1500);
+    } catch {
+      setMemberEdit((prev) => ({ ...prev, [memberId]: { ...prev[memberId], status: 'error', error: 'Network error.' } }));
+    }
+  };
+
+  const handleRemoveMember = async (memberId) => {
+    try {
+      await fetch('/api/squad/leave', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ room_share_code: share_code, member_id: memberId }),
+      });
+      fetchSquad();
+    } catch { /* silent */ }
+  };
+
+  const maskEmail = (email) => {
+    const [local, domain] = email.split('@');
+    if (!domain) return email;
+    const visible = local.slice(0, 2);
+    const masked  = '*'.repeat(Math.max(0, local.length - 2));
+    return `${visible}${masked}@${domain}`;
+  };
+
+  const maskedOwner = ownerEmail ? maskEmail(ownerEmail) : null;
+  const members = data?.members || [];
 
   return (
     <>
       <Head>
         <title>Your Squad — Vantage</title>
-        <meta name="description" content="Your Vantage squad room. Share your link and earn rewards." />
+        <meta name="description" content="You're on the Vantage waitlist. Share your link." />
         <meta name="robots" content="noindex" />
         <link
           href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Barlow+Condensed:wght@700;800;900&display=swap"
@@ -150,7 +176,6 @@ export default function SquadPage() {
 
       <div className="page">
 
-        {/* NAV */}
         <nav className="nav">
           <a href="/" className="nav-logo">
             <img src="/Logo.png" alt="Vantage" onError={(e) => { e.target.style.display = 'none'; }} />
@@ -158,14 +183,10 @@ export default function SquadPage() {
           </a>
         </nav>
 
-        {/* LOADING */}
         {loading && (
-          <div className="center-screen">
-            <div className="spinner"></div>
-          </div>
+          <div className="center-screen"><div className="spinner"></div></div>
         )}
 
-        {/* ERROR */}
         {error && !loading && (
           <div className="center-screen">
             <p className="error-msg">Squad not found or link is invalid.</p>
@@ -173,86 +194,58 @@ export default function SquadPage() {
           </div>
         )}
 
-        {/* CONTENT */}
         {data && !loading && (
           <main className="main">
 
-            {/* ── LEFT COLUMN ── */}
+            {/* LEFT */}
             <div className="col-left">
-
-              {/* Eyebrow */}
               <p className="eyebrow">
-                <span className="dot dot-green"></span>Squad Active
+                <span className="dot dot-green"></span>You&apos;re on the list
               </p>
-
-              {/* Headline */}
               <h1 className="headline">You&apos;re IN.</h1>
+              <p className="sub">Share your link to fill your squad.</p>
 
-              {/* Sub */}
-              <p className="sub">Share your link to earn rewards.</p>
-
-              {/* Blurb */}
-              <p className="blurb">
-                Refer friends to climb the tiers. Every 2 verified invites unlocks the next reward —
-                free credits, exclusive player cards, squad bonuses, and more. The more you share,
-                the bigger your edge on launch day.
-              </p>
-
-              {/* Perks list */}
               <ul className="perks">
                 <li><span className="perk-check">✓</span> Free credits to bet with on launch</li>
                 <li><span className="perk-check">✓</span> Exclusive player cards &amp; squad rooms</li>
                 <li><span className="perk-check">✓</span> Massive daily promos &amp; drops</li>
               </ul>
 
-              {/* Share button */}
               <button className="btn-share" onClick={handleShare}>
-                {copied ? '✓ Link Copied!' : 'Share Invite'}
+                {copied ? '✓ Link Copied!' : 'Share Invite Link'}
               </button>
 
-              {/* Share URL display (desktop fallback) */}
               <div className="share-url-wrap">
                 <span className="share-url-text">{shareUrl}</span>
               </div>
-
-              {/* Fine print */}
-              <p className="fine-print">
-                Invites only count after the invitee verifies their email.
-                Fraudulent or duplicate referrals may be disqualified.
-              </p>
-
             </div>
 
-            {/* ── RIGHT COLUMN ── */}
+            {/* RIGHT */}
             <div className="col-right">
               <div className="room-panel">
 
-                {/* Room header */}
+                {/* Owner header */}
                 <div className="room-header">
                   <div className="room-title-wrap">
-                    <p className="room-label">YOUR ROOM</p>
+                    <p className="room-label">YOUR SPOT</p>
                     <h2 className="room-title">
-                      {maskedEmail
-                        ? <>{maskedEmail.split('@')[0]}<span className="room-at">@{maskedEmail.split('@')[1]}</span></>
-                        : <span className="room-title-placeholder">your squad</span>
+                      {maskedOwner
+                        ? <>{maskedOwner.split('@')[0]}<span className="room-at">@{maskedOwner.split('@')[1]}</span></>
+                        : <span className="room-title-placeholder">your spot</span>
                       }
                     </h2>
                   </div>
-
-                  {/* Edit address button */}
                   {!editOpen && (
                     <button className="btn-edit" onClick={() => { setEditOpen(true); setEditError(''); setEditStatus(null); }}>
-                      Edit address
+                      Edit
                     </button>
                   )}
                 </div>
 
-                {/* Edit address form */}
+                {/* Owner edit form */}
                 {editOpen && (
-                  <form className="edit-form" onSubmit={handleEditSave}>
-                    <p className="edit-note">
-                      Changing your email deletes the old entry and creates a new verification link.
-                    </p>
+                  <form className="edit-form" onSubmit={handleOwnerEditSave}>
+                    <p className="edit-note">Update your email address.</p>
                     <input
                       ref={editInputRef}
                       type="email"
@@ -264,96 +257,79 @@ export default function SquadPage() {
                       disabled={editStatus === 'saving' || editStatus === 'sent'}
                     />
                     <div className="edit-actions">
-                      <button
-                        type="button"
-                        className="btn-cancel"
+                      <button type="button" className="btn-cancel"
                         onClick={() => { setEditOpen(false); setEditEmail(''); setEditStatus(null); setEditError(''); }}
-                        disabled={editStatus === 'saving'}
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        type="submit"
-                        className="btn-save"
-                        disabled={editStatus === 'saving' || editStatus === 'sent'}
-                      >
-                        {editStatus === 'saving' ? 'Saving…'
-                          : editStatus === 'sent' ? '✓ Check email!'
-                          : 'Save & resend link'}
+                        disabled={editStatus === 'saving'}>Cancel</button>
+                      <button type="submit" className="btn-save"
+                        disabled={editStatus === 'saving' || editStatus === 'sent'}>
+                        {editStatus === 'saving' ? 'Saving…' : editStatus === 'sent' ? '✓ Saved!' : 'Save'}
                       </button>
                     </div>
                     {editError && <p className="edit-error">{editError}</p>}
                   </form>
                 )}
 
-                {/* Avatar circles */}
-                <div className="avatars-grid">
-                  {slots.map((slot) => (
-                    <div key={slot.index} className="avatar-wrap">
-                      <div
-                        className={`avatar ${slot.full ? 'avatar-full' : slot.fraction > 0 ? 'avatar-partial' : ''}`}
-                        style={{ '--fill': `${Math.round(slot.fraction * 100)}%` }}
-                      >
-                        <svg className="avatar-ring" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          {/* Background track */}
-                          <circle
-                            cx="30" cy="30" r="26"
-                            stroke="#1e1a10"
-                            strokeWidth="3"
-                            fill="none"
-                          />
-                          {/* Filled arc — using stroke-dasharray trick */}
-                          <circle
-                            cx="30" cy="30" r="26"
-                            stroke={slot.full ? '#f0d080' : '#c9a84c'}
-                            strokeWidth="3"
-                            fill="none"
-                            strokeLinecap="round"
-                            strokeDasharray={`${Math.round(slot.fraction * 163.4)} 163.4`}
-                            transform="rotate(-90 30 30)"
-                            style={{ transition: 'stroke-dasharray 0.8s cubic-bezier(0.16,1,0.3,1)' }}
-                            opacity={slot.fraction > 0 ? 1 : 0}
-                          />
-                        </svg>
-                        {/* Person icon inside */}
-                        <div className={`avatar-inner ${slot.full ? 'avatar-inner-full' : ''}`}>
-                          {slot.full ? (
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                              <circle cx="12" cy="7" r="4" fill={slot.full ? '#f0d080' : '#5a5040'}/>
-                              <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke={slot.full ? '#f0d080' : '#5a5040'} strokeWidth="2" strokeLinecap="round" fill="none"/>
-                            </svg>
-                          ) : (
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" opacity="0.3">
-                              <circle cx="12" cy="7" r="4" fill="#5a5040"/>
-                              <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="#5a5040" strokeWidth="2" strokeLinecap="round" fill="none"/>
-                            </svg>
-                          )}
-                        </div>
-                      </div>
-                      <p className="avatar-label">
-                        {slot.full ? (
-                          <span className="label-unlocked">Tier {slot.index + 1} ✓</span>
-                        ) : (
-                          <span className="label-need">{slot.threshold} invites</span>
-                        )}
-                      </p>
-                    </div>
-                  ))}
+                {/* Divider */}
+                <div className="members-header">
+                  <span className="members-label">SQUAD</span>
+                  <span className="members-count">{members.length} {members.length === 1 ? 'member' : 'members'}</span>
                 </div>
 
-                {/* Progress count */}
-                <div className="progress-row">
-                  <span className="progress-label">Verified invites</span>
-                  <span className="progress-count">
-                    <strong>{verifiedCount}</strong>
-                    <span> / 8</span>
+                {/* Member list */}
+                {members.length === 0 ? (
+                  <p className="empty-state">No one in your squad yet. Share your link!</p>
+                ) : (
+                  <ul className="member-list">
+                    {members.map((m) => {
+                      const ms = memberEdit[m.id] || {};
+                      return (
+                        <li key={m.id} className="member-row">
+                          {ms.open ? (
+                            <form className="member-edit-form" onSubmit={(e) => handleMemberEditSave(e, m.id)}>
+                              <input
+                                type="email"
+                                className="edit-input edit-input-sm"
+                                placeholder="new@email.com"
+                                value={ms.email}
+                                onChange={(e) => handleMemberEmailChange(m.id, e.target.value)}
+                                required
+                                autoFocus
+                                disabled={ms.status === 'saving' || ms.status === 'sent'}
+                              />
+                              <div className="edit-actions">
+                                <button type="button" className="btn-cancel"
+                                  onClick={() => closeMemberEdit(m.id)}
+                                  disabled={ms.status === 'saving'}>Cancel</button>
+                                <button type="submit" className="btn-save"
+                                  disabled={ms.status === 'saving' || ms.status === 'sent'}>
+                                  {ms.status === 'saving' ? 'Saving…' : ms.status === 'sent' ? '✓ Saved!' : 'Save'}
+                                </button>
+                              </div>
+                              {ms.error && <p className="edit-error">{ms.error}</p>}
+                            </form>
+                          ) : (
+                            <>
+                              <span className="member-email">{maskEmail(m.email)}</span>
+                              <div className="member-actions">
+                                <button className="btn-member-action" onClick={() => openMemberEdit(m.id)}>Edit</button>
+                                <button className="btn-member-remove" onClick={() => handleRemoveMember(m.id)}>Remove</button>
+                              </div>
+                            </>
+                          )}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+
+                {/* Joined date */}
+                <div className="joined-at">
+                  <span className="joined-label">Joined</span>
+                  <span className="joined-date">
+                    {data.joined_at
+                      ? new Date(data.joined_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+                      : '—'}
                   </span>
-                </div>
-                <div className="progress-track">
-                  <div
-                    className="progress-fill"
-                    style={{ width: `${Math.min((verifiedCount / 8) * 100, 100)}%` }}
-                  ></div>
                 </div>
 
               </div>
@@ -365,7 +341,6 @@ export default function SquadPage() {
       </div>
 
       <style jsx>{`
-        /* ── BASE ── */
         .page {
           min-height: 100vh;
           background: #070707;
@@ -373,7 +348,6 @@ export default function SquadPage() {
           font-family: 'Space Grotesk', system-ui, sans-serif;
         }
 
-        /* ── NAV ── */
         .nav {
           display: flex;
           align-items: center;
@@ -386,45 +360,17 @@ export default function SquadPage() {
           backdrop-filter: blur(20px);
           z-index: 100;
         }
-        .nav-logo {
-          display: flex;
-          align-items: center;
-          gap: 0.6rem;
-          text-decoration: none;
-          color: #f0ebe1;
-        }
+        .nav-logo { display: flex; align-items: center; gap: 0.6rem; text-decoration: none; color: #f0ebe1; }
         .nav-logo img { height: 34px; width: auto; }
-        .nav-logo span {
-          font-family: 'Barlow Condensed', sans-serif;
-          font-size: 1.2rem;
-          font-weight: 900;
-          letter-spacing: 0.14em;
-        }
+        .nav-logo span { font-family: 'Barlow Condensed', sans-serif; font-size: 1.2rem; font-weight: 900; letter-spacing: 0.14em; }
 
-        /* ── CENTER SCREEN (loading/error) ── */
-        .center-screen {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          min-height: calc(100vh - 64px);
-          gap: 1rem;
-          color: #5a5040;
-        }
-        .spinner {
-          width: 36px;
-          height: 36px;
-          border: 2px solid #1a1a1a;
-          border-top-color: #c9a84c;
-          border-radius: 50%;
-          animation: spin 0.8s linear infinite;
-        }
+        .center-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: calc(100vh - 64px); gap: 1rem; color: #5a5040; }
+        .spinner { width: 36px; height: 36px; border: 2px solid #1a1a1a; border-top-color: #c9a84c; border-radius: 50%; animation: spin 0.8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
         .error-msg { font-size: 0.95rem; color: #5a5040; }
         .back-link { color: #c9a84c; font-size: 0.85rem; text-decoration: none; }
         .back-link:hover { text-decoration: underline; }
 
-        /* ── MAIN TWO-COLUMN LAYOUT ── */
         .main {
           display: grid;
           grid-template-columns: 1fr 1fr;
@@ -435,379 +381,84 @@ export default function SquadPage() {
           align-items: start;
         }
 
-        /* ── LEFT COLUMN ── */
-        .col-left {
-          display: flex;
-          flex-direction: column;
-          align-items: flex-start;
-        }
+        .col-left { display: flex; flex-direction: column; align-items: flex-start; }
 
-        .eyebrow {
-          display: inline-flex;
-          align-items: center;
-          gap: 0.45rem;
-          font-size: 0.7rem;
-          font-weight: 600;
-          letter-spacing: 0.12em;
-          text-transform: uppercase;
-          color: #5a5040;
-          margin-bottom: 1.2rem;
-        }
-        .dot {
-          width: 6px;
-          height: 6px;
-          border-radius: 50%;
-          flex-shrink: 0;
-        }
-        .dot-green {
-          background: #3ecf8e;
-          box-shadow: 0 0 8px rgba(62,207,142,0.6);
-          animation: pulse 2s ease-in-out infinite;
-        }
-        @keyframes pulse {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50% { opacity: 0.4; transform: scale(0.65); }
-        }
+        .eyebrow { display: inline-flex; align-items: center; gap: 0.45rem; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #5a5040; margin-bottom: 1.2rem; }
+        .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+        .dot-green { background: #3ecf8e; box-shadow: 0 0 8px rgba(62,207,142,0.6); animation: pulse 2s ease-in-out infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.65); } }
 
-        .headline {
-          font-family: 'Barlow Condensed', sans-serif;
-          font-size: clamp(3.5rem, 8vw, 6.5rem);
-          font-weight: 900;
-          letter-spacing: -0.01em;
-          text-transform: uppercase;
-          line-height: 0.92;
-          color: #f5f0e8;
-          margin: 0 0 1.2rem;
-        }
+        .headline { font-family: 'Barlow Condensed', sans-serif; font-size: clamp(3.5rem, 8vw, 6.5rem); font-weight: 900; letter-spacing: -0.01em; text-transform: uppercase; line-height: 0.92; color: #f5f0e8; margin: 0 0 1.2rem; }
+        .sub { font-size: 1rem; color: #8a8278; line-height: 1.6; margin: 0 0 1.75rem; max-width: 380px; }
 
-        .sub {
-          font-size: 1rem;
-          color: #8a8278;
-          line-height: 1.6;
-          margin: 0 0 1.25rem;
-          max-width: 380px;
-        }
+        .perks { list-style: none; padding: 0; margin: 0 0 2rem; display: flex; flex-direction: column; gap: 0.55rem; }
+        .perks li { display: flex; align-items: center; gap: 0.65rem; font-size: 0.88rem; color: #c8c0ac; font-weight: 500; }
+        .perk-check { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; background: rgba(201,168,76,0.12); border: 1px solid rgba(201,168,76,0.3); font-size: 10px; color: #c9a84c; flex-shrink: 0; }
 
-
-        .blurb {
-          font-size: 0.88rem;
-          color: #6a6258;
-          line-height: 1.75;
-          margin: 0 0 1.25rem;
-          max-width: 400px;
-        }
-
-        .perks {
-          list-style: none;
-          padding: 0;
-          margin: 0 0 2rem;
-          display: flex;
-          flex-direction: column;
-          gap: 0.55rem;
-        }
-        .perks li {
-          display: flex;
-          align-items: center;
-          gap: 0.65rem;
-          font-size: 0.88rem;
-          color: #c8c0ac;
-          font-weight: 500;
-        }
-        .perk-check {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          width: 18px;
-          height: 18px;
-          border-radius: 50%;
-          background: rgba(201,168,76,0.12);
-          border: 1px solid rgba(201,168,76,0.3);
-          font-size: 10px;
-          color: #c9a84c;
-          flex-shrink: 0;
-        }
-
-        .btn-share {
-          background: #c9a84c;
-          color: #070707;
-          border: none;
-          border-radius: 10px;
-          padding: 0.9rem 2.2rem;
-          font-family: 'Space Grotesk', sans-serif;
-          font-size: 0.95rem;
-          font-weight: 700;
-          letter-spacing: 0.04em;
-          text-transform: uppercase;
-          cursor: pointer;
-          transition: background 0.2s, transform 0.15s;
-          margin-bottom: 1rem;
-        }
+        .btn-share { background: #c9a84c; color: #070707; border: none; border-radius: 10px; padding: 0.9rem 2.2rem; font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; cursor: pointer; transition: background 0.2s, transform 0.15s; margin-bottom: 1rem; }
         .btn-share:hover { background: #d4bc82; }
         .btn-share:active { transform: scale(0.97); }
 
-        .share-url-wrap {
-          background: #0d0d0d;
-          border: 1px solid #1e1a10;
-          border-radius: 8px;
-          padding: 0.6rem 1rem;
-          margin-bottom: 1.5rem;
-          max-width: 100%;
-          overflow: hidden;
-        }
-        .share-url-text {
-          font-family: 'Courier New', monospace;
-          font-size: 0.78rem;
-          color: #c9a84c;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          display: block;
-        }
+        .share-url-wrap { background: #0d0d0d; border: 1px solid #1e1a10; border-radius: 8px; padding: 0.6rem 1rem; max-width: 100%; overflow: hidden; }
+        .share-url-text { font-family: 'Courier New', monospace; font-size: 0.78rem; color: #c9a84c; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
 
-        .fine-print {
-          font-size: 0.7rem;
-          color: #2c2820;
-          line-height: 1.7;
-          margin: 0;
-          max-width: 380px;
-        }
+        .col-right { position: sticky; top: 84px; }
 
-        /* ── RIGHT COLUMN ── */
-        .col-right {
-          position: sticky;
-          top: 84px;
-        }
+        .room-panel { background: linear-gradient(160deg, #0e0c08 0%, #0a0907 100%); border: 1px solid #f0d08040; border-radius: 20px; padding: 1.75rem; box-shadow: 0 0 60px rgba(240,208,128,0.04); }
 
-        .room-panel {
-          background: linear-gradient(160deg, #0e0c08 0%, #0a0907 100%);
-          border: 1px solid #f0d08040;
-          border-radius: 20px;
-          padding: 1.75rem;
-          box-shadow: 0 0 60px rgba(240,208,128,0.04);
-        }
-
-        /* Room header */
-        .room-header {
-          display: flex;
-          align-items: flex-start;
-          justify-content: space-between;
-          gap: 1rem;
-          margin-bottom: 1.75rem;
-        }
-        .room-label {
-          font-size: 0.62rem;
-          font-weight: 700;
-          letter-spacing: 0.16em;
-          color: #3a3020;
-          text-transform: uppercase;
-          margin: 0 0 0.3rem;
-        }
-        .room-title {
-          font-family: 'Barlow Condensed', sans-serif;
-          font-size: 1.6rem;
-          font-weight: 900;
-          letter-spacing: 0.02em;
-          color: #f0d080;
-          text-transform: uppercase;
-          margin: 0;
-          line-height: 1;
-          word-break: break-all;
-        }
+        .room-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 1.5rem; }
+        .room-label { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.16em; color: #3a3020; text-transform: uppercase; margin: 0 0 0.3rem; }
+        .room-title { font-family: 'Barlow Condensed', sans-serif; font-size: 1.6rem; font-weight: 900; letter-spacing: 0.02em; color: #f0d080; text-transform: uppercase; margin: 0; line-height: 1; word-break: break-all; }
         .room-at { color: #a08030; }
-        .room-title-placeholder {
-          color: #3a3020;
-          font-style: italic;
-          font-weight: 400;
-          text-transform: none;
-          font-family: 'Space Grotesk', sans-serif;
-          font-size: 1rem;
-          letter-spacing: 0;
-        }
+        .room-title-placeholder { color: #3a3020; font-style: italic; font-weight: 400; text-transform: none; font-family: 'Space Grotesk', sans-serif; font-size: 1rem; letter-spacing: 0; }
 
-        .btn-edit {
-          background: transparent;
-          border: 1px solid #2a2416;
-          border-radius: 6px;
-          color: #5a5040;
-          font-family: 'Space Grotesk', sans-serif;
-          font-size: 0.72rem;
-          font-weight: 600;
-          padding: 0.4rem 0.85rem;
-          cursor: pointer;
-          white-space: nowrap;
-          flex-shrink: 0;
-          transition: border-color 0.2s, color 0.2s;
-          margin-top: 0.2rem;
-        }
+        .btn-edit { background: transparent; border: 1px solid #2a2416; border-radius: 6px; color: #5a5040; font-family: 'Space Grotesk', sans-serif; font-size: 0.72rem; font-weight: 600; padding: 0.4rem 0.85rem; cursor: pointer; white-space: nowrap; flex-shrink: 0; transition: border-color 0.2s, color 0.2s; margin-top: 0.2rem; }
         .btn-edit:hover { border-color: #4a4030; color: #c9a84c; }
 
-        /* Edit form */
-        .edit-form {
-          background: #0a0907;
-          border: 1px solid #1e1a10;
-          border-radius: 12px;
-          padding: 1.1rem 1.1rem 1rem;
-          margin-bottom: 1.5rem;
-        }
-        .edit-note {
-          font-size: 0.75rem;
-          color: #5a5040;
-          line-height: 1.6;
-          margin: 0 0 0.85rem;
-        }
-        .edit-input {
-          width: 100%;
-          background: #111008;
-          border: 1px solid #2a2416;
-          border-radius: 8px;
-          padding: 0.65rem 0.9rem;
-          font-family: 'Space Grotesk', sans-serif;
-          font-size: 0.88rem;
-          color: #f0ebe1;
-          outline: none;
-          box-sizing: border-box;
-          margin-bottom: 0.75rem;
-          transition: border-color 0.2s;
-        }
+        .edit-form { background: #0a0907; border: 1px solid #1e1a10; border-radius: 12px; padding: 1.1rem 1.1rem 1rem; margin-bottom: 1.25rem; }
+        .edit-note { font-size: 0.75rem; color: #5a5040; line-height: 1.6; margin: 0 0 0.85rem; }
+        .edit-input { width: 100%; background: #111008; border: 1px solid #2a2416; border-radius: 8px; padding: 0.65rem 0.9rem; font-family: 'Space Grotesk', sans-serif; font-size: 0.88rem; color: #f0ebe1; outline: none; box-sizing: border-box; margin-bottom: 0.75rem; transition: border-color 0.2s; }
+        .edit-input-sm { padding: 0.5rem 0.75rem; font-size: 0.82rem; }
         .edit-input:focus { border-color: #c9a84c; }
-        .edit-actions {
-          display: flex;
-          gap: 0.6rem;
-        }
-        .btn-cancel {
-          flex: 1;
-          background: transparent;
-          border: 1px solid #2a2416;
-          border-radius: 7px;
-          color: #5a5040;
-          font-family: 'Space Grotesk', sans-serif;
-          font-size: 0.8rem;
-          font-weight: 600;
-          padding: 0.6rem;
-          cursor: pointer;
-          transition: border-color 0.2s, color 0.2s;
-        }
+        .edit-actions { display: flex; gap: 0.6rem; }
+        .btn-cancel { flex: 1; background: transparent; border: 1px solid #2a2416; border-radius: 7px; color: #5a5040; font-family: 'Space Grotesk', sans-serif; font-size: 0.8rem; font-weight: 600; padding: 0.6rem; cursor: pointer; transition: border-color 0.2s, color 0.2s; }
         .btn-cancel:hover { border-color: #4a4030; color: #8a8278; }
-        .btn-save {
-          flex: 2;
-          background: #c9a84c;
-          border: none;
-          border-radius: 7px;
-          color: #070707;
-          font-family: 'Space Grotesk', sans-serif;
-          font-size: 0.8rem;
-          font-weight: 700;
-          padding: 0.6rem;
-          cursor: pointer;
-          transition: opacity 0.2s, background 0.2s;
-        }
+        .btn-save { flex: 2; background: #c9a84c; border: none; border-radius: 7px; color: #070707; font-family: 'Space Grotesk', sans-serif; font-size: 0.8rem; font-weight: 700; padding: 0.6rem; cursor: pointer; transition: opacity 0.2s, background 0.2s; }
         .btn-save:disabled { opacity: 0.6; cursor: not-allowed; }
         .btn-save:not(:disabled):hover { background: #d4bc82; }
-        .edit-error {
-          font-size: 0.75rem;
-          color: #e05050;
-          margin: 0.6rem 0 0;
-        }
+        .edit-error { font-size: 0.75rem; color: #e05050; margin: 0.6rem 0 0; }
 
-        /* Avatar grid */
-        .avatars-grid {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 0.5rem;
-          margin-bottom: 1.5rem;
-        }
-        .avatar-wrap {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 0.45rem;
-        }
-        .avatar {
-          position: relative;
-          width: 60px;
-          height: 60px;
-        }
-        .avatar-ring {
-          position: absolute;
-          inset: 0;
-          width: 100%;
-          height: 100%;
-        }
-        .avatar-inner {
-          position: absolute;
-          inset: 0;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border-radius: 50%;
-          background: #111008;
-        }
-        .avatar-inner-full {
-          background: rgba(240,208,128,0.06);
-        }
-        .avatar-label {
-          font-size: 0.62rem;
-          font-weight: 600;
-          text-align: center;
-          margin: 0;
-          letter-spacing: 0.03em;
-        }
-        .label-unlocked { color: #c9a84c; }
-        .label-need { color: #2a2416; }
+        /* Members section */
+        .members-header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 0 0.65rem; border-top: 1px solid #141008; margin-bottom: 0.5rem; }
+        .members-label { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.16em; color: #3a3020; text-transform: uppercase; }
+        .members-count { font-size: 0.72rem; color: #5a5040; font-weight: 500; }
 
-        /* Progress bar */
-        .progress-row {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          margin-bottom: 0.6rem;
-        }
-        .progress-label {
-          font-size: 0.7rem;
-          font-weight: 600;
-          letter-spacing: 0.06em;
-          text-transform: uppercase;
-          color: #3a3020;
-        }
-        .progress-count {
-          font-size: 0.82rem;
-          color: #8a8278;
-        }
-        .progress-count strong {
-          color: #c9a84c;
-          font-size: 1rem;
-        }
-        .progress-track {
-          height: 5px;
-          background: #1a1510;
-          border-radius: 999px;
-          overflow: hidden;
-        }
-        .progress-fill {
-          height: 100%;
-          background: linear-gradient(90deg, #c9a84c, #f0d080);
-          border-radius: 999px;
-          transition: width 0.6s cubic-bezier(0.16,1,0.3,1);
-          min-width: 0;
-        }
+        .empty-state { font-size: 0.8rem; color: #3a3020; font-style: italic; margin: 0 0 1.25rem; }
 
-        /* ── RESPONSIVE ── */
+        .member-list { list-style: none; padding: 0; margin: 0 0 1.25rem; display: flex; flex-direction: column; gap: 0.4rem; }
+        .member-row { background: #0d0b07; border: 1px solid #1a1510; border-radius: 10px; padding: 0.65rem 0.85rem; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
+        .member-email { font-size: 0.82rem; color: #8a8278; font-family: 'Courier New', monospace; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .member-actions { display: flex; gap: 0.4rem; flex-shrink: 0; }
+        .member-edit-form { width: 100%; }
+
+        .btn-member-action { background: transparent; border: 1px solid #2a2416; border-radius: 5px; color: #5a5040; font-family: 'Space Grotesk', sans-serif; font-size: 0.68rem; font-weight: 600; padding: 0.28rem 0.6rem; cursor: pointer; transition: border-color 0.2s, color 0.2s; }
+        .btn-member-action:hover { border-color: #4a4030; color: #c9a84c; }
+
+        .btn-member-remove { background: transparent; border: 1px solid #2a1010; border-radius: 5px; color: #5a3030; font-family: 'Space Grotesk', sans-serif; font-size: 0.68rem; font-weight: 600; padding: 0.28rem 0.6rem; cursor: pointer; transition: border-color 0.2s, color 0.2s; }
+        .btn-member-remove:hover { border-color: #6a2020; color: #e05050; }
+
+        /* Joined date */
+        .joined-at { display: flex; align-items: center; justify-content: space-between; padding-top: 1rem; border-top: 1px solid #141008; }
+        .joined-label { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #3a3020; }
+        .joined-date { font-size: 0.82rem; color: #8a8278; }
+
         @media (max-width: 768px) {
-          .main {
-            grid-template-columns: 1fr;
-            padding: 3rem 1.5rem 5rem;
-            gap: 2.5rem;
-          }
+          .main { grid-template-columns: 1fr; padding: 3rem 1.5rem 5rem; gap: 2.5rem; }
           .col-right { position: static; }
           .headline { font-size: clamp(3rem, 12vw, 5rem); }
-          .avatars-grid { gap: 0.75rem; }
-          .avatar { width: 54px; height: 54px; }
         }
-
         @media (max-width: 400px) {
           .nav { padding: 0 1.2rem; }
-          .avatars-grid { gap: 0.4rem; }
-          .avatar { width: 48px; height: 48px; }
         }
       `}</style>
     </>

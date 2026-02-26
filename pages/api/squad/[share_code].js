@@ -14,52 +14,43 @@ export default async function handler(req, res) {
   const db = getServiceClient();
 
   try {
-    const { data: squad, error: squadErr } = await db
-      .from('squads')
-      .select('id, owner_waitlist_user_id, share_code, created_at')
+    const { data: owner, error: ownerErr } = await db
+      .from('waitlist_users')
+      .select('id, email, share_code, created_at')
       .eq('share_code', share_code)
       .maybeSingle();
 
-    if (squadErr || !squad) {
+    if (ownerErr || !owner) {
       return res.status(404).json({ error: 'Squad not found.' });
     }
 
-    const { count: verifiedCount } = await db
+    const { data: referrals } = await db
       .from('referrals')
-      .select('id', { count: 'exact', head: true })
-      .eq('inviter_waitlist_user_id', squad.owner_waitlist_user_id)
-      .in('status', ['VERIFIED', 'ACTIVATED']);
+      .select('invitee_id, created_at')
+      .eq('inviter_id', owner.id)
+      .order('created_at', { ascending: true });
 
-    const { data: tiers } = await db
-      .from('reward_tiers')
-      .select('tier_number, required_verified, reward_title, reward_description')
-      .order('tier_number');
+    const members = [];
+    if (referrals && referrals.length > 0) {
+      const inviteeIds = referrals.map((r) => r.invitee_id);
+      const { data: invitees } = await db
+        .from('waitlist_users')
+        .select('id, email')
+        .in('id', inviteeIds);
 
-    const { data: unlocks } = await db
-      .from('reward_unlocks')
-      .select('tier_number, status, unlocked_at')
-      .eq('waitlist_user_id', squad.owner_waitlist_user_id);
+      const inviteeMap = {};
+      (invitees || []).forEach((u) => { inviteeMap[u.id] = u; });
 
-    const unlockMap = {};
-    (unlocks || []).forEach((u) => { unlockMap[u.tier_number] = u; });
-
-    const tierList = (tiers || []).map((tier) => {
-      const unlock = unlockMap[tier.tier_number];
-      return {
-        tier_number:        tier.tier_number,
-        required_verified:  tier.required_verified,
-        reward_title:       tier.reward_title,
-        reward_description: tier.reward_description,
-        unlocked:           !!unlock,
-        unlocked_at:        unlock?.unlocked_at || null,
-      };
-    });
+      referrals.forEach((r) => {
+        const u = inviteeMap[r.invitee_id];
+        if (u) members.push({ id: u.id, email: u.email, joined_at: r.created_at });
+      });
+    }
 
     return res.status(200).json({
-      share_code:     squad.share_code,
-      verified_count: verifiedCount || 0,
-      tiers:          tierList,
-      joined_at:      squad.created_at,
+      share_code: owner.share_code,
+      joined_at:  owner.created_at,
+      members,
     });
 
   } catch (err) {

@@ -7,7 +7,6 @@ export default async function handler(req, res) {
   }
 
   const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.socket?.remoteAddress || 'unknown';
-  const userAgent = req.headers['user-agent'] || '';
 
   if (!rateLimit(`join:ip:${ip}`, 5, 60_000)) {
     return res.status(429).json({ error: 'Too many requests. Please wait a moment.' });
@@ -30,102 +29,86 @@ export default async function handler(req, res) {
   }
 
   const db = getServiceClient();
+  const isReferral = !!(refCode && typeof refCode === 'string');
 
   try {
-    let userId;
-
+    // Find or create the user
     const { data: existing } = await db
       .from('waitlist_users')
-      .select('id, status')
+      .select('id, share_code')
       .eq('email', normalizedEmail)
       .maybeSingle();
 
-    if (existing) {
-      userId = existing.id;
+    let userId, shareCode;
 
-      // If somehow still pending, upgrade to verified
-      if (existing.status === 'PENDING') {
-        await db
-          .from('waitlist_users')
-          .update({ status: 'VERIFIED', verified_at: new Date().toISOString() })
-          .eq('id', userId);
-      }
+    if (existing) {
+      userId    = existing.id;
+      shareCode = existing.share_code;
     } else {
+      // Direct join gets a share_code (room owner), referral join does not
+      let newCode = null;
+      if (!isReferral) {
+        for (let i = 0; i < 10; i++) {
+          newCode = generateShareCode();
+          const { data: collision } = await db
+            .from('waitlist_users')
+            .select('id')
+            .eq('share_code', newCode)
+            .maybeSingle();
+          if (!collision) break;
+        }
+      }
+
       const { data: newUser, error: insertErr } = await db
         .from('waitlist_users')
-        .insert({
-          email:            normalizedEmail,
-          status:           'VERIFIED',
-          verified_at:      new Date().toISOString(),
-          ip_first:         ip,
-          user_agent_first: userAgent,
-        })
-        .select('id')
+        .insert({ email: normalizedEmail, share_code: newCode, ip_first: ip })
+        .select('id, share_code')
         .single();
 
       if (insertErr) throw insertErr;
-      userId = newUser.id;
+      userId    = newUser.id;
+      shareCode = newUser.share_code;
     }
 
-    let shareCode;
-    const { data: existingSquad } = await db
-      .from('squads')
-      .select('share_code')
-      .eq('owner_waitlist_user_id', userId)
-      .maybeSingle();
-
-    if (existingSquad) {
-      shareCode = existingSquad.share_code;
-    } else {
-      let attempts = 0;
-      let newCode;
-      while (attempts < 10) {
-        newCode = generateShareCode();
-        const { data: collision } = await db
-          .from('squads')
-          .select('id')
-          .eq('share_code', newCode)
-          .maybeSingle();
-        if (!collision) break;
-        attempts++;
-      }
-
-      const { data: newSquad, error: squadErr } = await db
-        .from('squads')
-        .insert({ owner_waitlist_user_id: userId, share_code: newCode })
-        .select('share_code')
-        .single();
-
-      if (squadErr) throw squadErr;
-      shareCode = newSquad.share_code;
-    }
-
-    if (refCode && typeof refCode === 'string') {
-      const { data: refSquad } = await db
-        .from('squads')
-        .select('id, owner_waitlist_user_id')
+    if (isReferral) {
+      // Find the room owner by their share_code
+      const { data: owner } = await db
+        .from('waitlist_users')
+        .select('id')
         .eq('share_code', refCode)
         .maybeSingle();
 
-      if (refSquad && refSquad.owner_waitlist_user_id !== userId) {
+      if (owner && owner.id !== userId) {
+        // Remove from any existing room first
         const { data: existingRef } = await db
           .from('referrals')
-          .select('id')
-          .eq('invitee_waitlist_user_id', userId)
+          .select('id, inviter_id')
+          .eq('invitee_id', userId)
           .maybeSingle();
 
-        if (!existingRef) {
-          await db.from('referrals').insert({
-            squad_id:                 refSquad.id,
-            inviter_waitlist_user_id: refSquad.owner_waitlist_user_id,
-            invitee_waitlist_user_id: userId,
-            status:                   'VERIFIED',
-            verified_at:              new Date().toISOString(),
-          });
+        if (existingRef) {
+          if (existingRef.inviter_id === owner.id) {
+            // Already in this room
+            return res.status(200).json({ share_code: refCode });
+          }
+          const oldInviterId = existingRef.inviter_id;
+          await db.from('referrals').delete().eq('id', existingRef.id);
 
-          await recomputeTierUnlocks(db, refSquad.owner_waitlist_user_id);
+          const { count: remaining } = await db
+            .from('referrals')
+            .select('id', { count: 'exact', head: true })
+            .eq('inviter_id', oldInviterId);
+
+          if ((remaining || 0) === 0) {
+            await db.from('waitlist_users').delete().eq('id', oldInviterId);
+          }
         }
+
+        await db.from('referrals').insert({ inviter_id: owner.id, invitee_id: userId });
       }
+
+      // Always redirect referral joins to the owner's room
+      return res.status(200).json({ share_code: refCode });
     }
 
     return res.status(200).json({ share_code: shareCode });
@@ -133,45 +116,5 @@ export default async function handler(req, res) {
   } catch (err) {
     console.error('Join error:', err);
     return res.status(500).json({ error: 'Something went wrong. Please try again.' });
-  }
-}
-
-async function recomputeTierUnlocks(db, inviterUserId) {
-  try {
-    const { count: verifiedCount } = await db
-      .from('referrals')
-      .select('id', { count: 'exact', head: true })
-      .eq('inviter_waitlist_user_id', inviterUserId)
-      .in('status', ['VERIFIED', 'ACTIVATED']);
-
-    const { data: tiers } = await db
-      .from('reward_tiers')
-      .select('tier_number, required_verified');
-
-    if (!tiers) return;
-
-    const now = new Date().toISOString();
-
-    for (const tier of tiers) {
-      const shouldUnlock = (verifiedCount || 0) >= tier.required_verified;
-
-      const { data: existing } = await db
-        .from('reward_unlocks')
-        .select('id, status')
-        .eq('waitlist_user_id', inviterUserId)
-        .eq('tier_number', tier.tier_number)
-        .maybeSingle();
-
-      if (!existing && shouldUnlock) {
-        await db.from('reward_unlocks').insert({
-          waitlist_user_id: inviterUserId,
-          tier_number:      tier.tier_number,
-          status:           'UNLOCKED',
-          unlocked_at:      now,
-        });
-      }
-    }
-  } catch (err) {
-    console.error('recomputeTierUnlocks error:', err);
   }
 }

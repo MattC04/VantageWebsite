@@ -12,7 +12,7 @@ export default async function handler(req, res) {
     return res.status(429).json({ error: 'Too many requests. Please wait a moment.' });
   }
 
-  const { share_code, new_email } = req.body || {};
+  const { share_code, new_email, member_id } = req.body || {};
 
   if (!share_code || typeof share_code !== 'string') {
     return res.status(400).json({ error: 'Invalid request.' });
@@ -33,53 +33,65 @@ export default async function handler(req, res) {
   const db = getServiceClient();
 
   try {
-    const { data: squad } = await db
-      .from('squads')
-      .select('id, owner_waitlist_user_id, share_code')
+    const { data: owner } = await db
+      .from('waitlist_users')
+      .select('id, share_code')
       .eq('share_code', share_code)
       .maybeSingle();
 
-    if (!squad) {
+    if (!owner) {
       return res.status(404).json({ error: 'Squad not found.' });
     }
 
-    const oldUserId = squad.owner_waitlist_user_id;
+    let targetId;
+    if (member_id) {
+      const { data: ref } = await db
+        .from('referrals')
+        .select('invitee_id')
+        .eq('inviter_id', owner.id)
+        .eq('invitee_id', member_id)
+        .maybeSingle();
 
-    const { data: oldUser } = await db
+      if (!ref) {
+        return res.status(403).json({ error: 'That member is not in your squad.' });
+      }
+      targetId = member_id;
+    } else {
+      targetId = owner.id;
+    }
+
+    const { data: targetUser } = await db
       .from('waitlist_users')
       .select('id, email')
-      .eq('id', oldUserId)
+      .eq('id', targetId)
       .maybeSingle();
 
-    if (!oldUser) {
+    if (!targetUser) {
       return res.status(404).json({ error: 'User not found.' });
     }
 
-    if (oldUser.email === normalizedEmail) {
-      return res.status(200).json({ ok: true, new_share_code: squad.share_code });
+    if (targetUser.email === normalizedEmail) {
+      return res.status(200).json({ ok: true });
     }
 
-    // If another account already has this email, delete it (it's unverified by definition now)
     const { data: existingNew } = await db
       .from('waitlist_users')
       .select('id')
       .eq('email', normalizedEmail)
       .maybeSingle();
 
-    if (existingNew && existingNew.id !== oldUserId) {
-      await db.from('squads').delete().eq('owner_waitlist_user_id', existingNew.id);
-      await db.from('referrals').delete().eq('invitee_waitlist_user_id', existingNew.id);
+    if (existingNew && existingNew.id !== targetId) {
       await db.from('waitlist_users').delete().eq('id', existingNew.id);
     }
 
     const { error: updateErr } = await db
       .from('waitlist_users')
       .update({ email: normalizedEmail })
-      .eq('id', oldUserId);
+      .eq('id', targetId);
 
     if (updateErr) throw updateErr;
 
-    return res.status(200).json({ ok: true, new_share_code: squad.share_code });
+    return res.status(200).json({ ok: true });
 
   } catch (err) {
     console.error('Change email error:', err);
