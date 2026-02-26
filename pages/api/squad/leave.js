@@ -1,8 +1,16 @@
 import { getServiceClient } from '../../../lib/supabase';
+import { rateLimit } from '../../../lib/utils';
+
+export const config = { api: { bodyParser: { sizeLimit: '4kb' } } };
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.socket?.remoteAddress || 'unknown';
+  if (!rateLimit(`leave:ip:${ip}`, 10, 60_000)) {
+    return res.status(429).json({ error: 'Too many requests. Please wait a moment.' });
   }
 
   const { room_share_code, member_id } = req.body || {};

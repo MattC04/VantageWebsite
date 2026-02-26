@@ -1,6 +1,8 @@
 import { getServiceClient } from '../../../lib/supabase';
 import { normalizeEmail, isValidEmail, rateLimit } from '../../../lib/utils';
 
+export const config = { api: { bodyParser: { sizeLimit: '4kb' } } };
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });

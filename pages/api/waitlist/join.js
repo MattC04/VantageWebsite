@@ -2,6 +2,8 @@ import { getServiceClient } from '../../../lib/supabase';
 import { generateShareCode, normalizeEmail, isValidEmail, rateLimit } from '../../../lib/utils';
 import { sendWaitlistWelcome } from '../../../lib/email';
 
+export const config = { api: { bodyParser: { sizeLimit: '4kb' } } };
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
