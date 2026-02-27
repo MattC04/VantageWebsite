@@ -5,6 +5,7 @@ export default function Document() {
     <Html lang="en">
       <Head>
         <meta charSet="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         <meta name="description" content="Never sweat a parlay alone. The player props betting platform." />
         <link rel="icon" type="image/png" href="/Logo.png" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />

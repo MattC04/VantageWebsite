@@ -2287,8 +2287,9 @@ body.cursor-on-link #cursor-ring {
     font-family: "Space Grotesk", system-ui, sans-serif !important;
     font-size: clamp(3.8rem, 8vw, 7.5rem) !important;
     font-weight: 700 !important;
-    letter-spacing: -0.04em !important;
-    line-height: 0.95 !important;
+    letter-spacing: -0.015em !important;
+    word-spacing: 0.05em !important;
+    line-height: 1.02 !important;
     text-transform: none !important;
 }
 
@@ -2322,7 +2323,7 @@ body.cursor-on-link #cursor-ring {
     font-size: clamp(1.8rem, 3vw, 2.6rem) !important;
     font-weight: 900 !important;
     letter-spacing: -0.02em !important;
-    line-height: 0.95 !important;
+    line-height: 1.02 !important;
     text-transform: uppercase;
 }
 
@@ -2454,3 +2455,86 @@ body.cursor-on-link #cursor-ring {
         padding: 5rem 1.2rem 3.5rem;
     }
 }
+/* ============================================================
+   LARGE SCREEN SCALING ONLY
+   ============================================================ */
+
+@media (min-width: 1280px) {
+    .hero-scene {
+        width: min(1500px, 97vw);
+        gap: clamp(2.25rem, 4.6vw, 5rem);
+        padding: 0 clamp(1rem, 3vw, 3rem);
+    }
+
+    .hero-center {
+        max-width: 760px;
+    }
+
+    .hero-headline {
+        font-size: clamp(4.4rem, 6.2vw, 7rem);
+    }
+
+    .hero-sub {
+        font-size: 1.08rem;
+    }
+
+    .hero-phone {
+        width: min(360px, 25vw);
+    }
+
+    .hero-phone-glow {
+        width: 600px;
+        height: 600px;
+    }
+
+    .hero-props {
+        transform: scale(1.1);
+        transform-origin: center;
+    }
+
+    .waitlist-inner,
+    .footer-inner {
+        max-width: min(1240px, 94vw);
+    }
+}
+
+@media (min-width: 1600px) {
+    .hero-scene {
+        width: min(1720px, 97vw);
+        gap: clamp(3rem, 5.2vw, 6rem);
+    }
+
+    .hero-center {
+        max-width: 860px;
+    }
+
+    .hero-headline {
+        font-size: clamp(5rem, 6.4vw, 8.1rem);
+    }
+
+    .hero-sub {
+        font-size: 1.16rem;
+    }
+
+    .hero-phone {
+        width: min(430px, 24vw);
+    }
+
+    .hero-phone-glow {
+        width: 700px;
+        height: 700px;
+    }
+
+    .hero-props {
+        transform: scale(1.22);
+        transform-origin: center;
+    }
+
+    .waitlist-inner,
+    .footer-inner {
+        max-width: min(1440px, 92vw);
+    }
+}
+
+
+
