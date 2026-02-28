@@ -2,8 +2,8 @@
    VANTAGE — main.js
    ============================================================ */
 
-const EMAILJS_PUBLIC_KEY  = "RoMIm4lkSVsJtGG_m";
-const EMAILJS_SERVICE_ID  = "service_k2qc7us";
+const EMAILJS_PUBLIC_KEY = "RoMIm4lkSVsJtGG_m";
+const EMAILJS_SERVICE_ID = "service_k2qc7us";
 const EMAILJS_TEMPLATE_ID = "template_xbaufb8";
 
 /* ══════════════════════════════════════════════════════════════
@@ -245,14 +245,19 @@ function startMainAnimations() {
   /* ── Cursor grid + spotlight ── */
   const spotlight = document.getElementById("cursor-spotlight");
   const cursorGrid = document.getElementById("cursor-grid");
-  let slx = window.innerWidth / 2, sly = window.innerHeight / 2;
-  let stx = slx, sty = sly;
-  let gx = -9999, gy = -9999;
+  let slx = window.innerWidth / 2,
+    sly = window.innerHeight / 2;
+  let stx = slx,
+    sty = sly;
+  let gx = -9999,
+    gy = -9999;
   let cursorEntered = false;
 
   document.addEventListener("mousemove", (e) => {
-    stx = e.clientX; sty = e.clientY;
-    gx = e.clientX; gy = e.clientY;
+    stx = e.clientX;
+    sty = e.clientY;
+    gx = e.clientX;
+    gy = e.clientY;
     if (!cursorEntered) {
       cursorEntered = true;
       if (spotlight) spotlight.classList.add("active");
@@ -282,30 +287,48 @@ function startMainAnimations() {
   /* ── Custom cursor: instant dot + lagging ring ── */
   if (!document.getElementById("cursor-dot")) {
     document.body.classList.add("has-custom-cursor");
-    const dot  = Object.assign(document.createElement("div"), { id: "cursor-dot" });
-    const ring = Object.assign(document.createElement("div"), { id: "cursor-ring" });
+    const dot = Object.assign(document.createElement("div"), {
+      id: "cursor-dot",
+    });
+    const ring = Object.assign(document.createElement("div"), {
+      id: "cursor-ring",
+    });
     document.body.append(dot, ring);
 
-    let mx = innerWidth / 2, my = innerHeight / 2;
-    let rx = mx, ry = my, rvx = 0, rvy = 0;
+    let mx = innerWidth / 2,
+      my = innerHeight / 2;
+    let rx = mx,
+      ry = my,
+      rvx = 0,
+      rvy = 0;
 
-    document.addEventListener("mousemove", (e) => { mx = e.clientX; my = e.clientY; });
+    document.addEventListener("mousemove", (e) => {
+      mx = e.clientX;
+      my = e.clientY;
+    });
 
     document.querySelectorAll("a, button, .btn").forEach((el) => {
-      el.addEventListener("mouseenter", () => document.body.classList.add("cursor-on-link"));
-      el.addEventListener("mouseleave", () => document.body.classList.remove("cursor-on-link"));
+      el.addEventListener("mouseenter", () =>
+        document.body.classList.add("cursor-on-link"),
+      );
+      el.addEventListener("mouseleave", () =>
+        document.body.classList.remove("cursor-on-link"),
+      );
     });
 
     (function tickDot() {
       // Dot follows instantly
       dot.style.left = mx + "px";
-      dot.style.top  = my + "px";
+      dot.style.top = my + "px";
       // Ring lags with spring
-      rvx += (mx - rx) * 0.14; rvy += (my - ry) * 0.14;
-      rvx *= 0.75; rvy *= 0.75;
-      rx += rvx; ry += rvy;
+      rvx += (mx - rx) * 0.14;
+      rvy += (my - ry) * 0.14;
+      rvx *= 0.75;
+      rvy *= 0.75;
+      rx += rvx;
+      ry += rvy;
       ring.style.left = rx + "px";
-      ring.style.top  = ry + "px";
+      ring.style.top = ry + "px";
 
       requestAnimationFrame(tickDot);
     })();
@@ -323,62 +346,142 @@ function startMainAnimations() {
   gsap.set("#hero-headline", { autoAlpha: 0, y: 72, filter: "blur(10px)" });
   gsap.set("#hero-sub", { autoAlpha: 0, y: 20 });
   gsap.set("#hero-actions", { autoAlpha: 0, y: 16 });
-  if (heroPhoneWrap) gsap.set(heroPhoneWrap, { autoAlpha: 0, x: 100, filter: "blur(14px)" });
-  if (heroProps) gsap.set(heroProps, { autoAlpha: 0, x: -80, filter: "blur(14px)" });
+  if (heroPhoneWrap)
+    gsap.set(heroPhoneWrap, { autoAlpha: 0, x: 100, filter: "blur(14px)" });
+  if (heroProps)
+    gsap.set(heroProps, { autoAlpha: 0, x: -80, filter: "blur(14px)" });
 
   const tl = gsap.timeline({ defaults: { ease: "expo.out" }, delay: 0.05 });
 
-  tl.to("#nav",                { autoAlpha: 1, y: 0, duration: 0.7 }, 0)
-    .to(heroPhoneWrap || {},   { autoAlpha: 1, x: 0, filter: "blur(0px)", duration: 1.1 }, 0.1)
-    .to(heroProps || {},       { autoAlpha: 1, x: 0, filter: "blur(0px)", duration: 1.0 }, 0.2)
-    .to("#eyebrow",            { autoAlpha: 1, y: 0, clipPath: "inset(0 0% 0 0)", duration: 0.8 }, 0.3)
-    .to("#hero-headline",      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 1.0 }, 0.42)
-    .to("#hero-sub",           { autoAlpha: 1, y: 0, duration: 0.65 }, 0.78)
-    .to("#hero-actions",       { autoAlpha: 1, y: 0, duration: 0.55, ease: "back.out(1.4)" }, 0.92);
+  tl.to("#nav", { autoAlpha: 1, y: 0, duration: 0.7 }, 0)
+    .to(
+      heroPhoneWrap || {},
+      { autoAlpha: 1, x: 0, filter: "blur(0px)", duration: 1.1 },
+      0.1,
+    )
+    .to(
+      heroProps || {},
+      { autoAlpha: 1, x: 0, filter: "blur(0px)", duration: 1.0 },
+      0.2,
+    )
+    .to(
+      "#eyebrow",
+      { autoAlpha: 1, y: 0, clipPath: "inset(0 0% 0 0)", duration: 0.8 },
+      0.3,
+    )
+    .to(
+      "#hero-headline",
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 1.0 },
+      0.42,
+    )
+    .to("#hero-sub", { autoAlpha: 1, y: 0, duration: 0.65 }, 0.78)
+    .to(
+      "#hero-actions",
+      { autoAlpha: 1, y: 0, duration: 0.55, ease: "back.out(1.4)" },
+      0.92,
+    );
 
   /* ── Phone idle float (starts after entrance completes) ── */
   if (heroPhoneWrap) {
-    tl.call(() => {
-      gsap.to(heroPhoneWrap, { y: "-=12", duration: 3.5, yoyo: true, repeat: -1, ease: "sine.inOut" });
-    }, null, 1.6);
+    tl.call(
+      () => {
+        gsap.to(heroPhoneWrap, {
+          y: "-=12",
+          duration: 3.5,
+          yoyo: true,
+          repeat: -1,
+          ease: "sine.inOut",
+        });
+      },
+      null,
+      1.6,
+    );
   }
 
   /* ── Hero mouse parallax ── */
   if (heroPhone && heroScene) {
     const heroEl = document.getElementById("hero");
     heroEl.addEventListener("mousemove", (e) => {
-      const dx = (e.clientX / innerWidth  - 0.5) * 2;
+      const dx = (e.clientX / innerWidth - 0.5) * 2;
       const dy = (e.clientY / innerHeight - 0.5) * 2;
-      gsap.to(heroPhone, { rotateY: -26 + dx * 18, rotateX: 16 - dy * 13, rotateZ: -7 + dx * 4, x: dx * 28, duration: 0.9, ease: "power2.out", overwrite: "auto" });
-      gsap.to(heroScene, { rotateX: dy * 4, rotateY: dx * -4, x: dx * -12, duration: 1.0, ease: "power2.out", overwrite: "auto" });
+      gsap.to(heroPhone, {
+        rotateY: -26 + dx * 18,
+        rotateX: 16 - dy * 13,
+        rotateZ: -7 + dx * 4,
+        x: dx * 28,
+        duration: 0.9,
+        ease: "power2.out",
+        overwrite: "auto",
+      });
+      gsap.to(heroScene, {
+        rotateX: dy * 4,
+        rotateY: dx * -4,
+        x: dx * -12,
+        duration: 1.0,
+        ease: "power2.out",
+        overwrite: "auto",
+      });
     });
     heroEl.addEventListener("mouseleave", () => {
-      gsap.to(heroPhone, { rotateY: -26, rotateX: 16, rotateZ: -7, x: 0, duration: 1.0, ease: "power3.out", overwrite: "auto" });
-      gsap.to(heroScene, { rotateX: 0, rotateY: 0, x: 0, duration: 1.0, ease: "power3.out", overwrite: "auto" });
+      gsap.to(heroPhone, {
+        rotateY: -26,
+        rotateX: 16,
+        rotateZ: -7,
+        x: 0,
+        duration: 1.0,
+        ease: "power3.out",
+        overwrite: "auto",
+      });
+      gsap.to(heroScene, {
+        rotateX: 0,
+        rotateY: 0,
+        x: 0,
+        duration: 1.0,
+        ease: "power3.out",
+        overwrite: "auto",
+      });
     });
   }
 
   /* ── Prop card 3D parallax + shine ── */
   const propCards = [
-    { el: document.querySelector(".hero-prop-wrap--curry"),  baseY: 28,  baseX: 10, baseZ: -15, strength: { y: 30, x: 22 } },
-    { el: document.querySelector(".hero-prop-wrap--lebron"), baseY: -26, baseX: -8, baseZ: 13,  strength: { y: 28, x: 20 } },
+    {
+      el: document.querySelector(".hero-prop-wrap--curry"),
+      baseY: 28,
+      baseX: 10,
+      baseZ: -15,
+      strength: { y: 30, x: 22 },
+    },
+    {
+      el: document.querySelector(".hero-prop-wrap--lebron"),
+      baseY: -26,
+      baseX: -8,
+      baseZ: 13,
+      strength: { y: 28, x: 20 },
+    },
   ];
-  let propMx = 0, propMy = 0;
+  let propMx = 0,
+    propMy = 0;
   document.addEventListener("mousemove", (e) => {
-    propMx = (e.clientX / innerWidth  - 0.5) * 2;
+    propMx = (e.clientX / innerWidth - 0.5) * 2;
     propMy = (e.clientY / innerHeight - 0.5) * 2;
   });
   propCards.forEach(({ el, baseY, baseX, baseZ, strength }) => {
     if (!el) return;
     const shine = el.querySelector(".prop-shine");
-    let curY = baseY, curX = baseX;
+    let curY = baseY,
+      curX = baseX;
     el.addEventListener("mouseenter", () => el.classList.add("prop-active"));
-    el.addEventListener("mouseleave", () => { el.classList.remove("prop-active"); if (shine) shine.style.background = ""; });
+    el.addEventListener("mouseleave", () => {
+      el.classList.remove("prop-active");
+      if (shine) shine.style.background = "";
+    });
     el.addEventListener("mousemove", (e) => {
       const r = el.getBoundingClientRect();
-      const sx = ((e.clientX - r.left) / r.width)  * 100;
-      const sy = ((e.clientY - r.top)  / r.height) * 100;
-      if (shine) shine.style.background = `radial-gradient(circle at ${sx}% ${sy}%, rgba(201,171,110,0.5) 0%, rgba(201,171,110,0.15) 40%, transparent 65%)`;
+      const sx = ((e.clientX - r.left) / r.width) * 100;
+      const sy = ((e.clientY - r.top) / r.height) * 100;
+      if (shine)
+        shine.style.background = `radial-gradient(circle at ${sx}% ${sy}%, rgba(201,171,110,0.5) 0%, rgba(201,171,110,0.15) 40%, transparent 65%)`;
     });
     (function tick() {
       curY += (baseY + propMx * strength.y - curY) * 0.09;
@@ -392,9 +495,16 @@ function startMainAnimations() {
   document.querySelectorAll(".magnetic").forEach((btn) => {
     btn.addEventListener("mousemove", (e) => {
       const r = btn.getBoundingClientRect();
-      gsap.to(btn, { x: (e.clientX - r.left - r.width / 2) * 0.28, y: (e.clientY - r.top - r.height / 2) * 0.28, duration: 0.3, ease: "power2.out" });
+      gsap.to(btn, {
+        x: (e.clientX - r.left - r.width / 2) * 0.28,
+        y: (e.clientY - r.top - r.height / 2) * 0.28,
+        duration: 0.3,
+        ease: "power2.out",
+      });
     });
-    btn.addEventListener("mouseleave", () => gsap.to(btn, { x: 0, y: 0, duration: 0.6, ease: "elastic.out(1,0.4)" }));
+    btn.addEventListener("mouseleave", () =>
+      gsap.to(btn, { x: 0, y: 0, duration: 0.6, ease: "elastic.out(1,0.4)" }),
+    );
   });
 
   /* ════════════════════════════════════════════
@@ -403,40 +513,155 @@ function startMainAnimations() {
 
   // Hero text drifts up as you scroll away
   gsap.to(".hero-center", {
-    scrollTrigger: { trigger: "#hero", start: "top top", end: "50% top", scrub: 1 },
-    y: -60, autoAlpha: 0, ease: "none",
+    scrollTrigger: {
+      trigger: "#hero",
+      start: "top top",
+      end: "50% top",
+      scrub: 1,
+    },
+    y: -60,
+    autoAlpha: 0,
+    ease: "none",
   });
+
+  // Fade hero visuals (phone + player cards) out with section transition
+  gsap.to("#cards-field", {
+    scrollTrigger: {
+      trigger: "#hero",
+      start: "top top",
+      end: "50% top",
+      scrub: 1,
+    },
+    y: -40,
+    autoAlpha: 0,
+    ease: "none",
+  });
+
+  /* ── Features — scrub in + scrub out for text and visuals ── */
+  ["#slide-squad", "#slide-cards"].forEach((id) => {
+    const st = { trigger: id, start: "top 82%", end: "bottom 18%", scrub: 1.2 };
+
+    gsap
+      .timeline({ scrollTrigger: st })
+      .fromTo(
+        `${id} .slide-text`,
+        { autoAlpha: 0, x: -50 },
+        { autoAlpha: 1, x: 0, duration: 0.46, ease: "none" },
+      )
+      .to(`${id} .slide-text`, {
+        autoAlpha: 0,
+        x: -28,
+        duration: 0.54,
+        ease: "none",
+      });
+
+    gsap
+      .timeline({ scrollTrigger: st })
+      .fromTo(
+        `${id} .slide-visual`,
+        { autoAlpha: 0, x: 50 },
+        { autoAlpha: 1, x: 0, duration: 0.46, ease: "none" },
+      )
+      .to(`${id} .slide-visual`, {
+        autoAlpha: 0,
+        x: 28,
+        duration: 0.54,
+        ease: "none",
+      });
+  });
+
+  // Cards fan in with the same scrub window
+  const SLIDE_ST = { start: "top 82%", end: "bottom 18%", scrub: 1.2 };
+  gsap.fromTo(
+    ".slide-card--curry",
+    { rotate: -22, y: 50 },
+    {
+      rotate: -10,
+      y: 0,
+      scrollTrigger: { trigger: "#slide-cards", ...SLIDE_ST },
+    },
+  );
+  gsap.fromTo(
+    ".slide-card--lebron",
+    { rotate: 20, y: 50 },
+    {
+      rotate: 8,
+      y: 0,
+      scrollTrigger: { trigger: "#slide-cards", ...SLIDE_ST },
+    },
+  );
 
   // Waitlist section divider line draws
   const wl = document.getElementById("waitlist");
   if (wl) {
-    new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting) wl.classList.add("line-drawn");
-    }, { threshold: 0.05 }).observe(wl);
+    new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) wl.classList.add("line-drawn");
+      },
+      { threshold: 0.05 },
+    ).observe(wl);
   }
 
   // Waitlist heading
   const wlHeading = document.getElementById("wl-heading");
   if (wlHeading) {
-    gsap.fromTo(wlHeading,
+    gsap.fromTo(
+      wlHeading,
       { autoAlpha: 0, y: 50, filter: "blur(6px)" },
-      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 1.0, ease: "expo.out",
-        scrollTrigger: { trigger: wlHeading, start: "top 88%", toggleActions: "play none none none" } }
+      {
+        autoAlpha: 1,
+        y: 0,
+        filter: "blur(0px)",
+        duration: 1.0,
+        ease: "expo.out",
+        scrollTrigger: {
+          trigger: wlHeading,
+          start: "top 88%",
+          toggleActions: "play none none none",
+        },
+      },
     );
   }
 
   gsap.from(".wl-sub", {
-    autoAlpha: 0, y: 30, duration: 0.8, ease: "power3.out",
-    scrollTrigger: { trigger: ".wl-sub", start: "top 90%", toggleActions: "play none none none" },
+    autoAlpha: 0,
+    y: 30,
+    duration: 0.8,
+    ease: "power3.out",
+    scrollTrigger: {
+      trigger: ".wl-sub",
+      start: "top 90%",
+      toggleActions: "play none none none",
+    },
   });
   gsap.from(".perk-item", {
-    autoAlpha: 0, y: 22, stagger: 0.1, duration: 0.6, ease: "power3.out",
-    scrollTrigger: { trigger: ".wl-perks", start: "top 88%", toggleActions: "play none none none" },
+    autoAlpha: 0,
+    y: 22,
+    stagger: 0.1,
+    duration: 0.6,
+    ease: "power3.out",
+    scrollTrigger: {
+      trigger: ".wl-perks",
+      start: "top 88%",
+      toggleActions: "play none none none",
+    },
   });
-  gsap.fromTo("#wl-form-wrap",
+  gsap.fromTo(
+    "#wl-form-wrap",
     { autoAlpha: 0, y: 60, scale: 0.96, filter: "blur(8px)" },
-    { autoAlpha: 1, y: 0, scale: 1, filter: "blur(0px)", duration: 1.0, ease: "expo.out",
-      scrollTrigger: { trigger: "#wl-form-wrap", start: "top 90%", toggleActions: "play none none none" } }
+    {
+      autoAlpha: 1,
+      y: 0,
+      scale: 1,
+      filter: "blur(0px)",
+      duration: 1.0,
+      ease: "expo.out",
+      scrollTrigger: {
+        trigger: "#wl-form-wrap",
+        start: "top 90%",
+        toggleActions: "play none none none",
+      },
+    },
   );
 
   // Divider lines draw on scroll
@@ -445,10 +670,14 @@ function startMainAnimations() {
     const label = divider.querySelector(".ed-divider-label");
     if (!line) return;
     ScrollTrigger.create({
-      trigger: divider, start: "top 85%",
+      trigger: divider,
+      start: "top 85%",
       onEnter: () => {
         line.classList.add("drawn");
-        if (label) { label.style.transition = "opacity 0.5s ease 0.7s"; label.style.opacity = "1"; }
+        if (label) {
+          label.style.transition = "opacity 0.5s ease 0.7s";
+          label.style.opacity = "1";
+        }
       },
     });
   });
@@ -456,7 +685,11 @@ function startMainAnimations() {
   // Footer
   gsap.from("#footer .footer-inner > *", {
     scrollTrigger: { trigger: "#footer", start: "top 92%" },
-    autoAlpha: 0, y: 18, stagger: 0.1, duration: 0.6, ease: "power2.out",
+    autoAlpha: 0,
+    y: 18,
+    stagger: 0.1,
+    duration: 0.6,
+    ease: "power2.out",
   });
 
   /* ── Form submission ── */
@@ -478,19 +711,54 @@ function startMainAnimations() {
       }
 
       const btn = form.querySelector('[type="submit"]');
-      const orig = btn.textContent;
-      btn.textContent = "Joining...";
+      const origHtml = btn.innerHTML;
+      btn.innerHTML = "Joining...";
       btn.disabled = true;
 
       try {
-        await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-          to_email: email,
-          to_name: email.split("@")[0],
-        });
+        const useJoinApi =
+          typeof window !== "undefined" && !!window.__VANTAGE_JOIN_API__;
+        const refCode = new URLSearchParams(window.location.search).get("ref");
+
+        if (useJoinApi) {
+          const res = await fetch("/api/waitlist/join", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email,
+              ...(refCode ? { share_code: refCode } : {}),
+            }),
+          });
+
+          const json = await res.json().catch(() => ({}));
+          if (!res.ok)
+            throw new Error(
+              json.error || "Something went wrong. Please try again.",
+            );
+
+          if (json.share_code) {
+            try {
+              localStorage.setItem("vantage_email", email.toLowerCase());
+              localStorage.setItem("vantage_share_code", json.share_code);
+            } catch {}
+
+            const squadBtn = document.getElementById("view-squad-btn");
+            if (squadBtn) {
+              squadBtn.href = `/squad/${json.share_code}`;
+              squadBtn.style.display = "inline-block";
+            }
+          }
+        } else {
+          await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+            to_email: email,
+            to_name: email.split("@")[0],
+          });
+        }
+
         showSuccess();
-      } catch {
-        showError("Something went wrong. Please try again.");
-        resetBtn(btn, orig);
+      } catch (err) {
+        showError(err?.message || "Something went wrong. Please try again.");
+        resetBtn(btn, origHtml);
       }
     });
   }
@@ -530,7 +798,12 @@ function startMainAnimations() {
     const submitBtn = form ? form.querySelector('[type="submit"]') : null;
     const btnRect = submitBtn
       ? submitBtn.getBoundingClientRect()
-      : { left: window.innerWidth / 2, top: window.innerHeight / 2, width: 0, height: 0 };
+      : {
+          left: window.innerWidth / 2,
+          top: window.innerHeight / 2,
+          width: 0,
+          height: 0,
+        };
 
     const startX = btnRect.left + btnRect.width / 2;
     const startY = btnRect.top + btnRect.height / 2;
@@ -562,8 +835,10 @@ function startMainAnimations() {
       const t = Math.min(elapsed / duration, 1);
 
       // Quadratic bezier
-      const bx = (1 - t) * (1 - t) * startX + 2 * (1 - t) * t * cpX + t * t * hoopX;
-      const by = (1 - t) * (1 - t) * startY + 2 * (1 - t) * t * cpY + t * t * hoopY;
+      const bx =
+        (1 - t) * (1 - t) * startX + 2 * (1 - t) * t * cpX + t * t * hoopX;
+      const by =
+        (1 - t) * (1 - t) * startY + 2 * (1 - t) * t * cpY + t * t * hoopY;
 
       // Scale: grows slightly at peak, shrinks toward hoop (depth effect)
       const scale = 1 + Math.sin(t * Math.PI) * 0.35 - t * 0.2;
@@ -600,7 +875,7 @@ function startMainAnimations() {
       const emojis = ["💰", "💵", "🤑", "✨", "💸", "💰", "🔥", "💵"];
       cashBurst.innerHTML = "";
       cashBurst.style.left = hoopX + "px";
-      cashBurst.style.top = (hoopY - 30) + "px";
+      cashBurst.style.top = hoopY - 30 + "px";
       emojis.forEach((emoji, i) => {
         const el = document.createElement("div");
         el.className = "cash-particle";
@@ -609,14 +884,14 @@ function startMainAnimations() {
         const dist = 80 + Math.random() * 70;
         el.style.setProperty("--cx", Math.cos(angle) * dist + "px");
         el.style.setProperty("--cy", Math.sin(angle) * dist - 40 + "px");
-        el.style.setProperty("--cr", (Math.random() * 120 - 60) + "deg");
-        el.style.animationDelay = (i * 0.04) + "s";
+        el.style.setProperty("--cr", Math.random() * 120 - 60 + "deg");
+        el.style.animationDelay = i * 0.04 + "s";
         cashBurst.appendChild(el);
       });
 
       // Score text — positioned above the hoop
       scoreText.textContent = "Sent!";
-      scoreText.style.top = (hoopY - 130) + "px";
+      scoreText.style.top = hoopY - 130 + "px";
       scoreText.classList.remove("pop");
       void scoreText.offsetWidth; // reflow to restart animation
       scoreText.classList.add("pop");
@@ -649,8 +924,8 @@ function startMainAnimations() {
     }
     el.textContent = msg;
   }
-  function resetBtn(btn, text) {
-    btn.textContent = text;
+  function resetBtn(btn, html) {
+    btn.innerHTML = html;
     btn.disabled = false;
   }
 }

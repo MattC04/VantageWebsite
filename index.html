@@ -1,309 +1,672 @@
 <!doctype html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Vantage</title>
+        <meta
+            name="description"
+            content="Never sweat a parlay alone. The player props betting platform."
+        />
+        <link rel="icon" type="image/png" href="Logo.png" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Barlow+Condensed:wght@700;800;900&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="styles.css" />
+    </head>
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vantage</title>
-    <meta name="description" content="Never sweat a parlay alone. The player props betting platform." />
-    <link rel="icon" type="image/png" href="Logo.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Barlow+Condensed:wght@700;800;900&display=swap"
-        rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css" />
-</head>
-
-<body>
-    <!-- INTRO OVERLAY -->
-    <div id="intro">
-        <canvas id="intro-canvas"></canvas>
-        <div id="intro-logo">
-            <img src="Logo.png" alt="Vantage" id="intro-logo-img" onerror="this.style.display = 'none'" />
-            <span id="intro-logo-text">VANTAGE</span>
-        </div>
-        <div id="intro-tagline">The next greatest sports betting app.</div>
-        <div id="intro-odds">
-            <span class="odds-label">PARLAY ODDS</span>
-            <div class="odds-display">
-                <span class="odds-prefix">+</span><span id="odds-number">100</span>
+    <body>
+        <!-- INTRO OVERLAY -->
+        <div id="intro">
+            <canvas id="intro-canvas"></canvas>
+            <div id="intro-logo">
+                <img
+                    src="Logo.png"
+                    alt="Vantage"
+                    id="intro-logo-img"
+                    onerror="this.style.display = 'none'"
+                />
+                <span id="intro-logo-text">VANTAGE</span>
             </div>
-            <div class="odds-picks">
-                <span class="pick-dot" id="dot-1"></span>
-                <span class="pick-dot" id="dot-2"></span>
-                <span class="pick-dot" id="dot-3"></span>
-                <span class="pick-dot" id="dot-4"></span>
-                <span class="pick-dot" id="dot-5"></span>
+            <div id="intro-tagline">The next greatest sports betting app.</div>
+            <div id="intro-odds">
+                <span class="odds-label">PARLAY ODDS</span>
+                <div class="odds-display">
+                    <span class="odds-prefix">+</span
+                    ><span id="odds-number">100</span>
+                </div>
+                <div class="odds-picks">
+                    <span class="pick-dot" id="dot-1"></span>
+                    <span class="pick-dot" id="dot-2"></span>
+                    <span class="pick-dot" id="dot-3"></span>
+                    <span class="pick-dot" id="dot-4"></span>
+                    <span class="pick-dot" id="dot-5"></span>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- MAIN SITE -->
-    <div id="site" style="opacity: 0; visibility: hidden">
-        <!-- Cursor spotlight reactive layer -->
-        <div id="cursor-spotlight" aria-hidden="true"></div>
-        <!-- Cursor-following grid reveal -->
-        <div id="cursor-grid" aria-hidden="true"></div>
+        <!-- MAIN SITE -->
+        <div id="site" style="opacity: 0; visibility: hidden">
+            <!-- Cursor spotlight reactive layer -->
+            <div id="cursor-spotlight" aria-hidden="true"></div>
+            <!-- Cursor-following grid reveal -->
+            <div id="cursor-grid" aria-hidden="true"></div>
 
-        <div id="scroll-bg" aria-hidden="true">
-            <div class="bg-aurora"></div>
-            <div class="bg-grid"></div>
-            <div class="bg-perspective-grid"></div>
-            <div class="bg-rings"></div>
-            <div class="bg-noise"></div>
-            <div class="bg-particles" id="bg-particles"></div>
-            <div class="bg-heat" id="bg-heat"></div>
-        </div>
+            <div id="scroll-bg" aria-hidden="true">
+                <div class="bg-aurora"></div>
+                <div class="bg-grid"></div>
+                <div class="bg-perspective-grid"></div>
+                <div class="bg-rings"></div>
+                <div class="bg-noise"></div>
+                <div class="bg-particles" id="bg-particles"></div>
+                <div class="bg-heat" id="bg-heat"></div>
+            </div>
 
-        <div id="scroll-progress" aria-hidden="true"></div>
+            <div id="scroll-progress" aria-hidden="true"></div>
 
-        <!-- NAV -->
-        <nav id="nav">
-            <a href="#" class="nav-logo">
-                <img src="Logo.png" alt="Vantage" onerror="this.style.display: 'none'" />
-                <span class="logo-text">VANTAGE</span>
-            </a>
-            <a href="mailto:vantagesportsbook@gmail.com" class="nav-contact blob-btn">
-                Contact Us
-                <span class="blob-btn__inner">
-                    <span class="blob-btn__blobs">
-                        <span class="blob-btn__blob"></span>
-                        <span class="blob-btn__blob"></span>
-                        <span class="blob-btn__blob"></span>
-                        <span class="blob-btn__blob"></span>
+            <!-- NAV -->
+            <nav id="nav">
+                <a href="#" class="nav-logo">
+                    <img
+                        src="Logo.png"
+                        alt="Vantage"
+                        onerror="this.style.display: 'none'"
+                    />
+                    <span class="logo-text">VANTAGE</span>
+                </a>
+                <a
+                    href="mailto:vantagesportsbook@gmail.com"
+                    class="nav-contact blob-btn"
+                >
+                    Contact Us
+                    <span class="blob-btn__inner">
+                        <span class="blob-btn__blobs">
+                            <span class="blob-btn__blob"></span>
+                            <span class="blob-btn__blob"></span>
+                            <span class="blob-btn__blob"></span>
+                            <span class="blob-btn__blob"></span>
+                        </span>
                     </span>
-                </span>
-            </a>
-            <svg xmlns="http://www.w3.org/2000/svg" version="1.1" style="display:none">
-                <defs>
-                    <filter id="goo">
-                        <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur"/>
-                        <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="goo"/>
-                        <feBlend in="SourceGraphic" in2="goo"/>
-                    </filter>
-                </defs>
-            </svg>
-        </nav>
+                </a>
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    version="1.1"
+                    style="display: none"
+                >
+                    <defs>
+                        <filter id="goo">
+                            <feGaussianBlur
+                                in="SourceGraphic"
+                                stdDeviation="10"
+                                result="blur"
+                            />
+                            <feColorMatrix
+                                in="blur"
+                                mode="matrix"
+                                values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7"
+                                result="goo"
+                            />
+                            <feBlend in="SourceGraphic" in2="goo" />
+                        </filter>
+                    </defs>
+                </svg>
+            </nav>
 
-        <!-- HERO -->
-        <section id="hero">
-            <!-- Ticker -->
-            <div id="ticker-wrap" aria-hidden="true">
-                <div id="ticker">
-                    <span class="tick tick-green">🏈 J. Allen OVER 284.5 yds ✓</span>
-                    <span class="tick tick-gold">💰 +$47.50</span>
-                    <span class="tick">NBA · LeBron PTS OVER 22.5</span>
-                    <span class="tick tick-green">⚾ Ohtani K's OVER 7.5 ✓</span>
-                    <span class="tick tick-red">❌ CMC Rush UNDER 74.5</span>
-                    <span class="tick tick-gold">🔥 5-pick parlay · 8.2x payout</span>
-                    <span class="tick">NHL · McDavid Points OVER 1.5</span>
-                    <span class="tick tick-green">🏀 Curry 3PM OVER 3.5 ✓</span>
-                    <span class="tick tick-gold">💰 +$122.00</span>
-                    <span class="tick">NFL · Kelce Rec Yds OVER 68.5</span>
-                    <span class="tick tick-green">🏈 J. Allen OVER 284.5 yds ✓</span>
-                    <span class="tick tick-gold">💰 +$47.50</span>
-                    <span class="tick">NBA · LeBron PTS OVER 22.5</span>
-                    <span class="tick tick-green">⚾ Ohtani K's OVER 7.5 ✓</span>
-                    <span class="tick tick-red">❌ CMC Rush UNDER 74.5</span>
-                    <span class="tick tick-gold">🔥 5-pick parlay · 8.2x payout</span>
-                    <span class="tick">NHL · McDavid Points OVER 1.5</span>
-                    <span class="tick tick-green">🏀 Curry 3PM OVER 3.5 ✓</span>
-                    <span class="tick tick-gold">💰 +$122.00</span>
-                    <span class="tick">NFL · Kelce Rec Yds OVER 68.5</span>
-                </div>
-            </div>
-
-            <!-- HERO PHONE -->
-            <div id="cards-field" aria-hidden="true">
-                <div class="hero-scene">
-                    <!-- Player props — left side -->
-                    <div class="hero-props">
-                        <div class="hero-prop-wrap hero-prop-wrap--curry">
-                            <div class="prop-shine"></div>
-                            <div class="prop-bg">
-                                <div class="prop-tiles">
-                                    <div class="prop-tile prop-tile-1"></div>
-                                    <div class="prop-tile prop-tile-2"></div>
-                                    <div class="prop-tile prop-tile-3"></div>
-                                    <div class="prop-tile prop-tile-4"></div>
-                                    <div class="prop-tile prop-tile-5"></div>
-                                    <div class="prop-tile prop-tile-6"></div>
-                                    <div class="prop-tile prop-tile-7"></div>
-                                    <div class="prop-tile prop-tile-8"></div>
-                                </div>
-                                <div class="prop-line prop-line-1"></div>
-                                <div class="prop-line prop-line-2"></div>
-                            </div>
-                            <img class="hero-prop-img" src="assets/curry prop.png" alt="Curry prop" />
-                        </div>
-                        <div class="hero-prop-wrap hero-prop-wrap--lebron">
-                            <div class="prop-shine"></div>
-                            <div class="prop-bg">
-                                <div class="prop-tiles">
-                                    <div class="prop-tile prop-tile-1"></div>
-                                    <div class="prop-tile prop-tile-2"></div>
-                                    <div class="prop-tile prop-tile-3"></div>
-                                    <div class="prop-tile prop-tile-4"></div>
-                                    <div class="prop-tile prop-tile-5"></div>
-                                    <div class="prop-tile prop-tile-6"></div>
-                                    <div class="prop-tile prop-tile-7"></div>
-                                    <div class="prop-tile prop-tile-8"></div>
-                                </div>
-                                <div class="prop-line prop-line-1"></div>
-                                <div class="prop-line prop-line-2"></div>
-                            </div>
-                            <img class="hero-prop-img" src="assets/Lebron prop.png" alt="LeBron prop" />
-                        </div>
-                    </div>
-                    <!-- Phone — right side -->
-                    <div class="hero-phone-wrap">
-                        <div class="hero-phone-glow" aria-hidden="true"></div>
-                        <div class="hero-phone">
-                            <div class="hero-phone-notch"></div>
-                            <div class="hero-phone-screen">
-                                <img class="hero-phone-ui" src="assets/phonepicture.png" alt="Vantage phone UI"
-                                    loading="eager" />
-                            </div>
-                        </div>
+            <!-- HERO -->
+            <section id="hero">
+                <!-- Ticker -->
+                <div id="ticker-wrap" aria-hidden="true">
+                    <div id="ticker">
+                        <span class="tick tick-green"
+                            >🏈 J. Allen OVER 284.5 yds ✓</span
+                        >
+                        <span class="tick tick-gold">💰 +$47.50</span>
+                        <span class="tick">NBA · LeBron PTS OVER 22.5</span>
+                        <span class="tick tick-green"
+                            >⚾ Ohtani K's OVER 7.5 ✓</span
+                        >
+                        <span class="tick tick-red"
+                            >❌ CMC Rush UNDER 74.5</span
+                        >
+                        <span class="tick tick-gold"
+                            >🔥 5-pick parlay · 8.2x payout</span
+                        >
+                        <span class="tick">NHL · McDavid Points OVER 1.5</span>
+                        <span class="tick tick-green"
+                            >🏀 Curry 3PM OVER 3.5 ✓</span
+                        >
+                        <span class="tick tick-gold">💰 +$122.00</span>
+                        <span class="tick">NFL · Kelce Rec Yds OVER 68.5</span>
+                        <span class="tick tick-green"
+                            >🏈 J. Allen OVER 284.5 yds ✓</span
+                        >
+                        <span class="tick tick-gold">💰 +$47.50</span>
+                        <span class="tick">NBA · LeBron PTS OVER 22.5</span>
+                        <span class="tick tick-green"
+                            >⚾ Ohtani K's OVER 7.5 ✓</span
+                        >
+                        <span class="tick tick-red"
+                            >❌ CMC Rush UNDER 74.5</span
+                        >
+                        <span class="tick tick-gold"
+                            >🔥 5-pick parlay · 8.2x payout</span
+                        >
+                        <span class="tick">NHL · McDavid Points OVER 1.5</span>
+                        <span class="tick tick-green"
+                            >🏀 Curry 3PM OVER 3.5 ✓</span
+                        >
+                        <span class="tick tick-gold">💰 +$122.00</span>
+                        <span class="tick">NFL · Kelce Rec Yds OVER 68.5</span>
                     </div>
                 </div>
-            </div>
 
-            <!-- HERO COPY — centered -->
-            <div class="hero-center">
-                <div class="hero-eyebrow" id="eyebrow">
-                    <span class="eyebrow-dot"></span>
-                    <span>Now in private beta</span>
+                <!-- HERO PHONE -->
+                <div id="cards-field" aria-hidden="true">
+                    <div class="hero-scene">
+                        <!-- Player props — left side -->
+                        <div class="hero-props">
+                            <div class="hero-prop-wrap hero-prop-wrap--curry">
+                                <div class="prop-shine"></div>
+                                <div class="prop-bg">
+                                    <div class="prop-tiles">
+                                        <div
+                                            class="prop-tile prop-tile-1"
+                                        ></div>
+                                        <div
+                                            class="prop-tile prop-tile-2"
+                                        ></div>
+                                        <div
+                                            class="prop-tile prop-tile-3"
+                                        ></div>
+                                        <div
+                                            class="prop-tile prop-tile-4"
+                                        ></div>
+                                        <div
+                                            class="prop-tile prop-tile-5"
+                                        ></div>
+                                        <div
+                                            class="prop-tile prop-tile-6"
+                                        ></div>
+                                        <div
+                                            class="prop-tile prop-tile-7"
+                                        ></div>
+                                        <div
+                                            class="prop-tile prop-tile-8"
+                                        ></div>
+                                    </div>
+                                    <div class="prop-line prop-line-1"></div>
+                                    <div class="prop-line prop-line-2"></div>
+                                </div>
+                                <img
+                                    class="hero-prop-img"
+                                    src="assets/curry prop.png"
+                                    alt="Curry prop"
+                                />
+                            </div>
+                            <div class="hero-prop-wrap hero-prop-wrap--lebron">
+                                <div class="prop-shine"></div>
+                                <div class="prop-bg">
+                                    <div class="prop-tiles">
+                                        <div
+                                            class="prop-tile prop-tile-1"
+                                        ></div>
+                                        <div
+                                            class="prop-tile prop-tile-2"
+                                        ></div>
+                                        <div
+                                            class="prop-tile prop-tile-3"
+                                        ></div>
+                                        <div
+                                            class="prop-tile prop-tile-4"
+                                        ></div>
+                                        <div
+                                            class="prop-tile prop-tile-5"
+                                        ></div>
+                                        <div
+                                            class="prop-tile prop-tile-6"
+                                        ></div>
+                                        <div
+                                            class="prop-tile prop-tile-7"
+                                        ></div>
+                                        <div
+                                            class="prop-tile prop-tile-8"
+                                        ></div>
+                                    </div>
+                                    <div class="prop-line prop-line-1"></div>
+                                    <div class="prop-line prop-line-2"></div>
+                                </div>
+                                <img
+                                    class="hero-prop-img"
+                                    src="assets/Lebron prop.png"
+                                    alt="LeBron prop"
+                                />
+                            </div>
+                        </div>
+                        <!-- Phone — right side -->
+                        <div class="hero-phone-wrap">
+                            <div
+                                class="hero-phone-glow"
+                                aria-hidden="true"
+                            ></div>
+                            <div class="hero-phone">
+                                <div class="hero-phone-notch"></div>
+                                <div class="hero-phone-screen">
+                                    <img
+                                        class="hero-phone-ui"
+                                        src="assets/phonepicture.png"
+                                        alt="Vantage phone UI"
+                                        loading="eager"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <h1 class="hero-headline" id="hero-headline">
-                    Never Sweat<br />A Parlay<br />Alone.
-                </h1>
-                <p class="hero-sub" id="hero-sub">
-                    Making Betting Even Better.
-                </p>
-                <div class="hero-actions" id="hero-actions">
-                    <a href="#waitlist" class="btn btn-primary magnetic">Join the Waitlist</a>
-                    <span class="hero-count"><strong>100+</strong> on the list</span>
-                </div>
-            </div>
-        </section>
 
-        <!-- WAITLIST -->
-        <section id="waitlist">
-            <div class="orb orb-1" aria-hidden="true"></div>
-            <div class="orb orb-2" aria-hidden="true"></div>
-            <div class="ed-divider" aria-hidden="true">
-                <span class="ed-divider-line" id="ed-line-3"></span>
-                <span class="ed-divider-label">Early Access</span>
-            </div>
-            <div class="waitlist-inner">
-                <div class="waitlist-text">
-                    <h2 class="wl-heading" id="wl-heading">
-                        Get in before<br />everyone else.
-                    </h2>
-                    <p class="wl-sub">
-                        Join the waitlist for early beta access and lock in
-                        exclusive perks before we go live.
+                <!-- HERO COPY — centered -->
+                <div class="hero-center">
+                    <div class="hero-eyebrow" id="eyebrow">
+                        <span class="eyebrow-dot"></span>
+                        <span>Now in private beta</span>
+                    </div>
+                    <h1 class="hero-headline" id="hero-headline">
+                        Never Sweat<br />A Parlay<br />Alone.
+                    </h1>
+                    <p class="hero-sub" id="hero-sub">
+                        Making Betting Even Better.
                     </p>
-                    <ul class="wl-perks">
-                        <li class="perk-item">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="20 6 9 17 4 12" />
-                            </svg>
-                            Free credits to bet with on launch
-                        </li>
-                        <li class="perk-item">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="20 6 9 17 4 12" />
-                            </svg>
-                            Squad rooms &amp; exclusive player cards
-                        </li>
-                        <li class="perk-item">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="20 6 9 17 4 12" />
-                            </svg>
-                            Massive promos &amp; drops every day
-                        </li>
-                    </ul>
-                </div>
-                <div class="waitlist-form-wrap" id="wl-form-wrap">
-                    <form id="waitlist-form" class="waitlist-form">
-                        <label class="form-label" for="email-input">Your email</label>
-                        <div class="form-row">
-                            <input type="email" name="email" id="email-input" placeholder="you@example.com" required
-                                autocomplete="email" />
-                        </div>
-                        <button type="submit" class="btn btn-submit magnetic">
-                            Join the Waitlist →
-                        </button>
-                        <p class="form-note">
-                            No spam. Unsubscribe anytime.
-                        </p>
-                    </form>
-                    <div id="form-success" class="form-success" hidden>
-                        <div class="success-check">
-                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="20 6 9 17 4 12" />
-                            </svg>
-                        </div>
-                        <h3>You're in.</h3>
-                        <p>
-                            We'll hit you up when Vantage is ready. Stay
-                            locked in.
-                        </p>
+                    <div class="hero-actions" id="hero-actions">
+                        <a href="#waitlist" class="blob-btn blob-btn--cta">
+                            Join the Waitlist
+                            <span class="blob-btn__inner">
+                                <span class="blob-btn__blobs">
+                                    <span class="blob-btn__blob"></span>
+                                    <span class="blob-btn__blob"></span>
+                                    <span class="blob-btn__blob"></span>
+                                    <span class="blob-btn__blob"></span>
+                                </span>
+                            </span>
+                        </a>
+                        <span class="hero-count"
+                            ><strong>100+</strong> on the list</span
+                        >
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- FOOTER -->
-        <footer id="footer">
-            <div class="footer-inner">
-                <p class="footer-copy">&copy; 2026 Vantage. All rights reserved.</p>
-            </div>
-        </footer>
-    </div>
+            <!-- FEATURES -->
+            <section id="features">
+                <div class="features-sticky">
+                    <!-- Slide 1: Squad Rooms -->
+                    <div class="feature-slide" id="slide-squad">
+                        <div class="slide-inner">
+                            <div class="slide-text">
+                                <div class="slide-meta">
+                                    <span class="slide-count">01 / 02</span>
+                                    <span class="slide-tag">Squad Rooms</span>
+                                </div>
+                                <h2 class="slide-heading">
+                                    Bet with your<br />crew, not alone.
+                                </h2>
+                                <p class="slide-body">
+                                    Place a slip and start a Squad Room. Friends
+                                    who place the same slip join instantly.
+                                </p>
+                                <ul class="wl-perks">
+                                    <li class="perk-item">
+                                        <svg
+                                            width="16"
+                                            height="16"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="2.5"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                        >
+                                            <polyline points="20 6 9 17 4 12" />
+                                        </svg>
+                                        Live play-by-play updates
+                                    </li>
+                                    <li class="perk-item">
+                                        <svg
+                                            width="16"
+                                            height="16"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="2.5"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                        >
+                                            <polyline points="20 6 9 17 4 12" />
+                                        </svg>
+                                        Chat reactions and badges
+                                    </li>
+                                    <li class="perk-item">
+                                        <svg
+                                            width="16"
+                                            height="16"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="2.5"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                        >
+                                            <polyline points="20 6 9 17 4 12" />
+                                        </svg>
+                                        XP trivia and instant alerts
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="slide-visual">
+                                <div class="slide-phone-frame">
+                                    <div class="slide-phone-notch"></div>
+                                    <img
+                                        src="assets/phonepicture.png"
+                                        alt="Squad Room UI"
+                                        class="slide-phone-img"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-    <!-- Basketball hoop animation (shown on waitlist submit) -->
-    <div id="bball-stage" aria-hidden="true">
-        <div id="bball-hoop">
-            <svg id="bball-hoop-svg" viewBox="0 0 160 90" xmlns="http://www.w3.org/2000/svg">
-                <!-- Backboard -->
-                <rect x="60" y="0" width="40" height="26" rx="3" fill="#1a1a1a" stroke="#333" stroke-width="1.5"/>
-                <rect x="68" y="6" width="24" height="14" rx="2" fill="none" stroke="#c9ab6e" stroke-width="1.2" opacity="0.7"/>
-                <!-- Arm -->
-                <line x1="80" y1="26" x2="80" y2="34" stroke="#555" stroke-width="3" stroke-linecap="round"/>
-                <!-- Rim -->
-                <ellipse cx="80" cy="36" rx="28" ry="5" fill="none" stroke="#e05252" stroke-width="3.5" stroke-linecap="round"/>
-                <!-- Net lines -->
-                <path d="M52,36 Q50,55 58,68 Q64,76 80,78 Q96,76 102,68 Q110,55 108,36" fill="none" stroke="rgba(240,235,225,0.25)" stroke-width="1"/>
-                <path d="M80,36 L75,78" fill="none" stroke="rgba(240,235,225,0.18)" stroke-width="0.8"/>
-                <path d="M80,36 L85,78" fill="none" stroke="rgba(240,235,225,0.18)" stroke-width="0.8"/>
-                <path d="M68,37 L65,78" fill="none" stroke="rgba(240,235,225,0.18)" stroke-width="0.8"/>
-                <path d="M92,37 L95,78" fill="none" stroke="rgba(240,235,225,0.18)" stroke-width="0.8"/>
-                <path d="M59,38 L62,70" fill="none" stroke="rgba(240,235,225,0.18)" stroke-width="0.8"/>
-                <path d="M101,38 L98,70" fill="none" stroke="rgba(240,235,225,0.18)" stroke-width="0.8"/>
-                <!-- Net cross-bars -->
-                <path d="M55,47 Q80,52 105,47" fill="none" stroke="rgba(240,235,225,0.15)" stroke-width="0.8"/>
-                <path d="M57,58 Q80,64 103,58" fill="none" stroke="rgba(240,235,225,0.15)" stroke-width="0.8"/>
-                <path d="M60,68 Q80,73 100,68" fill="none" stroke="rgba(240,235,225,0.12)" stroke-width="0.8"/>
-            </svg>
+                    <!-- Slide 2: Player Cards -->
+                    <div class="feature-slide" id="slide-cards">
+                        <div class="slide-inner">
+                            <div class="slide-text">
+                                <div class="slide-meta">
+                                    <span class="slide-count">02 / 02</span>
+                                    <span class="slide-tag">Player Cards</span>
+                                </div>
+                                <h2 class="slide-heading">
+                                    Collect every<br />legend.
+                                </h2>
+                                <p class="slide-body">
+                                    Bet on players to unlock their card.
+                                </p>
+                            </div>
+                            <div class="slide-visual slide-visual--cards">
+                                <div class="slide-cards-stack">
+                                    <img
+                                        class="slide-card--curry"
+                                        src="assets/curry prop.png"
+                                        alt="Curry card"
+                                    />
+                                    <img
+                                        class="slide-card--lebron"
+                                        src="assets/Lebron prop.png"
+                                        alt="LeBron card"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- WAITLIST -->
+            <section id="waitlist">
+                <div class="orb orb-1" aria-hidden="true"></div>
+                <div class="orb orb-2" aria-hidden="true"></div>
+                <div class="ed-divider" aria-hidden="true">
+                    <span class="ed-divider-line" id="ed-line-3"></span>
+                    <span class="ed-divider-label">Early Access</span>
+                </div>
+                <div class="waitlist-inner">
+                    <div class="waitlist-text">
+                        <h2 class="wl-heading" id="wl-heading">
+                            Get in before<br />everyone else.
+                        </h2>
+                        <p class="wl-sub">
+                            Join the waitlist for early beta access and lock in
+                            exclusive perks before we go live.
+                        </p>
+                        <ul class="wl-perks">
+                            <li class="perk-item">
+                                <svg
+                                    width="16"
+                                    height="16"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2.5"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>
+                                Free credits to bet with on launch
+                            </li>
+                            <li class="perk-item">
+                                <svg
+                                    width="16"
+                                    height="16"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2.5"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>
+                                Squad rooms &amp; exclusive player cards
+                            </li>
+                            <li class="perk-item">
+                                <svg
+                                    width="16"
+                                    height="16"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2.5"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>
+                                Massive promos &amp; drops every day
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="waitlist-form-wrap" id="wl-form-wrap">
+                        <form id="waitlist-form" class="waitlist-form">
+                            <label class="form-label" for="email-input"
+                                >Your email</label
+                            >
+                            <div class="form-row">
+                                <input
+                                    type="email"
+                                    name="email"
+                                    id="email-input"
+                                    placeholder="you@example.com"
+                                    required
+                                    autocomplete="email"
+                                />
+                            </div>
+                            <button
+                                type="submit"
+                                class="blob-btn blob-btn--full"
+                            >
+                                Join the Waitlist →
+                                <span class="blob-btn__inner">
+                                    <span class="blob-btn__blobs">
+                                        <span class="blob-btn__blob"></span>
+                                        <span class="blob-btn__blob"></span>
+                                        <span class="blob-btn__blob"></span>
+                                        <span class="blob-btn__blob"></span>
+                                    </span>
+                                </span>
+                            </button>
+                            <p class="form-note">
+                                No spam. Unsubscribe anytime.
+                            </p>
+                        </form>
+                        <div id="form-success" class="form-success" hidden>
+                            <div class="success-check">
+                                <svg
+                                    width="28"
+                                    height="28"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2.5"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>
+                            </div>
+                            <h3>You're in.</h3>
+                            <p>
+                                We'll hit you up when Vantage is ready. Stay
+                                locked in.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- FOOTER -->
+            <footer id="footer">
+                <div class="footer-inner">
+                    <p class="footer-copy">
+                        &copy; 2026 Vantage. All rights reserved.
+                    </p>
+                </div>
+            </footer>
         </div>
-        <div id="bball-ball">🏀</div>
-        <div id="bball-cash-burst"></div>
-        <div id="bball-score-text"></div>
-    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-    <script src="main.js"></script>
-</body>
+        <!-- Basketball hoop animation (shown on waitlist submit) -->
+        <div id="bball-stage" aria-hidden="true">
+            <div id="bball-hoop">
+                <svg
+                    id="bball-hoop-svg"
+                    viewBox="0 0 160 90"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
+                    <!-- Backboard -->
+                    <rect
+                        x="60"
+                        y="0"
+                        width="40"
+                        height="26"
+                        rx="3"
+                        fill="#1a1a1a"
+                        stroke="#333"
+                        stroke-width="1.5"
+                    />
+                    <rect
+                        x="68"
+                        y="6"
+                        width="24"
+                        height="14"
+                        rx="2"
+                        fill="none"
+                        stroke="#c9ab6e"
+                        stroke-width="1.2"
+                        opacity="0.7"
+                    />
+                    <!-- Arm -->
+                    <line
+                        x1="80"
+                        y1="26"
+                        x2="80"
+                        y2="34"
+                        stroke="#555"
+                        stroke-width="3"
+                        stroke-linecap="round"
+                    />
+                    <!-- Rim -->
+                    <ellipse
+                        cx="80"
+                        cy="36"
+                        rx="28"
+                        ry="5"
+                        fill="none"
+                        stroke="#e05252"
+                        stroke-width="3.5"
+                        stroke-linecap="round"
+                    />
+                    <!-- Net lines -->
+                    <path
+                        d="M52,36 Q50,55 58,68 Q64,76 80,78 Q96,76 102,68 Q110,55 108,36"
+                        fill="none"
+                        stroke="rgba(240,235,225,0.25)"
+                        stroke-width="1"
+                    />
+                    <path
+                        d="M80,36 L75,78"
+                        fill="none"
+                        stroke="rgba(240,235,225,0.18)"
+                        stroke-width="0.8"
+                    />
+                    <path
+                        d="M80,36 L85,78"
+                        fill="none"
+                        stroke="rgba(240,235,225,0.18)"
+                        stroke-width="0.8"
+                    />
+                    <path
+                        d="M68,37 L65,78"
+                        fill="none"
+                        stroke="rgba(240,235,225,0.18)"
+                        stroke-width="0.8"
+                    />
+                    <path
+                        d="M92,37 L95,78"
+                        fill="none"
+                        stroke="rgba(240,235,225,0.18)"
+                        stroke-width="0.8"
+                    />
+                    <path
+                        d="M59,38 L62,70"
+                        fill="none"
+                        stroke="rgba(240,235,225,0.18)"
+                        stroke-width="0.8"
+                    />
+                    <path
+                        d="M101,38 L98,70"
+                        fill="none"
+                        stroke="rgba(240,235,225,0.18)"
+                        stroke-width="0.8"
+                    />
+                    <!-- Net cross-bars -->
+                    <path
+                        d="M55,47 Q80,52 105,47"
+                        fill="none"
+                        stroke="rgba(240,235,225,0.15)"
+                        stroke-width="0.8"
+                    />
+                    <path
+                        d="M57,58 Q80,64 103,58"
+                        fill="none"
+                        stroke="rgba(240,235,225,0.15)"
+                        stroke-width="0.8"
+                    />
+                    <path
+                        d="M60,68 Q80,73 100,68"
+                        fill="none"
+                        stroke="rgba(240,235,225,0.12)"
+                        stroke-width="0.8"
+                    />
+                </svg>
+            </div>
+            <div id="bball-ball">🏀</div>
+            <div id="bball-cash-burst"></div>
+            <div id="bball-score-text"></div>
+        </div>
 
+        <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+        <script src="main.js"></script>
+    </body>
 </html>
