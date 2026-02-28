@@ -280,9 +280,6 @@ export default function Home() {
                   <p className="invite-entry-error">{inviteError}</p>
                 )}
                 <p className="invite-room-code">Room: {refCode}</p>
-                {inviteLoading && (
-                  <p className="invite-room-loading">Updating...</p>
-                )}
               </div>
             </div>
           </section>
