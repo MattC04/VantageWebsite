@@ -66,46 +66,10 @@ a {
    CUSTOM CURSOR
    ============================================================ */
 
-body.has-custom-cursor,
-body.has-custom-cursor * {
-    cursor: none !important;
-}
-
-/* ── Cursor: small dot + lagging ring ── */
-#cursor-dot {
-    position: fixed;
-    pointer-events: none;
-    z-index: 2147483647;
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: var(--ivory, #f0ebe1);
-    transform: translate(-50%, -50%);
-    transition: width 0.2s ease, height 0.2s ease, opacity 0.2s ease;
-}
-
+/* dot + ring hidden — spotlight/grid effects still active */
+#cursor-dot,
 #cursor-ring {
-    position: fixed;
-    pointer-events: none;
-    z-index: 2147483646;
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    border: 1px solid rgba(201,171,110,0.45);
-    transform: translate(-50%, -50%);
-    transition: width 0.2s ease, height 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
-}
-
-body.cursor-on-link #cursor-dot {
-    width: 7px;
-    height: 7px;
-    background: var(--accent);
-}
-
-body.cursor-on-link #cursor-ring {
-    width: 36px;
-    height: 36px;
-    border-color: rgba(201,171,110,0.7);
+    display: none !important;
 }
 
 /* ============================================================
@@ -297,16 +261,35 @@ body.cursor-on-link #cursor-ring {
 }
 
 .bg-grid {
+    display: none;
+}
+
+.bg-perspective-grid {
+    position: absolute;
+    width: 220%;
+    height: 220%;
+    left: -60%;
+    top: 42%;
+    background-image:
+        linear-gradient(rgba(201, 171, 110, 0.09) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(201, 171, 110, 0.09) 1px, transparent 1px);
+    background-size: 80px 80px;
+    transform: perspective(380px) rotateX(68deg);
+    transform-origin: center top;
+    mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.5) 25%, black 55%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.5) 25%, black 55%);
+}
+
+#scroll-bg::after {
+    content: "";
     position: absolute;
     inset: 0;
-    background-image:
-        linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-    background-size: 60px 60px;
-    mask-image: radial-gradient(ellipse 100% 100% at 50% 50%, black 20%, transparent 80%);
-    -webkit-mask-image: radial-gradient(ellipse 100% 100% at 50% 50%, black 20%, transparent 80%);
-    opacity: 1;
-    animation: none;
+    background: radial-gradient(ellipse 90% 85% at 50% 46%,
+        transparent 30%,
+        rgba(7, 7, 7, 0.65) 62%,
+        #070707 88%);
+    pointer-events: none;
+    z-index: 5;
 }
 
 .bg-rings {
@@ -950,14 +933,16 @@ body.cursor-on-link #cursor-ring {
     align-items: center;
     justify-content: center;
     padding-top: calc(var(--nav-h) + 34px);
+    padding-bottom: calc(var(--nav-h) + 34px);
     overflow: visible;
     background: transparent;
 }
 
+
 #cards-field {
     position: absolute;
     inset: 0;
-    z-index: 9999;
+    z-index: 3;
     pointer-events: none;
     display: flex;
     align-items: center;
@@ -967,11 +952,11 @@ body.cursor-on-link #cursor-ring {
 }
 
 .hero-scene {
-    width: min(1120px, 95vw);
+    width: min(1020px, 95vw);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 4vw;
+    padding: 0 2vw;
     transform-style: preserve-3d;
 }
 
@@ -982,14 +967,14 @@ body.cursor-on-link #cursor-ring {
     height: 660px;
     pointer-events: none;
     flex-shrink: 0;
-    margin-top: 140px;
+    margin-top: 240px;
     margin-left: 30px;
 }
 
 /* Wrapper holds the 3D transform + clips shine/tile layers */
 .hero-prop-wrap {
     position: absolute;
-    width: 182px;
+    width: 158px;
     border-radius: 18px;
     overflow: hidden;
     will-change: transform;
@@ -1056,28 +1041,16 @@ body.cursor-on-link #cursor-ring {
 .hero-phone-wrap {
     position: relative;
     margin-top: 60px;
+    margin-right: -60px;
     flex-shrink: 0;
 }
 
 .hero-phone-glow {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 520px;
-    height: 520px;
-    border-radius: 50%;
-    background: radial-gradient(ellipse at center,
-        rgba(255, 107, 53, 0.7) 0%,
-        rgba(201, 171, 110, 0.45) 40%,
-        transparent 70%);
-    filter: blur(48px);
-    pointer-events: none;
-    z-index: 0;
+    display: none;
 }
 
 .hero-phone {
-    width: min(300px, 60vw);
+    width: min(210px, 46vw);
     aspect-ratio: 9/18.7;
     border-radius: 42px;
     background: #050505;
@@ -1324,7 +1297,7 @@ body.cursor-on-link #cursor-ring {
 
 .hero-center {
     position: relative;
-    z-index: 10000;
+    z-index: 5;
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -1373,7 +1346,8 @@ body.cursor-on-link #cursor-ring {
 .hero-headline {
     font-size: clamp(3.8rem, 8vw, 7.5rem);
     font-weight: 700;
-    line-height: 0.95;
+    line-height: 1.0;
+    padding-bottom: 0.08em;
     letter-spacing: -0.04em;
     background: linear-gradient(135deg, #f0ebe1 0%, #c9ab6e 45%, #ff6b35 100%);
     -webkit-background-clip: text;
@@ -2461,9 +2435,9 @@ body.cursor-on-link #cursor-ring {
 
 @media (min-width: 1280px) {
     .hero-scene {
-        width: min(1500px, 97vw);
-        gap: clamp(2.25rem, 4.6vw, 5rem);
-        padding: 0 clamp(1rem, 3vw, 3rem);
+        width: min(1060px, 90vw);
+        gap: clamp(1rem, 2vw, 2.5rem);
+        padding: 0 clamp(0.5rem, 1.5vw, 2rem);
     }
 
     .hero-center {
@@ -2500,8 +2474,8 @@ body.cursor-on-link #cursor-ring {
 
 @media (min-width: 1600px) {
     .hero-scene {
-        width: min(1720px, 97vw);
-        gap: clamp(3rem, 5.2vw, 6rem);
+        width: min(1180px, 88vw);
+        gap: clamp(1.5rem, 2.5vw, 3rem);
     }
 
     .hero-center {
