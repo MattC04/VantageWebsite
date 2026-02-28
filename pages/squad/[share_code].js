@@ -285,6 +285,7 @@ export default function SquadPage() {
   const members = data?.members || [];
   const peopleCount = Math.min(ROOM_CAPACITY, 1 + members.length);
   const isRoomFull = members.length >= MAX_REFERRALS;
+  const rewardTiers = [2, 4, 6, 8];
 
   return (
     <>
@@ -360,14 +361,25 @@ export default function SquadPage() {
               </button>
 
               <div className="share-url-wrap">
-                <span className="share-url-text">{shareUrl}</span>
                 <button
                   type="button"
                   className="copy-link-btn"
                   onClick={handleCopyLink}
+                  aria-label={copied ? "Link copied" : "Copy invite link"}
+                  title={copied ? "Link copied" : "Copy invite link"}
                 >
-                  {copied ? "Copied" : "Copy"}
+                  {copied ? (
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M20 6L9 17l-5-5" />
+                    </svg>
+                  ) : (
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <rect x="9" y="9" width="11" height="11" rx="2" />
+                      <rect x="4" y="4" width="11" height="11" rx="2" />
+                    </svg>
+                  )}
                 </button>
+                <span className="share-url-text">{shareUrl}</span>
               </div>
             </div>
 
@@ -459,6 +471,22 @@ export default function SquadPage() {
                 <div className="members-header">
                   <span className="members-label">SQUAD</span>
                   <span className="members-count">{peopleCount}/8 people</span>
+                </div>
+                <div className="reward-tiers">
+                  <p className="reward-left">Rewards unlock at each tier</p>
+                  <div className="reward-markers">
+                    {rewardTiers.map((tier) => {
+                      const unlocked = peopleCount >= tier;
+                      return (
+                        <span
+                          key={tier}
+                          className={`reward-marker${unlocked ? " unlocked" : ""}`}
+                        >
+                          {tier}/8
+                        </span>
+                      );
+                    })}
+                  </div>
                 </div>
 
                 {/* Member list */}
@@ -831,17 +859,27 @@ export default function SquadPage() {
           background: #111008;
           color: #c9a84c;
           border-radius: 6px;
-          padding: 0.42rem 0.7rem;
-          font-family: "Space Grotesk", sans-serif;
-          font-size: 0.72rem;
-          font-weight: 600;
+          width: 30px;
+          height: 30px;
+          padding: 0;
           cursor: pointer;
-          line-height: 1;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
           flex-shrink: 0;
           transition:
             border-color 0.2s,
             background 0.2s,
             color 0.2s;
+        }
+        .copy-link-btn svg {
+          width: 14px;
+          height: 14px;
+          fill: none;
+          stroke: currentColor;
+          stroke-width: 2;
+          stroke-linecap: round;
+          stroke-linejoin: round;
         }
         .copy-link-btn:hover {
           border-color: #4a4030;
@@ -879,13 +917,13 @@ export default function SquadPage() {
         }
         .room-title {
           font-family: "Space Grotesk", system-ui, sans-serif;
-          font-size: 1.6rem;
+          font-size: 1.02rem;
           font-weight: 700;
           letter-spacing: -0.01em;
           color: #f0d080;
           text-transform: none;
           margin: 0;
-          line-height: 1.05;
+          line-height: 1.2;
           word-break: break-all;
         }
         .room-at {
@@ -1028,6 +1066,45 @@ export default function SquadPage() {
           font-size: 0.72rem;
           color: #5a5040;
           font-weight: 500;
+        }
+        .reward-tiers {
+          display: grid;
+          grid-template-columns: auto 1fr;
+          gap: 0.65rem 0.8rem;
+          align-items: center;
+          margin: 0 0 0.9rem;
+        }
+        .reward-left {
+          font-size: 0.66rem;
+          color: #8a8278;
+          letter-spacing: 0.04em;
+          text-transform: uppercase;
+          margin: 0;
+          white-space: nowrap;
+        }
+        .reward-markers {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.45rem;
+          justify-content: flex-start;
+        }
+        .reward-marker {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          min-width: 44px;
+          border-radius: 999px;
+          border: 1px solid #2a2416;
+          padding: 0.2rem 0.55rem;
+          font-size: 0.68rem;
+          font-weight: 600;
+          color: #5a5040;
+          background: #0d0b07;
+        }
+        .reward-marker.unlocked {
+          border-color: rgba(201, 168, 76, 0.45);
+          color: #c9a84c;
+          background: rgba(201, 168, 76, 0.08);
         }
 
         .empty-state {
@@ -1231,6 +1308,10 @@ export default function SquadPage() {
           }
           .headline {
             font-size: clamp(3rem, 12vw, 5rem);
+          }
+          .reward-tiers {
+            grid-template-columns: 1fr;
+            gap: 0.45rem;
           }
         }
         @media (max-width: 400px) {

@@ -289,22 +289,21 @@ a {
         aurora-breathe 5.2s ease-in-out infinite alternate;
 }
 
-.bg-grid {
-    display: none;
-}
-
+.bg-grid,
 .bg-perspective-grid {
+    display: block;
     position: absolute;
     width: 220%;
     height: 220%;
     left: -60%;
     top: 42%;
     background-image:
-        linear-gradient(rgba(201, 171, 110, 0.09) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(201, 171, 110, 0.09) 1px, transparent 1px);
+        linear-gradient(rgba(201, 171, 110, 0.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(201, 171, 110, 0.055) 1px, transparent 1px);
     background-size: 80px 80px;
     transform: perspective(380px) rotateX(68deg);
     transform-origin: center top;
+    opacity: 0.7;
     mask-image: linear-gradient(
         to bottom,
         transparent 0%,
