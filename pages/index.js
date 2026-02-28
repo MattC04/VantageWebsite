@@ -66,6 +66,7 @@ export default function Home() {
   const inviteMembers = inviteData?.members || [];
   const invitePeopleCount = Math.min(ROOM_CAPACITY, 1 + inviteMembers.length);
   const inviteRoomFull = inviteMembers.length >= MAX_REFERRALS;
+  const rewardTiers = [2, 4, 6, 8];
 
   const handleInviteJoin = async (e) => {
     e.preventDefault();
@@ -200,15 +201,43 @@ export default function Home() {
           <section id="invite-entry">
             <div className="invite-entry-inner">
               <div className="invite-entry-copy">
-                <p className="invite-entry-eyebrow">Invite Link Detected</p>
+                <p className="invite-entry-eyebrow">You&apos;re invited</p>
                 <h2 className="invite-entry-title">Join this squad room.</h2>
                 <p className="invite-entry-sub">
-                  You were invited to sweat this slip with the squad.
+                  Enter your email to claim your spot.
                 </p>
+                <ul className="invite-entry-perks">
+                  <li>Live play-by-play updates</li>
+                  <li>Chat reactions and badges</li>
+                  <li>XP trivia and instant alerts</li>
+                </ul>
+              </div>
 
+              <div className="invite-entry-room">
+                <div className="invite-room-head">
+                  <p className="invite-room-label">Squad</p>
+                  <p className="invite-room-count">
+                    {invitePeopleCount}/8 people
+                  </p>
+                </div>
+                <div className="invite-reward-row">
+                  <span className="invite-reward-left">
+                    Rewards at each tier
+                  </span>
+                  <div className="invite-reward-markers">
+                    {rewardTiers.map((tier) => (
+                      <span
+                        key={tier}
+                        className={`invite-reward-marker${invitePeopleCount >= tier ? " unlocked" : ""}`}
+                      >
+                        {tier}/8
+                      </span>
+                    ))}
+                  </div>
+                </div>
                 {inviteStatus === "joined" ? (
                   <div className="invite-entry-success">
-                    You&apos;re in. Your spot has been added to this room.
+                    You&apos;re in. Your spot was added to this room.
                   </div>
                 ) : (
                   <form
@@ -250,13 +279,6 @@ export default function Home() {
                 {inviteError && (
                   <p className="invite-entry-error">{inviteError}</p>
                 )}
-              </div>
-
-              <div className="invite-entry-room">
-                <p className="invite-room-label">Squad Status</p>
-                <p className="invite-room-count">
-                  {invitePeopleCount}/8 people
-                </p>
                 <p className="invite-room-code">Room: {refCode}</p>
                 {inviteLoading && (
                   <p className="invite-room-loading">Updating...</p>

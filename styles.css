@@ -751,6 +751,20 @@ a {
     margin: 0 0 0.85rem;
 }
 
+.invite-entry-perks {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.invite-entry-perks li {
+    font-size: 0.82rem;
+    color: #c8c0ac;
+}
+
 .invite-entry-form {
     display: flex;
     gap: 0.6rem;
@@ -805,7 +819,14 @@ a {
     border: 1px solid rgba(201, 171, 110, 0.2);
     background: rgba(0, 0, 0, 0.4);
     border-radius: 12px;
-    padding: 0.9rem 1rem;
+    padding: 1rem;
+}
+
+.invite-room-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.55rem;
 }
 
 .invite-room-label {
@@ -817,11 +838,49 @@ a {
 }
 
 .invite-room-count {
-    font-size: 1.35rem;
+    font-size: 1.05rem;
     font-weight: 700;
     letter-spacing: -0.02em;
     color: var(--accent);
-    margin: 0 0 0.25rem;
+    margin: 0;
+}
+
+.invite-reward-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+    margin-bottom: 0.75rem;
+}
+
+.invite-reward-left {
+    font-size: 0.62rem;
+    color: var(--ivory-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    white-space: nowrap;
+}
+
+.invite-reward-markers {
+    display: flex;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.invite-reward-marker {
+    border: 1px solid rgba(201, 171, 110, 0.25);
+    border-radius: 999px;
+    padding: 0.14rem 0.45rem;
+    font-size: 0.68rem;
+    color: #8a8278;
+    background: rgba(0, 0, 0, 0.35);
+}
+
+.invite-reward-marker.unlocked {
+    color: var(--accent);
+    border-color: rgba(201, 171, 110, 0.5);
+    background: rgba(201, 171, 110, 0.12);
 }
 
 .invite-room-code,
@@ -2874,6 +2933,15 @@ a {
 
     .invite-entry-form .blob-btn {
         width: 100%;
+    }
+
+    .invite-reward-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .invite-reward-markers {
+        justify-content: flex-start;
     }
 
     .waitlist-inner {
