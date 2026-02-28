@@ -612,7 +612,7 @@ export default function SquadPage() {
       <style jsx>{`
         .page {
           min-height: 100vh;
-          background: var(--black, #1a1712);
+          background: var(--black, #201a16);
           color: #f0ebe1;
           font-family: "Space Grotesk", system-ui, sans-serif;
         }
@@ -625,7 +625,7 @@ export default function SquadPage() {
           border-bottom: 0;
           position: sticky;
           top: 0;
-          background: var(--black, #1a1712);
+          background: var(--black, #201a16);
           backdrop-filter: none;
           z-index: 100;
         }
