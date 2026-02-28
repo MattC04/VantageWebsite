@@ -3,6 +3,9 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/router";
 
 export default function SquadPage() {
+  const ROOM_CAPACITY = 8;
+  const MAX_REFERRALS = ROOM_CAPACITY - 1;
+
   const router = useRouter();
   const { share_code } = router.query;
 
@@ -58,7 +61,7 @@ export default function SquadPage() {
 
   useEffect(() => {
     fetchSquad();
-    const interval = setInterval(fetchSquad, 15_000);
+    const interval = setInterval(fetchSquad, 4_000);
     return () => clearInterval(interval);
   }, [fetchSquad]);
 
@@ -219,6 +222,11 @@ export default function SquadPage() {
   const handleJoinSquad = async (e) => {
     e.preventDefault();
     if (!joinEmail || joinStatus === "joining") return;
+    if ((data?.members?.length || 0) >= MAX_REFERRALS) {
+      setJoinError("This squad room is full.");
+      setJoinStatus("error");
+      return;
+    }
     setJoinStatus("joining");
     setJoinError("");
     try {
@@ -275,6 +283,8 @@ export default function SquadPage() {
 
   const maskedOwner = ownerEmail ? maskEmail(ownerEmail) : null;
   const members = data?.members || [];
+  const peopleCount = Math.min(ROOM_CAPACITY, 1 + members.length);
+  const isRoomFull = members.length >= MAX_REFERRALS;
 
   return (
     <>
@@ -448,10 +458,7 @@ export default function SquadPage() {
                 {/* Divider */}
                 <div className="members-header">
                   <span className="members-label">SQUAD</span>
-                  <span className="members-count">
-                    {members.length}{" "}
-                    {members.length === 1 ? "member" : "members"}
-                  </span>
+                  <span className="members-count">{peopleCount}/8 people</span>
                 </div>
 
                 {/* Member list */}
@@ -554,6 +561,10 @@ export default function SquadPage() {
                       <span className="join-success-check">✓</span>
                       <span>You&apos;re in the squad!</span>
                     </div>
+                  ) : isRoomFull ? (
+                    <div className="join-success">
+                      <span>This squad room is full.</span>
+                    </div>
                   ) : (
                     <form className="join-form" onSubmit={handleJoinSquad}>
                       <p className="join-label">JOIN THIS SQUAD</p>
@@ -601,7 +612,7 @@ export default function SquadPage() {
       <style jsx>{`
         .page {
           min-height: 100vh;
-          background: var(--black, #201a16);
+          background: var(--black);
           color: #f0ebe1;
           font-family: "Space Grotesk", system-ui, sans-serif;
         }
@@ -614,8 +625,8 @@ export default function SquadPage() {
           border-bottom: 0;
           position: sticky;
           top: 0;
-          background: rgba(7, 7, 7, 0.92);
-          backdrop-filter: blur(20px);
+          background: var(--black);
+          backdrop-filter: none;
           z-index: 100;
         }
         .nav-logo {
