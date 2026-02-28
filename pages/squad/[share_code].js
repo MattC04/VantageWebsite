@@ -716,7 +716,7 @@ export default function SquadPage() {
           gap: 3rem;
           max-width: 1080px;
           margin: 0 auto;
-          padding: 5rem 2.5rem 6rem;
+          padding: 3.8rem 2.5rem 6rem;
           align-items: start;
         }
 
@@ -917,14 +917,14 @@ export default function SquadPage() {
         }
         .room-title {
           font-family: "Space Grotesk", system-ui, sans-serif;
-          font-size: 1.02rem;
+          font-size: 1.02rem !important;
           font-weight: 700;
-          letter-spacing: -0.01em;
+          letter-spacing: -0.01em !important;
           color: #f0d080;
-          text-transform: none;
+          text-transform: none !important;
           margin: 0;
-          line-height: 1.2;
-          word-break: break-all;
+          line-height: 1.18 !important;
+          word-break: break-word;
         }
         .room-at {
           color: #a08030;
@@ -1300,7 +1300,7 @@ export default function SquadPage() {
         @media (max-width: 768px) {
           .main {
             grid-template-columns: 1fr;
-            padding: 3rem 1.5rem 5rem;
+            padding: 2.4rem 1.5rem 5rem;
             gap: 2.5rem;
           }
           .col-right {
