@@ -1,17 +1,48 @@
 import Head from "next/head";
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 export default function Home() {
+  const ROOM_CAPACITY = 8;
+  const MAX_REFERRALS = ROOM_CAPACITY - 1;
+
   const router = useRouter();
+  const refCode = typeof router.query.ref === "string" ? router.query.ref : "";
+
+  const [inviteData, setInviteData] = useState(null);
+  const [inviteLoading, setInviteLoading] = useState(false);
+  const [inviteError, setInviteError] = useState("");
+  const [inviteEmail, setInviteEmail] = useState("");
+  const [inviteStatus, setInviteStatus] = useState("idle"); // idle | joining | joined | error
+  const [inviteJoinError, setInviteJoinError] = useState("");
+
+  const fetchInviteData = useCallback(async () => {
+    if (!refCode) return;
+    setInviteLoading(true);
+    setInviteError("");
+    try {
+      const res = await fetch(`/api/squad/${refCode}`);
+      const json = await res.json();
+      if (!res.ok) {
+        setInviteError(json.error || "Squad not found.");
+        setInviteData(null);
+        return;
+      }
+      setInviteData(json);
+    } catch {
+      setInviteError("Could not load squad room.");
+      setInviteData(null);
+    } finally {
+      setInviteLoading(false);
+    }
+  }, [refCode]);
 
   useEffect(() => {
-    // If a ref code is present, redirect straight to that squad room
-    const refCode = router.query.ref;
-    if (refCode) {
-      router.replace(`/squad/${refCode}`);
-    }
-  }, [router.query.ref]);
+    if (!router.isReady || !refCode) return;
+    fetchInviteData();
+    const interval = setInterval(fetchInviteData, 4_000);
+    return () => clearInterval(interval);
+  }, [router.isReady, refCode, fetchInviteData]);
 
   useEffect(() => {
     // Load main.js animations after component mounts
@@ -31,6 +62,43 @@ export default function Home() {
       if (script.parentNode) script.parentNode.removeChild(script);
     };
   }, []);
+
+  const inviteMembers = inviteData?.members || [];
+  const invitePeopleCount = Math.min(ROOM_CAPACITY, 1 + inviteMembers.length);
+  const inviteRoomFull = inviteMembers.length >= MAX_REFERRALS;
+
+  const handleInviteJoin = async (e) => {
+    e.preventDefault();
+    if (!inviteEmail || inviteStatus === "joining" || !refCode) return;
+    if (inviteRoomFull) {
+      setInviteJoinError("This squad room is full.");
+      setInviteStatus("error");
+      return;
+    }
+
+    setInviteStatus("joining");
+    setInviteJoinError("");
+
+    try {
+      const res = await fetch("/api/waitlist/join", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: inviteEmail, share_code: refCode }),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        setInviteJoinError(json.error || "Something went wrong.");
+        setInviteStatus("error");
+        return;
+      }
+
+      setInviteStatus("joined");
+      fetchInviteData();
+    } catch {
+      setInviteJoinError("Network error. Please try again.");
+      setInviteStatus("error");
+    }
+  };
 
   return (
     <>
@@ -127,6 +195,76 @@ export default function Home() {
             </defs>
           </svg>
         </nav>
+
+        {refCode && (
+          <section id="invite-entry">
+            <div className="invite-entry-inner">
+              <div className="invite-entry-copy">
+                <p className="invite-entry-eyebrow">Invite Link Detected</p>
+                <h2 className="invite-entry-title">Join this squad room.</h2>
+                <p className="invite-entry-sub">
+                  You were invited to sweat this slip with the squad.
+                </p>
+
+                {inviteStatus === "joined" ? (
+                  <div className="invite-entry-success">
+                    You&apos;re in. Your spot has been added to this room.
+                  </div>
+                ) : (
+                  <form
+                    className="invite-entry-form"
+                    onSubmit={handleInviteJoin}
+                  >
+                    <input
+                      type="email"
+                      value={inviteEmail}
+                      onChange={(e) => setInviteEmail(e.target.value)}
+                      placeholder="you@example.com"
+                      required
+                      disabled={inviteStatus === "joining" || inviteRoomFull}
+                    />
+                    <button
+                      type="submit"
+                      className="blob-btn"
+                      disabled={inviteStatus === "joining" || inviteRoomFull}
+                    >
+                      {inviteStatus === "joining"
+                        ? "Joining..."
+                        : inviteRoomFull
+                          ? "Room Full"
+                          : "Join This Squad"}
+                      <span className="blob-btn__inner">
+                        <span className="blob-btn__blobs">
+                          <span className="blob-btn__blob"></span>
+                          <span className="blob-btn__blob"></span>
+                          <span className="blob-btn__blob"></span>
+                          <span className="blob-btn__blob"></span>
+                        </span>
+                      </span>
+                    </button>
+                  </form>
+                )}
+                {inviteJoinError && (
+                  <p className="invite-entry-error">{inviteJoinError}</p>
+                )}
+                {inviteError && (
+                  <p className="invite-entry-error">{inviteError}</p>
+                )}
+              </div>
+
+              <div className="invite-entry-room">
+                <p className="invite-room-label">Squad Status</p>
+                <p className="invite-room-count">
+                  {invitePeopleCount}/8 people
+                </p>
+                <p className="invite-room-code">Room: {refCode}</p>
+                {inviteLoading && (
+                  <p className="invite-room-loading">Updating...</p>
+                )}
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* HERO */}
         <section id="hero">

@@ -356,9 +356,11 @@ export default function SquadPage() {
                 </li>
               </ul>
 
-              <button className="btn-share" onClick={handleShare}>
-                {copied ? "✓ Link Copied!" : "Join the Waitlist"}
-              </button>
+              {!isOwner && (
+                <button className="btn-share" onClick={handleShare}>
+                  {copied ? "✓ Link Copied!" : "Join the Waitlist"}
+                </button>
+              )}
 
               <div className="share-url-wrap">
                 <button
