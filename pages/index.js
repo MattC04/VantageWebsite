@@ -265,6 +265,123 @@ export default function Home() {
           </div>
         </section>
 
+        {/* FEATURES */}
+        <section id="features">
+          <div className="features-sticky">
+            {/* Slide 1: Squad Rooms */}
+            <div className="feature-slide" id="slide-squad">
+              <div className="slide-inner">
+                <div className="slide-text">
+                  <div className="slide-meta">
+                    <span className="slide-count">01 / 02</span>
+                    <span className="slide-tag">Squad Rooms</span>
+                  </div>
+                  <h2 className="slide-heading">
+                    Bet with your
+                    <br />
+                    crew, not alone.
+                  </h2>
+                  <p className="slide-body">
+                    Place a slip and start a Squad Room. Friends who place the
+                    same slip join instantly.
+                  </p>
+                  <ul className="wl-perks">
+                    <li className="perk-item">
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                      Live play-by-play updates
+                    </li>
+                    <li className="perk-item">
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                      Chat reactions and badges
+                    </li>
+                    <li className="perk-item">
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                      XP trivia and instant alerts
+                    </li>
+                  </ul>
+                </div>
+                <div className="slide-visual">
+                  <div className="slide-phone-frame">
+                    <div className="slide-phone-notch"></div>
+                    <img
+                      src="/assets/phonepicture.png"
+                      alt="Squad Room UI"
+                      className="slide-phone-img"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Slide 2: Player Cards */}
+            <div className="feature-slide" id="slide-cards">
+              <div className="slide-inner">
+                <div className="slide-text">
+                  <div className="slide-meta">
+                    <span className="slide-count">02 / 02</span>
+                    <span className="slide-tag">Player Cards</span>
+                  </div>
+                  <h2 className="slide-heading">
+                    Collect every
+                    <br />
+                    legend.
+                  </h2>
+                  <p className="slide-body">
+                    Bet on players to unlock their card.
+                  </p>
+                </div>
+                <div className="slide-visual slide-visual--cards">
+                  <div className="slide-cards-stack">
+                    <img
+                      className="slide-card--curry"
+                      src="/assets/curry prop.png"
+                      alt="Curry card"
+                    />
+                    <img
+                      className="slide-card--lebron"
+                      src="/assets/Lebron prop.png"
+                      alt="LeBron card"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* WAITLIST */}
         <section id="waitlist">
           <div className="orb orb-1" aria-hidden="true"></div>
