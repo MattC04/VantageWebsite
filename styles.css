@@ -57,6 +57,7 @@ h6 {
 
 #site,
 #hero,
+#sweat-feature,
 #waitlist {
     background: transparent !important;
 }
@@ -2248,6 +2249,152 @@ a {
 .form-success p {
     font-size: 0.85rem;
     color: var(--ivory-muted);
+}
+
+/* ============================================================
+   SWEAT FEATURE SECTION
+   ============================================================ */
+
+#sweat-feature {
+    position: relative;
+    z-index: 2;
+    padding: 0 2.5rem 6rem;
+    background: #070707;
+}
+
+#sweat-feature .ed-divider {
+    padding-top: 4rem;
+}
+
+.sweat-inner {
+    max-width: 1060px;
+    margin: 3rem auto 0;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 5rem;
+    align-items: center;
+}
+
+.sweat-kicker {
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1rem;
+}
+
+.sweat-headline {
+    font-size: clamp(2.4rem, 5vw, 4.4rem);
+    font-weight: 700;
+    line-height: 0.96;
+    letter-spacing: -0.04em;
+    color: var(--ivory);
+    margin-bottom: 1.2rem;
+}
+
+.sweat-sub {
+    font-size: 0.95rem;
+    color: var(--ivory-muted);
+    line-height: 1.8;
+    max-width: 400px;
+    margin-bottom: 2rem;
+}
+
+.sweat-features {
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+}
+
+.sweat-feat {
+    display: flex;
+    gap: 0.9rem;
+    align-items: flex-start;
+}
+
+.sweat-feat-icon {
+    font-size: 1.2rem;
+    line-height: 1;
+    margin-top: 0.1rem;
+    flex-shrink: 0;
+}
+
+.sweat-feat-title {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--ivory);
+    margin-bottom: 0.2rem;
+}
+
+.sweat-feat-desc {
+    font-size: 0.82rem;
+    color: var(--ivory-muted);
+    line-height: 1.65;
+}
+
+/* Phone mockup */
+.sweat-phone-wrap {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.sweat-phone-glow {
+    position: absolute;
+    inset: -70px;
+    background: radial-gradient(circle at 50% 50%,
+        rgba(201, 171, 110, 0.18) 0%,
+        rgba(62, 207, 142, 0.08) 45%,
+        transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    filter: blur(24px);
+}
+
+.sweat-phone {
+    width: 347px;
+    background: #0a0a0a;
+    border: 1.5px solid rgba(255, 255, 255, 0.1);
+    border-radius: 36px;
+    padding: 10px;
+    box-shadow:
+        0 32px 80px rgba(0, 0, 0, 0.7),
+        0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+        0 0 60px rgba(201, 171, 110, 0.06);
+    position: relative;
+}
+
+.sweat-phone-notch {
+    width: 70px;
+    height: 6px;
+    background: #1a1a1a;
+    border-radius: 3px;
+    margin: 0 auto 8px;
+}
+
+.sweat-phone-screen {
+    border-radius: 28px;
+    overflow: hidden;
+    background: #000;
+}
+
+.sweat-phone-screen img {
+    width: 100%;
+    display: block;
+}
+
+@media (max-width: 860px) {
+    .sweat-inner {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+    }
+
+    .sweat-phone-wrap {
+        margin: 0 auto;
+    }
+
+    .sweat-phone {
+        width: 308px;
+    }
 }
 
 /* ============================================================

@@ -539,6 +539,57 @@ export default function Home() {
           </div>
         </section>
 
+        {/* SWEAT SCREEN FEATURE */}
+        <section id="sweat-feature">
+          <div className="ed-divider" aria-hidden="true">
+            <span className="ed-divider-line" id="ed-line-sweat"></span>
+            <span className="ed-divider-label">The Sweat Screen</span>
+          </div>
+          <div className="sweat-inner">
+            <div className="sweat-copy">
+              <div className="sweat-kicker">Live Parlay Tracking</div>
+              <h2 className="sweat-headline">Every Play.<br />Word for Word.<br />In Real Time.</h2>
+              <p className="sweat-sub">
+                Watch your parlay players go off or bust, live.
+                Every bucket, every rush, every strikeout lands play by play,
+                word for word, the second it happens.
+              </p>
+              <div className="sweat-features">
+                <div className="sweat-feat">
+                  <div className="sweat-feat-icon">⚡</div>
+                  <div>
+                    <div className="sweat-feat-title">Play by Play Updates</div>
+                    <div className="sweat-feat-desc">Real time play descriptions: 30-foot bomb, stepback elbow, transition dunk. Word for word as they happen.</div>
+                  </div>
+                </div>
+                <div className="sweat-feat">
+                  <div className="sweat-feat-icon">📊</div>
+                  <div>
+                    <div className="sweat-feat-title">Live Prop Lines</div>
+                    <div className="sweat-feat-desc">Watch your player&apos;s live stat vs. line update tick by tick. Curry at 2/5.5. LeBron at 27/25.5. You&apos;ll know the moment it changes.</div>
+                  </div>
+                </div>
+                <div className="sweat-feat">
+                  <div className="sweat-feat-icon">🔥</div>
+                  <div>
+                    <div className="sweat-feat-title">Squad Sweat</div>
+                    <div className="sweat-feat-desc">Your squad sees every play too. React in real time, hype each other up, and never sweat a parlay alone.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="sweat-phone-wrap">
+              <div className="sweat-phone-glow"></div>
+              <div className="sweat-phone">
+                <div className="sweat-phone-notch"></div>
+                <div className="sweat-phone-screen">
+                  <img src="/sweatscreen.png" alt="Vantage sweat screen — live play-by-play" loading="lazy" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* WAITLIST */}
         <section id="waitlist">
           <div className="orb orb-1" aria-hidden="true"></div>
