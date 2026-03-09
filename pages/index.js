@@ -508,8 +508,8 @@ export default function Home() {
 
             {/* Slide 2: Player Cards */}
             <div className="feature-slide" id="slide-cards">
-              <div className="slide-inner">
-                <div className="slide-text">
+              <div className="slide-inner slide-inner--wide">
+                <div className="slide-text slide-text--wide">
                   <div className="slide-meta">
                     <span className="slide-count">02 / 02</span>
                     <span className="slide-tag">Player Cards</span>
@@ -520,22 +520,28 @@ export default function Home() {
                     legend.
                   </h2>
                   <p className="slide-body">
-                    Bet on players to unlock their card.
+                    Place slips to unlock player cards and earn capped XP. Cards are cosmetics only.
                   </p>
-                </div>
-                <div className="slide-visual slide-visual--cards">
-                  <div className="slide-cards-stack">
-                    <img
-                      className="slide-card--curry"
-                      src="/card1.png"
-                      alt="Player card"
-                    />
-                    <img
-                      className="slide-card--lebron"
-                      src="/pack.png"
-                      alt="Card pack"
-                    />
-                  </div>
+                  <ul className="wl-perks">
+                    <li className="perk-item">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                      Bet on players to unlock their card and earn XP
+                    </li>
+                    <li className="perk-item">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                      Leveling milestones unlock promos: boosts and protected pick rewards
+                    </li>
+                    <li className="perk-item">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                      Progress tracked per season. Card borders reset every season.
+                    </li>
+                  </ul>
                 </div>
               </div>
             </div>
