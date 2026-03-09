@@ -1849,7 +1849,7 @@ a {
     justify-content: space-between;
     width: 100%;
     max-width: 1240px;
-    margin: 0;
+    margin: 0 auto;
     gap: 6vw;
 }
 
@@ -2080,7 +2080,7 @@ a {
 
 .waitlist-inner {
     max-width: 1240px;
-    margin: 0;
+    margin: 0 auto;
     display: flex;
     align-items: center;
     gap: 7rem;
