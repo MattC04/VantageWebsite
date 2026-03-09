@@ -1840,7 +1840,7 @@ a {
 .feature-slide {
     display: flex;
     align-items: center;
-    padding: 4rem 8vw;
+    padding: 5rem 8vw;
 }
 
 .slide-inner {
@@ -2020,7 +2020,7 @@ a {
 
 #waitlist {
     position: relative;
-    padding: 7.2rem 2.5rem 4rem;
+    padding: 5rem 2.5rem;
     overflow: hidden;
     margin-top: 0;
     border-top: 0 !important;
