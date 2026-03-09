@@ -3059,6 +3059,7 @@ a {
 
 @media (min-width: 1024px) {
     #nav,
+    .feature-slide,
     #waitlist,
     #footer {
         padding-left: 3.5rem;
