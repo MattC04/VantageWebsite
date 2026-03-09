@@ -207,7 +207,7 @@ export default function Home() {
                   Enter your email to claim your spot.
                 </p>
                 <ul className="invite-entry-perks">
-                  <li>Live play-by-play updates</li>
+                  <li>Live play by play updates</li>
                   <li>Chat reactions and badges</li>
                   <li>XP trivia and instant alerts</li>
                 </ul>
@@ -527,13 +527,13 @@ export default function Home() {
                   <div className="slide-cards-stack">
                     <img
                       className="slide-card--curry"
-                      src="/assets/curry prop.png"
-                      alt="Curry card"
+                      src="/card1.png"
+                      alt="Player card"
                     />
                     <img
                       className="slide-card--lebron"
-                      src="/assets/Lebron prop.png"
-                      alt="LeBron card"
+                      src="/pack.png"
+                      alt="Card pack"
                     />
                   </div>
                 </div>
