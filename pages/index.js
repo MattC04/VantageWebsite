@@ -425,22 +425,25 @@ export default function Home() {
         {/* FEATURES */}
         <section id="features">
           <div className="features-sticky">
-            {/* Slide 1: Squad Rooms */}
+            {/* Slide 1: Sweat Screen */}
             <div className="feature-slide" id="slide-squad">
               <div className="slide-inner">
                 <div className="slide-text">
                   <div className="slide-meta">
                     <span className="slide-count">01 / 02</span>
-                    <span className="slide-tag">Squad Rooms</span>
+                    <span className="slide-tag">The Sweat Screen</span>
                   </div>
                   <h2 className="slide-heading">
-                    Bet with your
+                    Every play.
                     <br />
-                    crew, not alone.
+                    Word for word.
+                    <br />
+                    In real time.
                   </h2>
                   <p className="slide-body">
-                    Place a slip and start a Squad Room. Friends who place the
-                    same slip join instantly.
+                    Watch your parlay players go off or bust, live.
+                    Every bucket, every rush, every strikeout
+                    lands the second it happens.
                   </p>
                   <ul className="wl-perks">
                     <li className="perk-item">
@@ -456,7 +459,7 @@ export default function Home() {
                       >
                         <polyline points="20 6 9 17 4 12" />
                       </svg>
-                      Live play-by-play updates
+                      Play by play updates, word for word
                     </li>
                     <li className="perk-item">
                       <svg
@@ -471,7 +474,7 @@ export default function Home() {
                       >
                         <polyline points="20 6 9 17 4 12" />
                       </svg>
-                      Chat reactions and badges
+                      Live prop lines tick by tick
                     </li>
                     <li className="perk-item">
                       <svg
@@ -486,7 +489,7 @@ export default function Home() {
                       >
                         <polyline points="20 6 9 17 4 12" />
                       </svg>
-                      XP trivia and instant alerts
+                      Squad reacts with you in real time
                     </li>
                   </ul>
                 </div>
@@ -494,8 +497,8 @@ export default function Home() {
                   <div className="slide-phone-frame">
                     <div className="slide-phone-notch"></div>
                     <img
-                      src="/assets/phonepicture.png"
-                      alt="Squad Room UI"
+                      src="/sweatscreen.png"
+                      alt="Sweat screen live play-by-play"
                       className="slide-phone-img"
                     />
                   </div>
@@ -533,57 +536,6 @@ export default function Home() {
                       alt="LeBron card"
                     />
                   </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* SWEAT SCREEN FEATURE */}
-        <section id="sweat-feature">
-          <div className="ed-divider" aria-hidden="true">
-            <span className="ed-divider-line" id="ed-line-sweat"></span>
-            <span className="ed-divider-label">The Sweat Screen</span>
-          </div>
-          <div className="sweat-inner">
-            <div className="sweat-copy">
-              <div className="sweat-kicker">Live Parlay Tracking</div>
-              <h2 className="sweat-headline">Every Play.<br />Word for Word.<br />In Real Time.</h2>
-              <p className="sweat-sub">
-                Watch your parlay players go off or bust, live.
-                Every bucket, every rush, every strikeout lands play by play,
-                word for word, the second it happens.
-              </p>
-              <div className="sweat-features">
-                <div className="sweat-feat">
-                  <div className="sweat-feat-icon">⚡</div>
-                  <div>
-                    <div className="sweat-feat-title">Play by Play Updates</div>
-                    <div className="sweat-feat-desc">Real time play descriptions: 30-foot bomb, stepback elbow, transition dunk. Word for word as they happen.</div>
-                  </div>
-                </div>
-                <div className="sweat-feat">
-                  <div className="sweat-feat-icon">📊</div>
-                  <div>
-                    <div className="sweat-feat-title">Live Prop Lines</div>
-                    <div className="sweat-feat-desc">Watch your player&apos;s live stat vs. line update tick by tick. Curry at 2/5.5. LeBron at 27/25.5. You&apos;ll know the moment it changes.</div>
-                  </div>
-                </div>
-                <div className="sweat-feat">
-                  <div className="sweat-feat-icon">🔥</div>
-                  <div>
-                    <div className="sweat-feat-title">Squad Sweat</div>
-                    <div className="sweat-feat-desc">Your squad sees every play too. React in real time, hype each other up, and never sweat a parlay alone.</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="sweat-phone-wrap">
-              <div className="sweat-phone-glow"></div>
-              <div className="sweat-phone">
-                <div className="sweat-phone-notch"></div>
-                <div className="sweat-phone-screen">
-                  <img src="/sweatscreen.png" alt="Vantage sweat screen — live play-by-play" loading="lazy" />
                 </div>
               </div>
             </div>
