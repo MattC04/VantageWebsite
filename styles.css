@@ -1973,12 +1973,14 @@ a {
     left: 0;
     bottom: 0;
     transform-origin: bottom center;
+    transform: rotate(-14deg);
 }
 
 .slide-card--lebron {
     right: 0;
     bottom: 0;
     transform-origin: bottom center;
+    transform: rotate(14deg);
 }
 
 @media (max-width: 800px) {

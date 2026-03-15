@@ -82,7 +82,7 @@ export default function Home() {
             />
             <span className="logo-text">VANTAGE</span>
           </a>
-          <a href="mailto:contact@vantage.com" className="nav-contact blob-btn">
+          <a href="mailto:vantagesportsbook@gmail.com" className="nav-contact blob-btn">
             Contact Us
             <span className="blob-btn__inner">
               <span className="blob-btn__blobs">
@@ -340,8 +340,8 @@ export default function Home() {
 
             {/* Slide 2: Player Cards */}
             <div className="feature-slide" id="slide-cards">
-              <div className="slide-inner slide-inner--wide">
-                <div className="slide-text slide-text--wide">
+              <div className="slide-inner">
+                <div className="slide-text">
                   <div className="slide-meta">
                     <span className="slide-count">02 / 02</span>
                     <span className="slide-tag">Player Cards</span>
@@ -374,6 +374,20 @@ export default function Home() {
                       Progress tracked per season. Card borders reset every season.
                     </li>
                   </ul>
+                </div>
+                <div className="slide-visual slide-visual--cards">
+                  <div className="slide-cards-stack">
+                    <img
+                      src="/card1.png"
+                      alt="Player card"
+                      className="slide-card--curry"
+                    />
+                    <img
+                      src="/card1.png"
+                      alt="Player card"
+                      className="slide-card--lebron"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
