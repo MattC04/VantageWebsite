@@ -1958,8 +1958,8 @@ a {
 
 .slide-cards-stack {
     position: relative;
-    width: min(400px, 50vw);
-    height: min(520px, 62vw);
+    width: min(520px, 64vw);
+    height: min(400px, 49vw);
 }
 
 /* ════════════════════════════════════════════
@@ -2020,33 +2020,18 @@ a {
     will-change: transform;
 }
 
-/* Back-left: Gold */
+/* Left: Diamond (Ant) */
 .pc--pos-l {
-    left: 0;
-    bottom: 0;
-    transform-origin: bottom center;
-    transform: rotate(-14deg) scale(0.88);
+    left: 2%;
+    top: 50%;
     z-index: 1;
-    opacity: 0.85;
 }
 
-/* Back-right: Diamond */
+/* Right: Prismatic (Curry) */
 .pc--pos-r {
-    right: 0;
-    bottom: 0;
-    transform-origin: bottom center;
-    transform: rotate(14deg) scale(0.88);
+    right: 2%;
+    top: 50%;
     z-index: 2;
-    opacity: 0.85;
-}
-
-/* Front center: Prismatic */
-.pc--pos-c {
-    left: 50%;
-    bottom: 0;
-    transform: translateX(-50%);
-    z-index: 3;
-    width: 62%;
 }
 
 /* --- Gradient border wrapper --- */
@@ -2129,8 +2114,8 @@ a {
     opacity: 0.9;
 }
 
-/* Sweeping energy wave (animated) */
-.pc--pos-c .pc-refract::after {
+/* Sweeping energy wave (animated) — both cards */
+.pc-refract::after {
     content: '';
     position: absolute;
     top: 0; left: -100%;
@@ -2146,100 +2131,69 @@ a {
     100% { left: 110%; opacity: 0; }
 }
 
-/* --- Top row: team name --- */
-.pc-top {
-    position: absolute;
-    top: 10px;
-    left: 12px;
-    right: 12px;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    z-index: 5;
-}
-.pc-team-full {
-    font-size: 10px;
-    font-weight: 600;
-    color: var(--pc-acc);
-    opacity: 0.6;
-    letter-spacing: 0.2px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    font-family: inherit;
-}
-
-/* --- Main content column --- */
-.pc-content {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding-top: 14px;
-    z-index: 5;
-    gap: 1px;
-}
-
-/* --- Player name + abbreviation --- */
-.pc-name {
-    font-size: clamp(12px, 2.2vw, 20px);
-    font-weight: 800;
-    color: rgba(255, 255, 255, 0.95);
-    letter-spacing: -0.3px;
-    line-height: 1.2;
-    text-align: center;
-    font-family: inherit;
-}
-.pc-abbr {
-    font-size: clamp(8px, 1.3vw, 13px);
-    font-weight: 600;
-    color: var(--pc-acc);
-    letter-spacing: 1.8px;
-    opacity: 0.5;
-    margin-top: 2px;
-    text-align: center;
-    font-family: inherit;
-}
-
-/* --- Player image / aura --- */
+/* --- Player image — full bleed, top portion of card --- */
 .pc-img-wrap {
-    width: 42%;
-    aspect-ratio: 1;
-    border-radius: 50%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 72%;
     overflow: hidden;
-    margin: 6px 0;
-    position: relative;
-    background: radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.12), transparent 70%);
-    flex-shrink: 0;
+    border-radius: 12px 12px 0 0;
+    z-index: 2;
 }
-.pc-img-wrap::before {
+.pc-img-wrap::after {
     content: '';
     position: absolute;
-    inset: -5px;
-    border-radius: 50%;
-    background: radial-gradient(circle, var(--pc-acc) 0%, transparent 65%);
-    opacity: 0.2;
-    z-index: 0;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 10%, var(--pc-glow) 0%, transparent 65%);
+    opacity: 0.35;
+    pointer-events: none;
+    z-index: 2;
 }
 .pc-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 50%;
-    position: relative;
-    z-index: 1;
+    object-position: top center;
     display: block;
+    transform: scale(1.06);
+    transform-origin: top center;
 }
 
-/* --- Season text --- */
-.pc-season {
-    font-size: clamp(7px, 1.1vw, 11px);
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.3);
-    letter-spacing: 1.2px;
-    margin-bottom: 8px;
+/* --- Dark gradient overlay — separates image from footer --- */
+.pc-card-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        180deg,
+        transparent 0%,
+        transparent 38%,
+        rgba(0,0,0,0.15) 52%,
+        var(--pc-i1) 72%,
+        var(--pc-i2) 100%
+    );
+    z-index: 3;
+    pointer-events: none;
+    border-radius: 12px;
+}
+
+/* --- Footer: name + XP bar --- */
+.pc-footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 8px 13px 30px;
+    z-index: 5;
+}
+.pc-name {
+    font-size: clamp(11px, 1.9vw, 17px);
+    font-weight: 800;
+    color: rgba(255, 255, 255, 0.96);
+    letter-spacing: -0.3px;
+    line-height: 1.1;
+    margin-bottom: 7px;
     font-family: inherit;
 }
 
@@ -2283,14 +2237,15 @@ a {
 /* --- Tier badge --- */
 .pc-tier-lbl {
     position: absolute;
-    bottom: 24px;
-    left: 16px;
-    font-size: clamp(5px, 0.9vw, 8px);
+    top: 10px;
+    right: 13px;
+    font-size: clamp(5px, 0.85vw, 8px);
     font-weight: 900;
     letter-spacing: 2.5px;
     color: var(--pc-acc);
-    opacity: 0.55;
+    opacity: 0.8;
     z-index: 6;
+    text-shadow: 0 0 10px var(--pc-glow);
     font-family: inherit;
 }
 
@@ -2341,9 +2296,13 @@ a {
     100% { background-position: 0% 50%; }
 }
 
-/* Glow pulsate on front card */
-.pc--pos-c .pc-border {
+/* Glow pulse on both cards */
+.pc--pos-l .pc-border,
+.pc--pos-r .pc-border {
     animation: pc-glow-pulse 3s ease-in-out infinite;
+}
+.pc--prismatic.pc--pos-r .pc-border {
+    animation: pc-prismatic-border 4s linear infinite, pc-glow-pulse 3s ease-in-out infinite;
 }
 @keyframes pc-glow-pulse {
     0%, 100% { box-shadow: 0 0 28px var(--pc-glow), 0 20px 40px rgba(0,0,0,0.7); }
@@ -2373,8 +2332,8 @@ a {
     }
 
     .slide-cards-stack {
-        width: min(280px, 80vw);
-        height: min(360px, 96vw);
+        width: min(360px, 90vw);
+        height: min(280px, 70vw);
     }
 
     .slide-heading {
@@ -3750,7 +3709,8 @@ h6,
         inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
 }
 
-.pc--pos-c .pc-border {
+.pc--pos-l .pc-border,
+.pc--pos-r .pc-border {
     box-shadow: 0 0 40px var(--pc-glow), 0 28px 56px rgba(0, 0, 0, 0.75) !important;
 }
 

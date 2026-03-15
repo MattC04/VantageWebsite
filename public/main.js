@@ -385,35 +385,41 @@ function startMainAnimations() {
     y: -60, autoAlpha: 0, ease: "none",
   });
 
-  // Player cards fan in as #slide-cards enters viewport
-  const SLIDE_ST = { start: "top 82%", end: "bottom 18%", scrub: 1.2 };
-  gsap.fromTo(".pc--pos-l", { rotate: -22, y: 60, opacity: 0 }, { rotate: -14, y: 0, opacity: 0.85, scrollTrigger: { trigger: "#slide-cards", ...SLIDE_ST } });
-  gsap.fromTo(".pc--pos-r", { rotate: 20,  y: 60, opacity: 0 }, { rotate: 14,  y: 0, opacity: 0.85, scrollTrigger: { trigger: "#slide-cards", ...SLIDE_ST } });
-  gsap.fromTo(".pc--pos-c", { y: 80, opacity: 0, scale: 0.9 },  { y: 0, opacity: 1, scale: 1,       scrollTrigger: { trigger: "#slide-cards", ...SLIDE_ST } });
+  // Player cards — fade in on scroll
+  gsap.fromTo([".pc--pos-l", ".pc--pos-r"],
+    { opacity: 0 },
+    { opacity: 1, stagger: 0.18, duration: 0.9, ease: "power2.out",
+      scrollTrigger: { trigger: "#slide-cards", start: "top 82%", toggleActions: "play none none none" } }
+  );
 
-  // Front card hover: 3D tilt + shimmer
-  const frontCard = document.querySelector(".pc--pos-c");
-  if (frontCard) {
-    const shimmer = frontCard.querySelector(".pc-shimmer");
-    let rafId, curX = 0, curY = 0, tarX = 0, tarY = 0;
-    frontCard.addEventListener("mousemove", (e) => {
-      const r = frontCard.getBoundingClientRect();
-      const nx = (e.clientX - r.left) / r.width;
-      const ny = (e.clientY - r.top) / r.height;
-      tarX = (ny - 0.5) * -14; tarY = (nx - 0.5) * 14;
-      if (shimmer) { shimmer.style.opacity = "1"; shimmer.style.background = `radial-gradient(circle at ${nx*100}% ${ny*100}%, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.07) 38%, transparent 64%)`; }
+  // Player cards — hero-style global mouse parallax on both cards
+  let pcMx = 0, pcMy = 0;
+  document.addEventListener("mousemove", (e) => {
+    pcMx = (e.clientX / innerWidth  - 0.5) * 2;
+    pcMy = (e.clientY / innerHeight - 0.5) * 2;
+  });
+  const pcCardDefs = [
+    { el: document.querySelector(".pc--pos-l"), baseY: -18, baseX: 5,  baseZ: -6, strength: { y: 24, x: 18 } },
+    { el: document.querySelector(".pc--pos-r"), baseY:  16, baseX: -4, baseZ:  5, strength: { y: 22, x: 16 } },
+  ];
+  pcCardDefs.forEach(({ el, baseY, baseX, baseZ, strength }) => {
+    if (!el) return;
+    const shimmer = el.querySelector(".pc-shimmer");
+    let curY = baseY, curX = baseX;
+    el.addEventListener("mousemove", (e) => {
+      const r = el.getBoundingClientRect();
+      const sx = ((e.clientX - r.left) / r.width)  * 100;
+      const sy = ((e.clientY - r.top)  / r.height) * 100;
+      if (shimmer) { shimmer.style.opacity = "1"; shimmer.style.background = `radial-gradient(circle at ${sx}% ${sy}%, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.07) 38%, transparent 64%)`; }
     });
-    frontCard.addEventListener("mouseenter", () => {
-      cancelAnimationFrame(rafId);
-      (function tick() { curX += (tarX - curX) * 0.11; curY += (tarY - curY) * 0.11; frontCard.style.transform = `translateX(-50%) perspective(800px) rotateX(${curX}deg) rotateY(${curY}deg) scale(1.04)`; rafId = requestAnimationFrame(tick); })();
-    });
-    frontCard.addEventListener("mouseleave", () => {
-      cancelAnimationFrame(rafId);
-      if (shimmer) shimmer.style.opacity = "";
-      tarX = 0; tarY = 0;
-      (function reset() { curX += (0-curX)*0.14; curY += (0-curY)*0.14; frontCard.style.transform = `translateX(-50%) perspective(800px) rotateX(${curX}deg) rotateY(${curY}deg) scale(1)`; if (Math.abs(curX)>0.05||Math.abs(curY)>0.05) { rafId=requestAnimationFrame(reset); } else { frontCard.style.transform="translateX(-50%)"; } })();
-    });
-  }
+    el.addEventListener("mouseleave", () => { if (shimmer) shimmer.style.opacity = ""; });
+    (function tick() {
+      curY += (baseY + pcMx * strength.y - curY) * 0.09;
+      curX += (baseX - pcMy * strength.x - curX) * 0.09;
+      el.style.transform = `translateY(-50%) perspective(900px) rotateY(${curY}deg) rotateX(${curX}deg) rotateZ(${baseZ}deg)`;
+      requestAnimationFrame(tick);
+    })();
+  });
 
   // Waitlist section divider line draws
   const wl = document.getElementById("waitlist");
