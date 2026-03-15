@@ -1953,13 +1953,16 @@ a {
 
 /* ── Cards stack — slide 2 ── */
 .slide-visual--cards {
-    position: relative;
+    align-items: flex-start;
+    padding-top: 0.25rem;
 }
 
 .slide-cards-stack {
-    position: relative;
-    width: min(520px, 64vw);
-    height: min(400px, 49vw);
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+    width: 100%;
+    max-width: 440px;
 }
 
 /* ════════════════════════════════════════════
@@ -2010,43 +2013,35 @@ a {
     --pc-bar1: #FF6EC7; --pc-bar2: #4DDBFF;
 }
 
-/* --- Stack positions --- */
+/* --- Each card is a flex child, no absolute positioning needed --- */
 .pc {
-    position: absolute;
-    width: 52%;
+    position: relative;
+    flex: 1 1 0;
+    min-width: 0;
     aspect-ratio: 280 / 395;
     cursor: pointer;
     transform-style: preserve-3d;
     will-change: transform;
 }
 
-/* Left: Diamond (Ant) */
-.pc--pos-l {
-    left: 2%;
-    top: 50%;
-    z-index: 1;
-}
+.pc--pos-l { z-index: 1; }
+.pc--pos-r { z-index: 2; }
 
-/* Right: Prismatic (Curry) */
-.pc--pos-r {
-    right: 2%;
-    top: 50%;
-    z-index: 2;
-}
-
-/* --- Gradient border wrapper --- */
+/* --- Gradient border: absolutely fills .pc --- */
 .pc-border {
-    width: 100%;
-    height: 100%;
+    position: absolute;
+    inset: 0;
     border-radius: 14px;
-    padding: 2.5px;
+    padding: 2px;
     background: linear-gradient(135deg, var(--pc-b1), var(--pc-b2));
-    box-shadow: 0 0 28px var(--pc-glow), 0 20px 40px rgba(0, 0, 0, 0.7);
+    box-shadow: 0 0 32px var(--pc-glow), 0 22px 44px rgba(0, 0, 0, 0.8);
+    animation: pc-glow-pulse 3s ease-in-out infinite;
 }
 
 .pc--prismatic .pc-border {
     background: linear-gradient(135deg, #FF80BE, #FFBE60, #7EEDB8, #60CCFF, #A87CFF, #FF80BE);
-    animation: pc-prismatic-border 4s linear infinite;
+    background-size: 300% 300%;
+    animation: pc-prismatic-border 4s linear infinite, pc-glow-pulse 3s ease-in-out infinite;
 }
 
 @keyframes pc-prismatic-border {
@@ -2054,14 +2049,17 @@ a {
     50%  { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
 }
+@keyframes pc-glow-pulse {
+    0%, 100% { box-shadow: 0 0 32px var(--pc-glow), 0 22px 44px rgba(0,0,0,0.8); }
+    50%       { box-shadow: 0 0 58px var(--pc-glow), 0 28px 52px rgba(0,0,0,0.85); }
+}
 
-/* --- Inner card body --- */
+/* --- Inner card body: sits inside the 2px border --- */
 .pc-inner {
-    width: 100%;
-    height: 100%;
+    position: absolute;
+    inset: 2px;
     border-radius: 12px;
     overflow: hidden;
-    position: relative;
     background: linear-gradient(180deg, var(--pc-i1) 0%, var(--pc-i2) 100%);
 }
 
@@ -2098,67 +2096,67 @@ a {
     z-index: 0;
 }
 
-/* --- Diagonal refractor lines --- */
+/* --- Diagonal refractor lines (clearly visible) --- */
 .pc-refract {
     position: absolute;
     inset: 0;
     pointer-events: none;
-    z-index: 1;
+    z-index: 5;
     background: repeating-linear-gradient(
         42deg,
         transparent,
-        transparent 13px,
-        rgba(255,255,255,0.045) 13px,
-        rgba(255,255,255,0.045) 14px
+        transparent 11px,
+        rgba(255, 255, 255, 0.11) 11px,
+        rgba(255, 255, 255, 0.11) 12px
     );
-    opacity: 0.9;
+    mix-blend-mode: overlay;
 }
 
-/* Sweeping energy wave (animated) — both cards */
+/* Sweeping energy wave */
 .pc-refract::after {
     content: '';
     position: absolute;
     top: 0; left: -100%;
-    width: 60%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-    animation: pc-wave 6s ease-in-out infinite;
+    width: 55%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.22), transparent);
+    animation: pc-wave 4.5s ease-in-out infinite;
     pointer-events: none;
 }
 @keyframes pc-wave {
     0%   { left: -60%; opacity: 0; }
-    20%  { opacity: 1; }
-    80%  { opacity: 1; }
+    15%  { opacity: 1; }
+    85%  { opacity: 1; }
     100% { left: 110%; opacity: 0; }
 }
 
-/* --- Player image — full bleed, top portion of card --- */
+/* --- Player image: fills top 65% of card --- */
 .pc-img-wrap {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 72%;
+    top: 0; left: 0; right: 0;
+    height: 65%;
     overflow: hidden;
-    border-radius: 12px 12px 0 0;
+    border-radius: 10px 10px 0 0;
     z-index: 2;
 }
-.pc-img-wrap::after {
+/* Tier-color aura glow behind image */
+.pc-img-wrap::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(ellipse at 50% 10%, var(--pc-glow) 0%, transparent 65%);
-    opacity: 0.35;
+    background: radial-gradient(ellipse at 50% 5%, var(--pc-glow), transparent 70%);
+    opacity: 0.5;
+    z-index: 0;
     pointer-events: none;
-    z-index: 2;
 }
 .pc-img {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
     object-position: top center;
     display: block;
-    transform: scale(1.06);
-    transform-origin: top center;
+    z-index: 1;
 }
 
 /* --- Dark gradient overlay — separates image from footer --- */
@@ -2234,18 +2232,18 @@ a {
     background: linear-gradient(90deg, var(--pc-bar1), var(--pc-bar2));
 }
 
-/* --- Tier badge --- */
+/* --- Tier badge: top-right, clearly visible --- */
 .pc-tier-lbl {
     position: absolute;
-    top: 10px;
-    right: 13px;
-    font-size: clamp(5px, 0.85vw, 8px);
+    top: 9px;
+    right: 10px;
+    font-size: clamp(7px, 1.1vw, 10px);
     font-weight: 900;
-    letter-spacing: 2.5px;
+    letter-spacing: 2px;
     color: var(--pc-acc);
-    opacity: 0.8;
-    z-index: 6;
-    text-shadow: 0 0 10px var(--pc-glow);
+    opacity: 1;
+    z-index: 9;
+    text-shadow: 0 0 14px var(--pc-glow), 0 1px 4px rgba(0,0,0,0.9);
     font-family: inherit;
 }
 
@@ -2296,18 +2294,6 @@ a {
     100% { background-position: 0% 50%; }
 }
 
-/* Glow pulse on both cards */
-.pc--pos-l .pc-border,
-.pc--pos-r .pc-border {
-    animation: pc-glow-pulse 3s ease-in-out infinite;
-}
-.pc--prismatic.pc--pos-r .pc-border {
-    animation: pc-prismatic-border 4s linear infinite, pc-glow-pulse 3s ease-in-out infinite;
-}
-@keyframes pc-glow-pulse {
-    0%, 100% { box-shadow: 0 0 28px var(--pc-glow), 0 20px 40px rgba(0,0,0,0.7); }
-    50%       { box-shadow: 0 0 48px var(--pc-glow), 0 24px 48px rgba(0,0,0,0.75); }
-}
 
 @media (max-width: 800px) {
     .slide-inner {
@@ -2332,8 +2318,8 @@ a {
     }
 
     .slide-cards-stack {
-        width: min(360px, 90vw);
-        height: min(280px, 70vw);
+        max-width: min(340px, 88vw);
+        gap: 10px;
     }
 
     .slide-heading {
@@ -3711,7 +3697,7 @@ h6,
 
 .pc--pos-l .pc-border,
 .pc--pos-r .pc-border {
-    box-shadow: 0 0 40px var(--pc-glow), 0 28px 56px rgba(0, 0, 0, 0.75) !important;
+    box-shadow: 0 0 44px var(--pc-glow), 0 30px 60px rgba(0, 0, 0, 0.8) !important;
 }
 
 .waitlist-form-wrap {

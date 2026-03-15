@@ -399,8 +399,8 @@ function startMainAnimations() {
     pcMy = (e.clientY / innerHeight - 0.5) * 2;
   });
   const pcCardDefs = [
-    { el: document.querySelector(".pc--pos-l"), baseY: -18, baseX: 5,  baseZ: -6, strength: { y: 24, x: 18 } },
-    { el: document.querySelector(".pc--pos-r"), baseY:  16, baseX: -4, baseZ:  5, strength: { y: 22, x: 16 } },
+    { el: document.querySelector(".pc--pos-l"), baseY: -8, baseX:  3, baseZ: -4, strength: { y: 16, x: 12 } },
+    { el: document.querySelector(".pc--pos-r"), baseY:  8, baseX: -2, baseZ:  3, strength: { y: 14, x: 10 } },
   ];
   pcCardDefs.forEach(({ el, baseY, baseX, baseZ, strength }) => {
     if (!el) return;
@@ -410,13 +410,13 @@ function startMainAnimations() {
       const r = el.getBoundingClientRect();
       const sx = ((e.clientX - r.left) / r.width)  * 100;
       const sy = ((e.clientY - r.top)  / r.height) * 100;
-      if (shimmer) { shimmer.style.opacity = "1"; shimmer.style.background = `radial-gradient(circle at ${sx}% ${sy}%, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.07) 38%, transparent 64%)`; }
+      if (shimmer) { shimmer.style.opacity = "1"; shimmer.style.background = `radial-gradient(circle at ${sx}% ${sy}%, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0.08) 40%, transparent 65%)`; }
     });
     el.addEventListener("mouseleave", () => { if (shimmer) shimmer.style.opacity = ""; });
     (function tick() {
       curY += (baseY + pcMx * strength.y - curY) * 0.09;
       curX += (baseX - pcMy * strength.x - curX) * 0.09;
-      el.style.transform = `translateY(-50%) perspective(900px) rotateY(${curY}deg) rotateX(${curX}deg) rotateZ(${baseZ}deg)`;
+      el.style.transform = `perspective(900px) rotateY(${curY}deg) rotateX(${curX}deg) rotateZ(${baseZ}deg)`;
       requestAnimationFrame(tick);
     })();
   });
