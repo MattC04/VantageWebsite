@@ -377,16 +377,106 @@ export default function Home() {
                 </div>
                 <div className="slide-visual slide-visual--cards">
                   <div className="slide-cards-stack">
-                    <img
-                      src="/card1.png"
-                      alt="Player card"
-                      className="slide-card--curry"
-                    />
-                    <img
-                      src="/card1.png"
-                      alt="Player card"
-                      className="slide-card--lebron"
-                    />
+
+                    {/* Gold — LeBron James (back left) */}
+                    <div className="pc pc--gold pc--pos-l">
+                      <div className="pc-border">
+                        <div className="pc-inner">
+                          <div className="pc-cf" aria-hidden="true"></div>
+                          <div className="pc-refract" aria-hidden="true"></div>
+                          <div className="pc-top">
+                            <span className="pc-team-full">Los Angeles Lakers</span>
+                          </div>
+                          <div className="pc-content">
+                            <div className="pc-name">LeBron James</div>
+                            <div className="pc-abbr">LAL</div>
+                            <div className="pc-img-wrap">
+                              <img className="pc-img" src="https://cdn.nba.com/headshots/nba/latest/1040x760/2544.png" alt="LeBron James" />
+                            </div>
+                            <div className="pc-season">2025–2026</div>
+                            <div className="pc-progress-wrap">
+                              <div className="pc-progress-hdr">
+                                <span className="pc-next">→ DIAMOND</span>
+                                <span className="pc-pct">73%</span>
+                              </div>
+                              <div className="pc-bar-bg">
+                                <div className="pc-bar-fill" style={{ width: '73%' }}></div>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="pc-tier-lbl">GOLD</div>
+                          <div className="pc-watermark">VANTAGE COLLECTIBLES</div>
+                          <div className="pc-shimmer" aria-hidden="true"></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Diamond — Anthony Edwards (back right) */}
+                    <div className="pc pc--diamond pc--pos-r">
+                      <div className="pc-border">
+                        <div className="pc-inner">
+                          <div className="pc-cf" aria-hidden="true"></div>
+                          <div className="pc-refract" aria-hidden="true"></div>
+                          <div className="pc-top">
+                            <span className="pc-team-full">Minnesota Timberwolves</span>
+                          </div>
+                          <div className="pc-content">
+                            <div className="pc-name">Ant Edwards</div>
+                            <div className="pc-abbr">MIN</div>
+                            <div className="pc-img-wrap">
+                              <img className="pc-img" src="https://cdn.nba.com/headshots/nba/latest/1040x760/1630162.png" alt="Anthony Edwards" />
+                            </div>
+                            <div className="pc-season">2025–2026</div>
+                            <div className="pc-progress-wrap">
+                              <div className="pc-progress-hdr">
+                                <span className="pc-next">→ PRISMATIC</span>
+                                <span className="pc-pct">58%</span>
+                              </div>
+                              <div className="pc-bar-bg">
+                                <div className="pc-bar-fill" style={{ width: '58%' }}></div>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="pc-tier-lbl">DIAMOND</div>
+                          <div className="pc-watermark">VANTAGE COLLECTIBLES</div>
+                          <div className="pc-shimmer" aria-hidden="true"></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Prismatic — Stephen Curry (front center) */}
+                    <div className="pc pc--prismatic pc--pos-c">
+                      <div className="pc-border">
+                        <div className="pc-inner">
+                          <div className="pc-cf" aria-hidden="true"></div>
+                          <div className="pc-refract" aria-hidden="true"></div>
+                          <div className="pc-top">
+                            <span className="pc-team-full">Golden State Warriors</span>
+                          </div>
+                          <div className="pc-content">
+                            <div className="pc-name">Stephen Curry</div>
+                            <div className="pc-abbr">GSW</div>
+                            <div className="pc-img-wrap">
+                              <img className="pc-img" src="https://cdn.nba.com/headshots/nba/latest/1040x760/201939.png" alt="Stephen Curry" />
+                            </div>
+                            <div className="pc-season">2025–2026</div>
+                            <div className="pc-progress-wrap">
+                              <div className="pc-progress-hdr">
+                                <span className="pc-next">MAX</span>
+                                <span className="pc-pct">42%</span>
+                              </div>
+                              <div className="pc-bar-bg">
+                                <div className="pc-bar-fill" style={{ width: '42%' }}></div>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="pc-tier-lbl">PRISMATIC</div>
+                          <div className="pc-watermark">VANTAGE COLLECTIBLES</div>
+                          <div className="pc-shimmer" aria-hidden="true"></div>
+                        </div>
+                      </div>
+                    </div>
+
                   </div>
                 </div>
               </div>
