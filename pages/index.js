@@ -227,10 +227,10 @@ function PlayerCard({ name="LeBron James", team="LAL", teamFull="Los Angeles Lak
             <div style={{ position:"absolute", top:6, left:6, right:6, bottom:6, border:`1px solid ${t.accent}12`, borderRadius:8, zIndex:2, pointerEvents:"none" }}/>
             <div style={{ position:"absolute", top:10, left:10, right:10, bottom:10, border:`0.5px solid ${t.accent}08`, borderRadius:6, zIndex:2, pointerEvents:"none" }}/>
 
-            {/* TOP BAR: sport + team (left), rank (right) */}
-            <div style={{ position:"absolute", top:12, left:16, zIndex:10, display:"flex", alignItems:"flex-start", gap:7, maxWidth:180, transform:`translate(${px*1}px, ${py*1}px)`, transition: hovered ? "none" : "transform 0.5s ease" }}>
-              <div style={{ marginTop:2, flexShrink:0 }}><SportIcon sport={sport} color={t.accent} size={16}/></div>
-              <span style={{ fontSize:13, fontWeight:700, letterSpacing:0.3, color:t.accent, opacity:0.65, lineHeight:1.25 }}>{teamFull}</span>
+            {/* TOP BAR: sport icon + team abbr (left), rank (right) */}
+            <div style={{ position:"absolute", top:8, left:10, zIndex:10, display:"flex", alignItems:"center", gap:5, transform:`translate(${px*1}px, ${py*1}px)`, transition: hovered ? "none" : "transform 0.5s ease" }}>
+              <SportIcon sport={sport} color={t.accent} size={14}/>
+              <span style={{ fontSize:12, fontWeight:700, letterSpacing:1.5, color:t.accent, opacity:0.65 }}>{team}</span>
             </div>
 
             {/* RANK */}
