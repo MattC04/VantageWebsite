@@ -260,7 +260,9 @@ function PlayerCard({ name="LeBron James", team="LAL", teamFull="Los Angeles Lak
                 {imageUrl ? (
                   <div style={{ position:"relative", width:180, height:180, display:"flex", alignItems:"center", justifyContent:"center" }}>
                     <div style={{ position:"absolute", inset:0, zIndex:1 }}><EnergyAura colors={t.auraColors} tier={tier} hovered={hovered}/></div>
-                    <img src={imageUrl} alt={name} style={{ position:"absolute", top:"50%", left:"50%", transform:"translate(-50%,-50%)", width:120, height:120, borderRadius:"50%", objectFit:"cover", zIndex:10 }}/>
+                    <img src={imageUrl} alt={name}
+                      onError={(e) => { e.target.style.display="none"; }}
+                      style={{ position:"absolute", top:"50%", left:"50%", transform:"translate(-50%,-50%)", width:120, height:120, borderRadius:"50%", objectFit:"cover", zIndex:10 }}/>
                   </div>
                 ) : <EnergyAura colors={t.auraColors} tier={tier} hovered={hovered}/>}
               </div>
@@ -738,7 +740,7 @@ export default function Home() {
                         teamFull="Minnesota Timberwolves"
                         season="2025–2026"
                         sport="basketball"
-                        imageUrl="https://cdn.nba.com/headshots/nba/latest/1040x760/1630162.png"
+                        imageUrl="https://a.espncdn.com/i/headshots/nba/players/full/4432816.png"
                         teamLogoUrl="https://a.espncdn.com/i/teamlogos/nba/500/min.png"
                         betsPlaced={89} wins={67} wagered={4200}
                         tier="platinum" progress={1.0} rank={1}
@@ -751,7 +753,7 @@ export default function Home() {
                         teamFull="Golden State Warriors"
                         season="2025–2026"
                         sport="basketball"
-                        imageUrl="https://cdn.nba.com/headshots/nba/latest/1040x760/201939.png"
+                        imageUrl="https://a.espncdn.com/i/headshots/nba/players/full/3975.png"
                         teamLogoUrl="https://a.espncdn.com/i/teamlogos/nba/500/gsw.png"
                         betsPlaced={76} wins={51} wagered={3800}
                         tier="diamond" progress={0.58} rank={2}
