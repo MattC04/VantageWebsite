@@ -2388,49 +2388,6 @@ a {
 }
 
 
-@media (max-width: 800px) {
-    .slide-inner {
-        flex-direction: column-reverse;
-        gap: 2rem;
-        padding-top: 2rem;
-        align-items: flex-start;
-    }
-
-    .slide-text {
-        flex: none;
-    }
-
-    .slide-visual {
-        flex: none;
-        width: 100%;
-        justify-content: center;
-    }
-
-    .slide-phone-frame {
-        width: min(200px, 55vw);
-    }
-
-    .slide-cards-stack {
-        flex-direction: column;
-        align-items: center;
-        max-width: 100%;
-        gap: 20px;
-    }
-
-    .pc-card-wrap {
-        width: 252px;
-        height: 378px;
-    }
-
-    .pc-card-wrap > div {
-        transform: scale(0.9);
-        transform-origin: top left;
-    }
-
-    .slide-heading {
-        font-size: clamp(2.4rem, 8vw, 3.5rem);
-    }
-}
 
 /* ============================================================
    WAITLIST
