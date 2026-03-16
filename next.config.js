@@ -24,8 +24,8 @@ const securityHeaders = [
       "font-src 'self' https://fonts.gstatic.com",
       // Images: self + data URIs
       "img-src 'self' data:",
-      // API calls: self + Supabase + EmailJS
-      "connect-src 'self' https://*.supabase.co https://api.emailjs.com https://vitals.vercel-insights.com",
+      // API calls: self + Supabase + Vercel analytics
+      "connect-src 'self' https://*.supabase.co https://vitals.vercel-insights.com",
       // No iframes, objects, or base tag tricks
       "frame-src 'none'",
       "object-src 'none'",
