@@ -1,6 +1,7 @@
 /* ============================================================
    VANTAGE — styles.css
    ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 :root {
     --black: #201a16;
@@ -1959,11 +1960,43 @@ a {
 
 .slide-cards-stack {
     display: flex;
-    align-items: flex-end;
+    align-items: flex-start;
     gap: 16px;
     width: 100%;
-    max-width: 440px;
+    max-width: 600px;
 }
+
+/* Scale wrapper: 280px card → ~200px layout footprint */
+.pc-card-wrap {
+    flex-shrink: 0;
+    width: 202px;
+    height: 302px;
+    overflow: visible;
+}
+.pc-card-wrap > div {
+    transform: scale(0.72);
+    transform-origin: top left;
+}
+
+/* Card animation keyframes */
+@keyframes prismaticShift {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+@keyframes prismaticText {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+@keyframes borderPulse-bronze  { 0%,100% { box-shadow:0 0 15px #CD7F3240; } 50% { box-shadow:0 0 30px #CD7F3280, 0 0 60px #CD7F3230; } }
+@keyframes borderPulse-silver  { 0%,100% { box-shadow:0 0 15px #C0C0C040; } 50% { box-shadow:0 0 30px #C0C0C080, 0 0 60px #C0C0C030; } }
+@keyframes borderPulse-gold    { 0%,100% { box-shadow:0 0 15px #FFD70040; } 50% { box-shadow:0 0 30px #FFD70080, 0 0 60px #FFD70030; } }
+@keyframes borderPulse-purple  { 0%,100% { box-shadow:0 0 15px #9B30FF40; } 50% { box-shadow:0 0 30px #9B30FF80, 0 0 60px #9B30FF30; } }
+@keyframes borderPulse-platinum{ 0%,100% { box-shadow:0 0 15px #D4C0F040; } 50% { box-shadow:0 0 30px #D4C0F080, 0 0 60px #D4C0F030; } }
+@keyframes borderPulse-diamond { 0%,100% { box-shadow:0 0 15px #4DD9FF40; } 50% { box-shadow:0 0 30px #4DD9FF80, 0 0 60px #4DD9FF30; } }
+@keyframes glitchFlicker { 0%,100%{opacity:0;} 20%{opacity:1;} 40%{opacity:0;} 60%{opacity:0.7;} 80%{opacity:0;} }
+@keyframes waveSlide { 0% { transform:translateX(0); } 100% { transform:translateX(33.33%); } }
 
 /* ════════════════════════════════════════════
    PLAYER CARDS — tier-based CSS cards
