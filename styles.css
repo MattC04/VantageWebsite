@@ -3574,6 +3574,185 @@ a {
     }
 }
 /* ============================================================
+   MOBILE — full responsive layout (max-width: 768px)
+   ============================================================ */
+
+@media (max-width: 768px) {
+
+    /* ── NAV ── */
+    #nav {
+        padding: 0 1.2rem;
+    }
+
+    /* ── HERO ── */
+    #hero {
+        min-height: auto;
+        padding: calc(var(--nav-h) + 2rem) 0 2.5rem;
+        align-items: center;
+        justify-content: flex-start;
+        flex-direction: column;
+    }
+
+    .hero-scene {
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        gap: 1.5rem;
+        padding: 0 1.2rem;
+    }
+
+    .hero-center {
+        order: 1;
+        align-items: center;
+        text-align: center;
+        max-width: 100%;
+        padding: 0;
+    }
+
+    .hero-headline {
+        font-size: clamp(2.8rem, 11vw, 4.2rem);
+        text-align: center;
+    }
+
+    .hero-sub {
+        font-size: 1rem;
+        text-align: center;
+        max-width: 340px;
+    }
+
+    .hero-actions {
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        gap: 0.9rem;
+    }
+
+    .hero-actions a,
+    .hero-actions button {
+        width: 100%;
+        max-width: 300px;
+        text-align: center;
+        justify-content: center;
+    }
+
+    .hero-count {
+        justify-content: center;
+    }
+
+    .hero-props {
+        display: none;
+    }
+
+    .hero-phone-wrap {
+        order: 2;
+        margin-top: 0;
+    }
+
+    .hero-phone {
+        width: min(220px, 58vw);
+        transform: rotateY(-8deg) rotateX(6deg) rotateZ(-2deg) scale(1);
+    }
+
+    .hero-phone-glow {
+        width: 300px;
+        height: 300px;
+    }
+
+    #cards-field {
+        display: none;
+    }
+
+    /* ── FEATURES — slide layout ── */
+    .feature-slide {
+        padding: 2.5rem 5vw;
+        min-height: auto;
+    }
+
+    .slide-inner {
+        flex-direction: column;
+        gap: 2rem;
+        align-items: flex-start;
+    }
+
+    .slide-text,
+    .slide-text--wide {
+        flex: none;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .slide-visual {
+        flex: none;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .slide-heading {
+        font-size: clamp(2.2rem, 9vw, 3.2rem);
+    }
+
+    /* ── Phone frame — slide 1 ── */
+    .slide-phone-frame {
+        width: min(240px, 64vw);
+    }
+
+    /* ── Player cards — slide 2 ── */
+    .slide-visual--cards {
+        align-items: center;
+        padding-top: 0;
+    }
+
+    .slide-cards-stack {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        max-width: 100%;
+    }
+
+    .pc-card-wrap {
+        width: 252px;
+        height: 378px;
+    }
+
+    .pc-card-wrap > div {
+        transform: scale(0.9);
+        transform-origin: top left;
+    }
+
+    /* ── WAITLIST ── */
+    #waitlist {
+        padding: 3rem 5vw;
+    }
+
+    .waitlist-inner {
+        flex-direction: column;
+        gap: 2.5rem;
+    }
+
+    .waitlist-form-wrap {
+        flex: none;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .wl-heading {
+        font-size: clamp(2rem, 8vw, 3rem);
+    }
+
+    /* ── FOOTER ── */
+    .footer-inner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.2rem;
+    }
+
+    .footer-links {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+}
+
+/* ============================================================
    LARGE SCREEN SCALING ONLY
    ============================================================ */
 
