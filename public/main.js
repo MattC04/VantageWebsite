@@ -457,7 +457,7 @@ function startMainAnimations() {
     autoAlpha: 0, y: 18, stagger: 0.1, duration: 0.6, ease: "power2.out",
   });
 
-  /* ── Form submission — calls /api/waitlist/join, redirects to squad page ── */
+  /* ── Form submission — calls /api/waitlist/join ── */
   const form = document.getElementById("waitlist-form");
   const successEl = document.getElementById("form-success");
 
@@ -502,7 +502,6 @@ function startMainAnimations() {
           localStorage.setItem("vantage_email", email.toLowerCase().trim());
         } catch {}
 
-        shootBasketball();
         gsap.to(form, {
           opacity: 0, y: -16, duration: 0.4, ease: "power2.in",
           onComplete: () => {

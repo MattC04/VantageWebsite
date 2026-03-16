@@ -325,7 +325,7 @@ export default function Home() {
     window.__VANTAGE_JOIN_API__ = true;
 
     const script = document.createElement("script");
-    script.src = "/main.js";
+    script.src = "/main.js?v=4";
     script.defer = true;
     document.body.appendChild(script);
 
@@ -854,8 +854,8 @@ export default function Home() {
         </footer>
       </div>
 
-      {/* Basketball hoop animation */}
-      <div id="bball-stage" aria-hidden="true">
+      {/* Basketball hoop animation - hidden */}
+      <div id="bball-stage" aria-hidden="true" style={{display:"none"}}>
         <div id="bball-hoop">
           <svg
             id="bball-hoop-svg"
