@@ -262,7 +262,7 @@ function PlayerCard({ name="LeBron James", team="LAL", teamFull="Los Angeles Lak
                     <div style={{ position:"absolute", inset:0, zIndex:1 }}><EnergyAura colors={t.auraColors} tier={tier} hovered={hovered}/></div>
                     <img src={imageUrl} alt={name}
                       onError={(e) => { e.target.style.display="none"; }}
-                      style={{ position:"absolute", top:"50%", left:"50%", transform:"translate(-50%,-50%)", width:120, height:120, borderRadius:"50%", objectFit:"cover", zIndex:10 }}/>
+                      style={{ position:"absolute", top:"50%", left:"50%", transform:"translate(-50%,-50%) translateZ(2px)", WebkitTransform:"translate(-50%,-50%) translateZ(2px)", width:120, height:120, borderRadius:"50%", objectFit:"cover", zIndex:10 }}/>
                   </div>
                 ) : <EnergyAura colors={t.auraColors} tier={tier} hovered={hovered}/>}
               </div>

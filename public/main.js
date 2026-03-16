@@ -3,6 +3,8 @@ const EMAILJS_SERVICE_ID  = "service_k2qc7us";
 const EMAILJS_TEMPLATE_ID = "template_xbaufb8";
 
 (function initIntro() {
+  history.scrollRestoration = 'manual';
+  window.scrollTo(0, 0);
   const canvas = document.getElementById("intro-canvas");
   const ctx = canvas.getContext("2d");
   const logoEl = document.getElementById("intro-logo");
