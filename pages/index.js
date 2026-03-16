@@ -540,7 +540,7 @@ export default function Home() {
           <div className="hero-center">
             <div className="hero-eyebrow" id="eyebrow">
               <span className="eyebrow-dot"></span>
-              <span>Now in beta</span>
+              <span>Beta coming soon</span>
             </div>
             <h1 className="hero-headline" id="hero-headline">
               Never Sweat
