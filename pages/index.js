@@ -740,7 +740,7 @@ export default function Home() {
                         teamFull="Minnesota Timberwolves"
                         season="2025–2026"
                         sport="basketball"
-                        imageUrl="https://a.espncdn.com/i/headshots/nba/players/full/4432816.png"
+                        imageUrl="/player_ant.png"
                         teamLogoUrl="https://a.espncdn.com/i/teamlogos/nba/500/min.png"
                         betsPlaced={89} wins={67} wagered={4200}
                         tier="platinum" progress={1.0} rank={1}
@@ -753,7 +753,7 @@ export default function Home() {
                         teamFull="Golden State Warriors"
                         season="2025–2026"
                         sport="basketball"
-                        imageUrl="https://a.espncdn.com/i/headshots/nba/players/full/3975.png"
+                        imageUrl="/player_curry.png"
                         teamLogoUrl="https://a.espncdn.com/i/teamlogos/nba/500/gsw.png"
                         betsPlaced={76} wins={51} wagered={3800}
                         tier="diamond" progress={0.58} rank={2}
