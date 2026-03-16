@@ -132,15 +132,16 @@ function PlayerCard({ name="LeBron James", team="LAL", teamFull="Los Angeles Lak
   const slide = "transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94)";
 
   return (
-    <div style={{ perspective:1200, width:280, height:420 }}>
+    <div style={{ perspective:1200, WebkitPerspective:1200, width:280, height:420 }}>
       <div ref={cardRef} onMouseMove={onMove}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => { setHovered(false); setTilt({ x:0, y:0 }); setShinePos({ x:50, y:50 }); }}
         onClick={() => setFlipped(f => !f)}
         style={{
-          position:"relative", width:280, height:420, transformStyle:"preserve-3d",
-          transition: hovered ? "transform 0.1s ease-out" : "transform 0.6s ease-out",
+          position:"relative", width:280, height:420, transformStyle:"preserve-3d", WebkitTransformStyle:"preserve-3d",
+          transition: hovered ? "transform 0.1s ease-out, -webkit-transform 0.1s ease-out" : "transform 0.6s ease-out, -webkit-transform 0.6s ease-out",
           transform: `rotateX(${flipped ? 0 : tilt.x}deg) rotateY(${flipped ? 180 : tilt.y}deg)`,
+          WebkitTransform: `rotateX(${flipped ? 0 : tilt.x}deg) rotateY(${flipped ? 180 : tilt.y}deg)`,
           cursor:"pointer", userSelect:"none", fontFamily:"'Plus Jakarta Sans', sans-serif",
         }}
       >
@@ -149,7 +150,7 @@ function PlayerCard({ name="LeBron James", team="LAL", teamFull="Los Angeles Lak
           position:"absolute", width:280, height:420, borderRadius:16, padding:3,
           background: t.border, backgroundSize: t.prismatic ? "400% 400%" : undefined,
           animation: t.prismatic ? "prismaticShift 4s ease infinite" : hovered && !flipped ? `borderPulse-${tier} 2s ease infinite` : undefined,
-          backfaceVisibility:"hidden",
+          backfaceVisibility:"hidden", WebkitBackfaceVisibility:"hidden",
           boxShadow: hovered ? `0 20px 50px rgba(0,0,0,0.5), 0 0 40px ${t.glow}` : `0 4px 20px rgba(0,0,0,0.5)`,
         }}>
           <div style={{ position:"relative", width:274, height:414, borderRadius:13, background:t.inner, overflow:"hidden" }}>
@@ -308,7 +309,8 @@ function PlayerCard({ name="LeBron James", team="LAL", teamFull="Los Angeles Lak
           position:"absolute", width:280, height:420, borderRadius:16, padding:3,
           background: t.border, backgroundSize: t.prismatic ? "400% 400%" : undefined,
           animation: t.prismatic ? "prismaticShift 4s ease infinite" : undefined,
-          backfaceVisibility:"hidden", transform:"rotateY(180deg)",
+          backfaceVisibility:"hidden", WebkitBackfaceVisibility:"hidden",
+          transform:"rotateY(180deg)", WebkitTransform:"rotateY(180deg)",
           boxShadow:`0 4px 20px rgba(0,0,0,0.5)`,
         }}>
           <div style={{ position:"relative", width:274, height:414, borderRadius:13, background:t.inner, overflow:"hidden", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:18 }}>
