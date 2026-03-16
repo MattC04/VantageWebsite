@@ -10,7 +10,7 @@ const TIERS = {
   silver:   { border:"linear-gradient(135deg, #D0D0D0, #808080, #E8E8E8, #A0A0A0)", glow:"rgba(200,200,220,0.4)", label:"SILVER", accent:"#C0C0C0", accent2:"#E8E8E8", accent3:"#808090", inner:"linear-gradient(160deg, #14141a 0%, #0a0a10 100%)", barBg:"linear-gradient(90deg, #808080, #C0C0C0, #E8E8E8)", auraColors:["#9CA8B8","#C0C0C0","#E8E8E8"], scanColor:"C0C0C0", refAngle:50 },
   gold:     { border:"linear-gradient(135deg, #FFD700, #B8860B, #FFF4A0, #DAA520)", glow:"rgba(255,215,0,0.45)", label:"GOLD", accent:"#FFD700", accent2:"#FFF1A8", accent3:"#DAA520", inner:"linear-gradient(160deg, #181408 0%, #100e06 100%)", barBg:"linear-gradient(90deg, #DAA520, #FFD700, #FFF1A8)", auraColors:["#FFD700","#FFF1A8","#DAA520"], scanColor:"FFD700", refAngle:42 },
   purple:   { border:"linear-gradient(135deg, #9B30FF, #5C1A8C, #CF9FFF, #7B1FA2)", glow:"rgba(155,48,255,0.45)", label:"EPIC", accent:"#9B30FF", accent2:"#CF9FFF", accent3:"#6A0DAD", inner:"linear-gradient(160deg, #140c1e 0%, #0a0612 100%)", barBg:"linear-gradient(90deg, #6A0DAD, #9B30FF, #CF9FFF)", auraColors:["#9B30FF","#CF9FFF","#6A0DAD"], scanColor:"9B30FF", refAngle:55 },
-  platinum: { border:"linear-gradient(135deg, #A8D8EA, #E8B4F0, #A8EAC8, #F0D0A8, #A8B4F0)", glow:"rgba(200,180,240,0.5)", label:"PLATINUM", accent:"#D4C0F0", accent2:"#A8D8EA", accent3:"#E8B4F0", inner:"linear-gradient(160deg, #121620 0%, #0a0e18 100%)", barBg:"linear-gradient(90deg, #A8D8EA, #D8B4F0, #A8EAC8, #E0B8D0)", prismatic:true, auraColors:["#A8D8EA","#E8B4F0","#A8EAC8","#F0D0A8"], scanColor:"D4C0F0", refAngle:48 },
+  platinum: { border:"linear-gradient(135deg, #A8D8EA, #E8B4F0, #A8EAC8, #F0D0A8, #A8B4F0)", glow:"rgba(200,180,240,0.5)", label:"PRISMATIC", accent:"#D4C0F0", accent2:"#A8D8EA", accent3:"#E8B4F0", inner:"linear-gradient(160deg, #121620 0%, #0a0e18 100%)", barBg:"linear-gradient(90deg, #A8D8EA, #D8B4F0, #A8EAC8, #E0B8D0)", prismatic:true, auraColors:["#A8D8EA","#E8B4F0","#A8EAC8","#F0D0A8"], scanColor:"D4C0F0", refAngle:48 },
   diamond:  { border:"linear-gradient(135deg, #B9F2FF, #4DD9FF, #FFFFFF, #4DD9FF, #B9F2FF)", glow:"rgba(77,217,255,0.55)", label:"DIAMOND", accent:"#4DD9FF", accent2:"#B9F2FF", accent3:"#2BC4F0", inner:"linear-gradient(160deg, #0a1418 0%, #060e14 100%)", barBg:"linear-gradient(90deg, #2BC4F0, #4DD9FF, #B9F2FF)", auraColors:["#4DD9FF","#B9F2FF","#2BC4F0"], scanColor:"4DD9FF", refAngle:40, glitch:true },
 };
 const TIER_ORDER = ["bronze","silver","gold","purple","platinum","diamond"];
@@ -118,7 +118,7 @@ function PlayerCard({ name="LeBron James", team="LAL", teamFull="Los Angeles Lak
   const t = TIERS[tier] || TIERS.bronze;
   const tierIdx = TIER_ORDER.indexOf(tier);
   const nextTier = tierIdx < TIER_ORDER.length - 1 ? TIER_ORDER[tierIdx + 1] : null;
-  const prismaticText = t.prismatic ? { background:"linear-gradient(90deg,#A8D8EA,#E8B4F0,#A8EAC8,#D4B8F0)", backgroundSize:"200% 100%", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", animation:"prismaticText 3s ease infinite" } : {};
+  const prismaticText = t.prismatic ? { background:"linear-gradient(90deg,#A8D8EA,#E8B4F0,#A8EAC8,#D4B8F0)", WebkitBackgroundClip:"text", backgroundClip:"text", WebkitTextFillColor:"transparent", color:"transparent" } : {};
 
   const px = tilt.y / 8, py = tilt.x / 8;
 
@@ -129,6 +129,9 @@ function PlayerCard({ name="LeBron James", team="LAL", teamFull="Los Angeles Lak
     setShinePos({ x: (e.clientX - r.left) / r.width * 100, y: (e.clientY - r.top) / r.height * 100 });
   }, []);
 
+  const onTouchStart = useCallback(() => { setHovered(true); }, []);
+  const onTouchEnd = useCallback(() => { setHovered(false); setTilt({ x:0, y:0 }); }, []);
+
   const slide = "transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94)";
 
   return (
@@ -136,6 +139,8 @@ function PlayerCard({ name="LeBron James", team="LAL", teamFull="Los Angeles Lak
       <div ref={cardRef} onMouseMove={onMove}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => { setHovered(false); setTilt({ x:0, y:0 }); setShinePos({ x:50, y:50 }); }}
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
         onClick={() => setFlipped(f => !f)}
         style={{
           position:"relative", width:280, height:420, transformStyle:"preserve-3d", WebkitTransformStyle:"preserve-3d",
@@ -254,8 +259,8 @@ function PlayerCard({ name="LeBron James", team="LAL", teamFull="Los Angeles Lak
               <div style={{ marginTop:-6, marginBottom:-6, transition:slide, transform: hovered ? `translateX(32px) scale(1.04) translate(${px*2}px, ${py*2}px)` : "translateX(0) scale(1)" }}>
                 {imageUrl ? (
                   <div style={{ position:"relative", width:180, height:180, display:"flex", alignItems:"center", justifyContent:"center" }}>
-                    <div style={{ position:"absolute", inset:0 }}><EnergyAura colors={t.auraColors} tier={tier} hovered={hovered}/></div>
-                    <img src={imageUrl} alt={name} style={{ width:120, height:120, borderRadius:"50%", objectFit:"cover", position:"relative", zIndex:2 }}/>
+                    <div style={{ position:"absolute", inset:0, zIndex:1 }}><EnergyAura colors={t.auraColors} tier={tier} hovered={hovered}/></div>
+                    <img src={imageUrl} alt={name} style={{ width:120, height:120, borderRadius:"50%", objectFit:"cover", position:"relative", zIndex:3 }}/>
                   </div>
                 ) : <EnergyAura colors={t.auraColors} tier={tier} hovered={hovered}/>}
               </div>

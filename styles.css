@@ -1975,7 +1975,11 @@ a {
 }
 .pc-card-wrap > div {
     transform: scale(0.72);
+    -webkit-transform: scale(0.72);
     transform-origin: top left;
+    -webkit-transform-origin: top left;
+    transform-style: preserve-3d;
+    -webkit-transform-style: preserve-3d;
 }
 
 /* Card animation keyframes */
@@ -3760,7 +3764,11 @@ a {
 
     .pc-card-wrap > div {
         transform: scale(0.9);
+        -webkit-transform: scale(0.9);
         transform-origin: top left;
+        -webkit-transform-origin: top left;
+        transform-style: preserve-3d;
+        -webkit-transform-style: preserve-3d;
     }
 
     /* ── WAITLIST ── */
