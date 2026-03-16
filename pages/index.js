@@ -573,7 +573,7 @@ export default function Home() {
           <div className="hero-center">
             <div className="hero-eyebrow" id="eyebrow">
               <span className="eyebrow-dot"></span>
-              <span>Now in private beta</span>
+              <span>Now in beta</span>
             </div>
             <h1 className="hero-headline" id="hero-headline">
               Never Sweat
