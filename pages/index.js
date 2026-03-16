@@ -378,18 +378,67 @@ export default function Home() {
                 <div className="slide-visual slide-visual--cards">
                   <div className="slide-cards-stack">
 
-                    {/* Diamond — Ant Edwards */}
-                    <div className="pc pc--diamond pc--pos-l">
+                    {/* Prismatic — Ant Edwards */}
+                    <div className="pc pc--prismatic pc--pos-l">
                       <div className="pc-border">
                         <div className="pc-inner">
                           <div className="pc-cf" aria-hidden="true"></div>
-                          <div className="pc-bg-logo" aria-hidden="true">V</div>
                           <div className="pc-refract" aria-hidden="true"></div>
-                          <div className="pc-img-wrap">
+                          <div className="pc-top-row">
+                            <div className="pc-team-tag">
+                              <span className="pc-globe">⊕</span>
+                              <span>MIN</span>
+                            </div>
+                            <div className="pc-rank-wrap">
+                              <span className="pc-rank-label">RANK</span>
+                              <span className="pc-rank-num">#1</span>
+                            </div>
+                          </div>
+                          <div className="pc-player-name">Ant Edwards</div>
+                          <div className="pc-player-abbr">MIN</div>
+                          <div className="pc-img-area">
+                            <img className="pc-logo-bg" src="https://cdn.nba.com/logos/nba/1610612750/global/L/logo.svg" alt="" aria-hidden="true" />
                             <img className="pc-img" src="https://cdn.nba.com/headshots/nba/latest/1040x760/1630162.png" alt="Anthony Edwards" />
                           </div>
-                          <div className="pc-name">Ant Edwards</div>
-                          <div className="pc-tier-lbl">DIAMOND</div>
+                          <div className="pc-season">2025–2026</div>
+                          <div className="pc-progress-wrap">
+                            <div className="pc-progress-hdr">
+                              <span className="pc-next">MAX</span>
+                              <span className="pc-pct">100%</span>
+                            </div>
+                            <div className="pc-bar-bg">
+                              <div className="pc-bar-fill" style={{ width: '100%' }}></div>
+                            </div>
+                          </div>
+                          <div className="pc-tier-lbl">PRISMATIC</div>
+                          <div className="pc-shimmer" aria-hidden="true"></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Diamond — Stephen Curry */}
+                    <div className="pc pc--diamond pc--pos-r">
+                      <div className="pc-border">
+                        <div className="pc-inner">
+                          <div className="pc-cf" aria-hidden="true"></div>
+                          <div className="pc-refract" aria-hidden="true"></div>
+                          <div className="pc-top-row">
+                            <div className="pc-team-tag">
+                              <span className="pc-globe">⊕</span>
+                              <span>GSW</span>
+                            </div>
+                            <div className="pc-rank-wrap">
+                              <span className="pc-rank-label">RANK</span>
+                              <span className="pc-rank-num">#2</span>
+                            </div>
+                          </div>
+                          <div className="pc-player-name">Stephen Curry</div>
+                          <div className="pc-player-abbr">GSW</div>
+                          <div className="pc-img-area">
+                            <img className="pc-logo-bg" src="https://cdn.nba.com/logos/nba/1610612744/global/L/logo.svg" alt="" aria-hidden="true" />
+                            <img className="pc-img" src="https://cdn.nba.com/headshots/nba/latest/1040x760/201939.png" alt="Stephen Curry" />
+                          </div>
+                          <div className="pc-season">2025–2026</div>
                           <div className="pc-progress-wrap">
                             <div className="pc-progress-hdr">
                               <span className="pc-next">→ PRISMATIC</span>
@@ -399,34 +448,7 @@ export default function Home() {
                               <div className="pc-bar-fill" style={{ width: '58%' }}></div>
                             </div>
                           </div>
-                          <div className="pc-watermark">VANTAGE COLLECTIBLES</div>
-                          <div className="pc-shimmer" aria-hidden="true"></div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Prismatic — Stephen Curry */}
-                    <div className="pc pc--prismatic pc--pos-r">
-                      <div className="pc-border">
-                        <div className="pc-inner">
-                          <div className="pc-cf" aria-hidden="true"></div>
-                          <div className="pc-bg-logo" aria-hidden="true">V</div>
-                          <div className="pc-refract" aria-hidden="true"></div>
-                          <div className="pc-img-wrap">
-                            <img className="pc-img" src="https://cdn.nba.com/headshots/nba/latest/1040x760/201939.png" alt="Stephen Curry" />
-                          </div>
-                          <div className="pc-name">Stephen Curry</div>
-                          <div className="pc-tier-lbl">PRISMATIC</div>
-                          <div className="pc-progress-wrap">
-                            <div className="pc-progress-hdr">
-                              <span className="pc-next">MAX</span>
-                              <span className="pc-pct">42%</span>
-                            </div>
-                            <div className="pc-bar-bg">
-                              <div className="pc-bar-fill" style={{ width: '42%' }}></div>
-                            </div>
-                          </div>
-                          <div className="pc-watermark">VANTAGE COLLECTIBLES</div>
+                          <div className="pc-tier-lbl">DIAMOND</div>
                           <div className="pc-shimmer" aria-hidden="true"></div>
                         </div>
                       </div>
