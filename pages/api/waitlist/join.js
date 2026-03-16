@@ -61,6 +61,11 @@ export default async function handler(req, res) {
     if (existing) {
       userId = existing.id;
       shareCode = existing.share_code;
+      // Resend welcome email even for existing users
+      sendWaitlistWelcome({
+        toEmail: normalizedEmail,
+        toName: normalizedEmail.split("@")[0],
+      }).catch((err) => console.error("Email send error:", err));
     } else {
       // Direct join gets a share_code (room owner), referral join does not
       let newCode = null;
