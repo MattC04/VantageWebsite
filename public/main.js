@@ -497,15 +497,10 @@ function startMainAnimations() {
           return;
         }
 
-        // Save email + share_code so squad page can identify the owner
+        // Save email for future use
         try {
           localStorage.setItem("vantage_email", email.toLowerCase().trim());
-          if (data.share_code) localStorage.setItem("vantage_share_code", data.share_code);
         } catch {}
-
-        const squadUrl = "/squad/" + data.share_code;
-        const viewBtn = document.getElementById("view-squad-btn");
-        if (viewBtn) viewBtn.href = squadUrl;
 
         shootBasketball();
         gsap.to(form, {
@@ -514,7 +509,6 @@ function startMainAnimations() {
             form.hidden = true;
             successEl.hidden = false;
             gsap.from(successEl, { opacity: 0, y: 20, duration: 0.6, ease: "back.out(1.5)" });
-            setTimeout(() => { window.location.href = squadUrl; }, 2400);
           },
         });
 

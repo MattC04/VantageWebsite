@@ -838,15 +838,7 @@ export default function Home() {
                   </svg>
                 </div>
                 <h3>You&apos;re in.</h3>
-                <p>You&apos;re on the list. View your squad room below.</p>
-                <a
-                  id="view-squad-btn"
-                  href="#"
-                  className="btn btn-primary"
-                  style={{ marginTop: "1rem", display: "inline-block" }}
-                >
-                  View My Squad →
-                </a>
+                <p>You&apos;re on the list. We&apos;ll be in touch when we launch.</p>
               </div>
             </div>
           </div>
