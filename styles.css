@@ -2200,16 +2200,15 @@ a {
     text-shadow: 0 0 8px var(--pc-glow);
 }
 
-/* --- Image area: team logo watermark behind portrait player photo --- */
+/* --- Image area: team logo watermark behind circular headshot --- */
 .pc-img-area {
     width: 100%;
     flex: 1;
     position: relative;
     z-index: 3;
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     justify-content: center;
-    overflow: hidden;
     min-height: 0;
 }
 .pc-logo-bg {
@@ -2219,20 +2218,20 @@ a {
     height: 100%;
     object-fit: contain;
     object-position: center;
-    opacity: 0.18;
+    opacity: 0.08;
     pointer-events: none;
     user-select: none;
 }
 .pc-img {
     position: relative;
     z-index: 2;
-    width: 82%;
-    height: 100%;
-    object-fit: contain;
+    width: 55%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    object-fit: cover;
     object-position: top center;
     display: block;
-    -webkit-mask-image: linear-gradient(to bottom, black 55%, transparent 100%);
-    mask-image: linear-gradient(to bottom, black 55%, transparent 100%);
+    box-shadow: 0 0 0 2px var(--pc-acc), 0 0 22px var(--pc-glow);
 }
 
 /* --- Season text --- */
@@ -2314,18 +2313,35 @@ a {
     mix-blend-mode: screen;
 }
 
-/* Prismatic: always-on subtle rainbow cycle */
+/* Diamond: always-on subtle cyan shimmer */
+.pc--diamond .pc-shimmer {
+    background: linear-gradient(
+        135deg,
+        rgba(77, 217, 255, 0),
+        rgba(185, 242, 255, 0.12),
+        rgba(185, 242, 255, 0.30),
+        rgba(185, 242, 255, 0.12),
+        rgba(77, 217, 255, 0)
+    );
+    background-size: 300% 300%;
+    opacity: 0.7;
+    animation: pc-prism-cycle 4s ease-in-out infinite;
+}
+
+/* Prismatic: always-on rainbow spectral cycle (exact palette from tiers.ts) */
 .pc--prismatic .pc-shimmer {
     background: linear-gradient(
         135deg,
-        rgba(255, 80, 160, 0.08),
-        rgba(255, 180, 0, 0.08),
-        rgba(0, 220, 120, 0.08),
-        rgba(80, 180, 255, 0.08),
-        rgba(160, 80, 255, 0.08)
+        rgba(255, 0, 80, 0),
+        rgba(255, 130, 0, 0.18),
+        rgba(220, 220, 0, 0.28),
+        rgba(0, 200, 90, 0.18),
+        rgba(0, 120, 255, 0.18),
+        rgba(110, 0, 255, 0.28),
+        rgba(255, 0, 160, 0)
     );
     background-size: 300% 300%;
-    opacity: 0.6;
+    opacity: 0.7;
     animation: pc-prism-cycle 5s ease infinite;
 }
 @keyframes pc-prism-cycle {
