@@ -4,7 +4,12 @@ const EMAILJS_TEMPLATE_ID = "template_xbaufb8";
 
 (function initIntro() {
   history.scrollRestoration = 'manual';
+  if (window.location.hash) history.replaceState(null, '', window.location.pathname + window.location.search);
+  document.documentElement.scrollTop = 0;
+  document.body.scrollTop = 0;
   window.scrollTo(0, 0);
+  document.body.style.overflow = 'hidden';
+  document.documentElement.style.overflow = 'hidden';
   const canvas = document.getElementById("intro-canvas");
   const ctx = canvas.getContext("2d");
   const logoEl = document.getElementById("intro-logo");
@@ -195,6 +200,11 @@ const EMAILJS_TEMPLATE_ID = "template_xbaufb8";
         setTimeout(() => {
           introEl.remove();
           sweep.remove();
+          document.body.style.overflow = '';
+          document.documentElement.style.overflow = '';
+          document.documentElement.scrollTop = 0;
+          document.body.scrollTop = 0;
+          window.scrollTo(0, 0);
           siteEl.style.transition = "none";
           siteEl.style.opacity = "1";
           siteEl.classList.add("entering");

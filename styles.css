@@ -1214,6 +1214,16 @@ a {
     background: transparent;
 }
 
+#hero::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 220px;
+    background: linear-gradient(to bottom, transparent 0%, var(--black) 100%);
+    pointer-events: none;
+    z-index: 6;
+}
+
 #cards-field {
     position: absolute;
     inset: 0;
@@ -1838,7 +1848,28 @@ a {
     /* plain wrapper */
 }
 
+#features::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 100px;
+    background: linear-gradient(to bottom, var(--black), transparent);
+    pointer-events: none;
+    z-index: 3;
+}
+
+#features::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 140px;
+    background: linear-gradient(to bottom, transparent, var(--black));
+    pointer-events: none;
+    z-index: 3;
+}
+
 .feature-slide {
+    position: relative;
     display: flex;
     align-items: center;
     padding: 3rem 8vw;
