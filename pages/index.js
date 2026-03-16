@@ -854,8 +854,8 @@ export default function Home() {
         </footer>
       </div>
 
-      {/* Basketball hoop animation - hidden */}
-      <div id="bball-stage" aria-hidden="true" style={{display:"none"}}>
+      {/* Basketball hoop animation */}
+      <div id="bball-stage" aria-hidden="true">
         <div id="bball-hoop">
           <svg
             id="bball-hoop-svg"

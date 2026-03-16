@@ -502,6 +502,7 @@ function startMainAnimations() {
           localStorage.setItem("vantage_email", email.toLowerCase().trim());
         } catch {}
 
+        shootBasketball();
         gsap.to(form, {
           opacity: 0, y: -16, duration: 0.4, ease: "power2.in",
           onComplete: () => {
