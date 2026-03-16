@@ -3678,9 +3678,38 @@ a {
         justify-content: center;
     }
 
-    /* Hide hero phone on mobile — feature slide has its own phone */
+    /* Show phone behind hero text on mobile */
     #cards-field {
+        display: flex;
+        z-index: 1;
+    }
+
+    .hero-props {
         display: none;
+    }
+
+    .hero-scene {
+        justify-content: center;
+        width: 100%;
+    }
+
+    .hero-phone-wrap {
+        opacity: 0.18;
+        transform: none;
+    }
+
+    .hero-phone {
+        width: min(220px, 55vw);
+        transform: none;
+    }
+
+    .hero-phone-glow {
+        opacity: 0;
+    }
+
+    .hero-center {
+        position: relative;
+        z-index: 4;
     }
 
     /* ── FEATURES ── */
