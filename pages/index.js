@@ -698,7 +698,7 @@ export default function Home() {
                         teamFull="Minnesota Timberwolves"
                         season="2025–2026"
                         sport="basketball"
-                        imageUrl="/player_ant.png"
+                        imageUrl="/player_ant.png?v=2"
                         teamLogoUrl="https://a.espncdn.com/i/teamlogos/nba/500/min.png"
                         betsPlaced={89} wins={67} wagered={4200}
                         tier="platinum" progress={1.0} rank={1}
