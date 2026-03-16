@@ -4009,3 +4009,27 @@ h6,
     }
 }
 
+/* ── Section seam blend — covers any visible line between hero and features on mobile ── */
+.section-seam {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .section-seam {
+        display: block;
+        height: 120px;
+        margin-top: -60px;
+        margin-bottom: -60px;
+        position: relative;
+        z-index: 15;
+        pointer-events: none;
+        background: linear-gradient(
+            to bottom,
+            transparent 0%,
+            var(--black) 35%,
+            var(--black) 65%,
+            transparent 100%
+        );
+    }
+}
+

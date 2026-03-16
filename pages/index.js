@@ -568,6 +568,9 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Mobile seam blend */}
+        <div aria-hidden="true" className="section-seam" />
+
         {/* FEATURES */}
         <section id="features">
           <div className="features-sticky">
