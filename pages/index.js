@@ -394,10 +394,10 @@ export default function Home() {
                               <span className="pc-rank-num">#1</span>
                             </div>
                           </div>
+                          <img className="pc-logo-bg" src="https://a.espncdn.com/i/teamlogos/nba/500/min.png" alt="" aria-hidden="true" />
                           <div className="pc-player-name">Ant Edwards</div>
                           <div className="pc-player-abbr">MIN</div>
                           <div className="pc-img-area">
-                            <img className="pc-logo-bg" src="https://a.espncdn.com/i/teamlogos/nba/500/min.png" alt="" aria-hidden="true" />
                             <img className="pc-img" src="https://cdn.nba.com/headshots/nba/latest/1040x760/1630162.png" alt="Anthony Edwards" />
                           </div>
                           <div className="pc-season">2025–2026</div>
@@ -432,10 +432,10 @@ export default function Home() {
                               <span className="pc-rank-num">#2</span>
                             </div>
                           </div>
+                          <img className="pc-logo-bg" src="https://a.espncdn.com/i/teamlogos/nba/500/gsw.png" alt="" aria-hidden="true" />
                           <div className="pc-player-name">Stephen Curry</div>
                           <div className="pc-player-abbr">GSW</div>
                           <div className="pc-img-area">
-                            <img className="pc-logo-bg" src="https://a.espncdn.com/i/teamlogos/nba/500/gsw.png" alt="" aria-hidden="true" />
                             <img className="pc-img" src="https://cdn.nba.com/headshots/nba/latest/1040x760/201939.png" alt="Stephen Curry" />
                           </div>
                           <div className="pc-season">2025–2026</div>

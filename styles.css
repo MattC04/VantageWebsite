@@ -2174,7 +2174,7 @@ a {
 
 /* --- Player name + team abbreviation --- */
 .pc-player-name {
-    font-size: clamp(10px, 1.9vw, 17px);
+    font-size: clamp(12px, 2.4vw, 22px);
     font-weight: 900;
     color: rgba(255,255,255,0.97);
     text-align: left;
@@ -2200,7 +2200,21 @@ a {
     text-shadow: 0 0 8px var(--pc-glow);
 }
 
-/* --- Image area: team logo watermark behind circular headshot --- */
+/* --- Team logo: absolute on .pc-inner, centered (RN: top=67/395=17%, left=10/280=3.6%, 260/280=92.9%) --- */
+.pc-logo-bg {
+    position: absolute;
+    top: 17%;
+    left: 3.6%;
+    width: 92.9%;
+    aspect-ratio: 1;
+    object-fit: contain;
+    opacity: 0.08;
+    pointer-events: none;
+    user-select: none;
+    z-index: 1;
+}
+
+/* --- Image area: flex container for circular headshot only --- */
 .pc-img-area {
     width: 100%;
     flex: 1;
@@ -2211,21 +2225,12 @@ a {
     justify-content: center;
     min-height: 0;
 }
-.pc-logo-bg {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    object-position: center;
-    opacity: 0.08;
-    pointer-events: none;
-    user-select: none;
-}
+
+/* --- Circular headshot: 43% = 120/280 from RN --- */
 .pc-img {
     position: relative;
-    z-index: 2;
-    width: 55%;
+    z-index: 3;
+    width: 43%;
     aspect-ratio: 1;
     border-radius: 50%;
     object-fit: cover;
@@ -2236,16 +2241,15 @@ a {
 
 /* --- Season text --- */
 .pc-season {
-    font-size: clamp(6px, 0.8vw, 7px);
+    font-size: clamp(6px, 0.8vw, 8px);
     font-weight: 500;
     color: rgba(255,255,255,0.32);
     letter-spacing: 1px;
-    text-align: left;
+    text-align: center;
     width: 100%;
     position: relative;
     z-index: 3;
     font-family: inherit;
-    text-transform: uppercase;
 }
 
 /* --- XP progress bar --- */
