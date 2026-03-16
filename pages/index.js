@@ -118,7 +118,7 @@ function PlayerCard({ name="LeBron James", team="LAL", teamFull="Los Angeles Lak
   const t = TIERS[tier] || TIERS.bronze;
   const tierIdx = TIER_ORDER.indexOf(tier);
   const nextTier = tierIdx < TIER_ORDER.length - 1 ? TIER_ORDER[tierIdx + 1] : null;
-  const prismaticText = t.prismatic ? { background:"linear-gradient(90deg,#A8D8EA,#E8B4F0,#A8EAC8,#D4B8F0)", WebkitBackgroundClip:"text", backgroundClip:"text", WebkitTextFillColor:"transparent", color:"transparent" } : {};
+  const prismaticText = t.prismatic ? { color:"#c8b8f0" } : {};
 
   const px = tilt.y / 8, py = tilt.x / 8;
 
@@ -260,7 +260,7 @@ function PlayerCard({ name="LeBron James", team="LAL", teamFull="Los Angeles Lak
                 {imageUrl ? (
                   <div style={{ position:"relative", width:180, height:180, display:"flex", alignItems:"center", justifyContent:"center" }}>
                     <div style={{ position:"absolute", inset:0, zIndex:1 }}><EnergyAura colors={t.auraColors} tier={tier} hovered={hovered}/></div>
-                    <img src={imageUrl} alt={name} style={{ width:120, height:120, borderRadius:"50%", objectFit:"cover", position:"relative", zIndex:3 }}/>
+                    <img src={imageUrl} alt={name} style={{ position:"absolute", top:"50%", left:"50%", transform:"translate(-50%,-50%)", width:120, height:120, borderRadius:"50%", objectFit:"cover", zIndex:10 }}/>
                   </div>
                 ) : <EnergyAura colors={t.auraColors} tier={tier} hovered={hovered}/>}
               </div>

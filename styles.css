@@ -3647,62 +3647,22 @@ a {
         justify-content: center;
     }
 
-    /* Cards-field — phone mockup below hero text */
+    /* Hide hero phone on mobile — feature slide has its own phone */
     #cards-field {
-        position: relative;
-        inset: auto;
-        order: 2;
-        width: 100%;
-        height: auto;
-        overflow: visible;
-        pointer-events: none;
-        display: flex;
-        justify-content: center;
-        margin-top: 2rem;
-        padding-bottom: 2.5rem;
-    }
-
-    .hero-scene {
-        width: 100%;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 0;
-        padding: 0;
-    }
-
-    /* Hide the player prop card images — phone is the hero focal point */
-    .hero-props {
         display: none;
-    }
-
-    .hero-phone-wrap {
-        margin-top: 0;
-        display: flex;
-        justify-content: center;
-    }
-
-    .hero-phone {
-        width: min(210px, 56vw);
-        transform: rotateY(-6deg) rotateX(4deg) rotateZ(-1.5deg);
-    }
-
-    .hero-phone-glow {
-        width: 280px;
-        height: 280px;
     }
 
     /* ── FEATURES ── */
     .feature-slide {
-        padding: 3rem 6vw 3.5rem;
+        padding: 3.5rem 6vw 4rem;
         min-height: auto;
     }
 
-    /* Visual on top, text below */
+    /* Text on top, visual below */
     .slide-inner {
         flex-direction: column;
-        gap: 2.2rem;
-        align-items: center;
+        gap: 2.5rem;
+        align-items: flex-start;
     }
 
     .slide-text,
@@ -3710,14 +3670,12 @@ a {
         flex: none;
         width: 100%;
         max-width: 100%;
-        order: 2;
     }
 
     .slide-visual {
         flex: none;
         width: 100%;
         justify-content: center;
-        order: 1;
     }
 
     .slide-meta {
@@ -3735,7 +3693,8 @@ a {
 
     /* Slide 1 — phone frame */
     .slide-phone-frame {
-        width: min(230px, 62vw);
+        width: min(260px, 70vw);
+        margin: 0 auto;
     }
 
     /* Slide 2 — player cards stacked, centered */
