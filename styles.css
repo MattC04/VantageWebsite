@@ -3578,148 +3578,131 @@ a {
     }
 }
 /* ============================================================
-   MOBILE — full responsive layout (max-width: 768px)
+   MOBILE — full responsive layout (≤ 768px)
    ============================================================ */
 
 @media (max-width: 768px) {
 
-    /* Prevent horizontal overflow from any element */
+    /* ── GLOBAL ── */
     body, #site {
         overflow-x: hidden;
     }
 
     /* ── NAV ── */
     #nav {
-        padding: 0 5vw;
+        padding: 0 6vw;
     }
 
     /* ── HERO ── */
     #hero {
         min-height: auto;
-        padding: calc(var(--nav-h) + 1.5rem) 0 3rem;
+        padding: calc(var(--nav-h) + 2.5rem) 6vw 0;
+        flex-direction: column;
         align-items: center;
         justify-content: flex-start;
-        flex-direction: column;
         overflow: hidden;
+        gap: 0;
     }
 
-    /* Text block — centered, on top */
+    /* Hero text — centered, comes first */
     .hero-center {
         order: 1;
         align-items: center;
         text-align: center;
         max-width: 100%;
-        padding: 0 5vw;
+        padding: 0;
+        gap: 1.1rem;
+    }
+
+    .hero-eyebrow {
+        margin: 0 auto;
     }
 
     .hero-headline {
-        font-size: clamp(2.8rem, 10.5vw, 4rem);
+        font-size: clamp(2.6rem, 10vw, 3.8rem);
         text-align: center;
     }
 
     .hero-sub {
         font-size: 1rem;
         text-align: center;
-        max-width: 320px;
+        max-width: 100%;
     }
 
     .hero-actions {
         flex-direction: column;
         align-items: center;
         width: 100%;
-        gap: 0.85rem;
+        gap: 1rem;
     }
 
-    .hero-actions a,
-    .hero-actions button {
+    .hero-actions .blob-btn--cta {
         width: 100%;
-        max-width: 280px;
-        text-align: center;
+        max-width: 300px;
         justify-content: center;
+        text-align: center;
     }
 
     .hero-count {
         justify-content: center;
     }
 
-    /* Cards-field — relative flow, below the text */
+    /* Cards-field — phone mockup below hero text */
     #cards-field {
         position: relative;
         inset: auto;
         order: 2;
         width: 100%;
-        height: 240px;
-        overflow: hidden;
+        height: auto;
+        overflow: visible;
         pointer-events: none;
         display: flex;
-        align-items: flex-start;
         justify-content: center;
-        margin-top: 1.5rem;
+        margin-top: 2rem;
+        padding-bottom: 2.5rem;
     }
 
-    /* Hero scene — side-by-side: cards left, phone right */
     .hero-scene {
-        width: auto;
-        display: flex;
-        flex-direction: row;
-        align-items: flex-start;
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
         justify-content: center;
-        gap: 20px;
+        gap: 0;
         padding: 0;
     }
 
-    /* Player card images — scaled down */
+    /* Hide the player prop card images — phone is the hero focal point */
     .hero-props {
-        display: block;
-        position: relative;
-        width: 120px;
-        height: 240px;
-        margin-left: 0;
-        flex-shrink: 0;
+        display: none;
     }
 
-    .hero-prop-wrap {
-        width: 68px;
-    }
-
-    .hero-prop-wrap--curry {
-        top: 0;
-        left: 0;
-        transform: perspective(900px) rotateY(28deg) rotateX(10deg) rotateZ(-15deg);
-    }
-
-    .hero-prop-wrap--lebron {
-        top: 118px;
-        left: 20px;
-        transform: perspective(900px) rotateY(-26deg) rotateX(-8deg) rotateZ(13deg);
-    }
-
-    /* Phone — beside the cards */
     .hero-phone-wrap {
-        flex-shrink: 0;
-        margin-top: 10px;
+        margin-top: 0;
+        display: flex;
+        justify-content: center;
     }
 
     .hero-phone {
-        width: 100px;
-        transform: rotateY(-8deg) rotateX(5deg) rotateZ(-2deg);
+        width: min(210px, 56vw);
+        transform: rotateY(-6deg) rotateX(4deg) rotateZ(-1.5deg);
     }
 
     .hero-phone-glow {
-        width: 180px;
-        height: 180px;
+        width: 280px;
+        height: 280px;
     }
 
-    /* ── FEATURES — slide layout ── */
+    /* ── FEATURES ── */
     .feature-slide {
-        padding: 2.5rem 5vw;
+        padding: 3rem 6vw 3.5rem;
         min-height: auto;
     }
 
+    /* Visual on top, text below */
     .slide-inner {
         flex-direction: column;
-        gap: 2rem;
-        align-items: flex-start;
+        gap: 2.2rem;
+        align-items: center;
     }
 
     .slide-text,
@@ -3727,24 +3710,35 @@ a {
         flex: none;
         width: 100%;
         max-width: 100%;
+        order: 2;
     }
 
     .slide-visual {
         flex: none;
         width: 100%;
         justify-content: center;
+        order: 1;
+    }
+
+    .slide-meta {
+        justify-content: flex-start;
     }
 
     .slide-heading {
-        font-size: clamp(2.2rem, 9vw, 3.2rem);
+        font-size: clamp(2rem, 8.5vw, 2.8rem);
     }
 
-    /* ── Phone frame — slide 1 ── */
+    .slide-body {
+        font-size: 0.95rem;
+        line-height: 1.7;
+    }
+
+    /* Slide 1 — phone frame */
     .slide-phone-frame {
-        width: min(240px, 64vw);
+        width: min(230px, 62vw);
     }
 
-    /* ── Player cards — slide 2 ── */
+    /* Slide 2 — player cards stacked, centered */
     .slide-visual--cards {
         align-items: center;
         padding-top: 0;
@@ -3753,7 +3747,7 @@ a {
     .slide-cards-stack {
         flex-direction: column;
         align-items: center;
-        gap: 20px;
+        gap: 24px;
         max-width: 100%;
     }
 
@@ -3773,12 +3767,30 @@ a {
 
     /* ── WAITLIST ── */
     #waitlist {
-        padding: 3rem 5vw;
+        padding: 3.5rem 6vw;
     }
 
     .waitlist-inner {
         flex-direction: column;
         gap: 2.5rem;
+        align-items: stretch;
+    }
+
+    .waitlist-text {
+        width: 100%;
+    }
+
+    .wl-eyebrow {
+        display: block;
+        text-align: left;
+    }
+
+    .wl-heading {
+        font-size: clamp(1.9rem, 7.5vw, 2.8rem);
+    }
+
+    .wl-sub {
+        font-size: 0.95rem;
     }
 
     .waitlist-form-wrap {
@@ -3787,21 +3799,23 @@ a {
         max-width: 100%;
     }
 
-    .wl-heading {
-        font-size: clamp(2rem, 8vw, 3rem);
+    /* ── FOOTER ── */
+    #footer {
+        padding: 2rem 6vw;
     }
 
-    /* ── FOOTER ── */
     .footer-inner {
         flex-direction: column;
-        align-items: flex-start;
-        gap: 1.2rem;
-        padding: 2rem 5vw;
+        align-items: center;
+        text-align: center;
+        gap: 1rem;
+        padding: 0;
     }
 
     .footer-links {
         flex-wrap: wrap;
-        gap: 0.75rem;
+        justify-content: center;
+        gap: 0.9rem;
     }
 }
 
