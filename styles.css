@@ -3579,58 +3579,57 @@ a {
 
 @media (max-width: 768px) {
 
+    /* Prevent horizontal overflow from any element */
+    body, #site {
+        overflow-x: hidden;
+    }
+
     /* ── NAV ── */
     #nav {
-        padding: 0 1.2rem;
+        padding: 0 5vw;
     }
 
     /* ── HERO ── */
     #hero {
         min-height: auto;
-        padding: calc(var(--nav-h) + 2rem) 0 2.5rem;
+        padding: calc(var(--nav-h) + 1.5rem) 0 3rem;
         align-items: center;
         justify-content: flex-start;
         flex-direction: column;
+        overflow: hidden;
     }
 
-    .hero-scene {
-        flex-direction: column;
-        align-items: center;
-        width: 100%;
-        gap: 1.5rem;
-        padding: 0 1.2rem;
-    }
-
+    /* Text block — centered, on top */
     .hero-center {
         order: 1;
         align-items: center;
         text-align: center;
         max-width: 100%;
-        padding: 0;
+        padding: 0 5vw;
     }
 
     .hero-headline {
-        font-size: clamp(2.8rem, 11vw, 4.2rem);
+        font-size: clamp(2.8rem, 10.5vw, 4rem);
         text-align: center;
     }
 
     .hero-sub {
         font-size: 1rem;
         text-align: center;
-        max-width: 340px;
+        max-width: 320px;
     }
 
     .hero-actions {
         flex-direction: column;
         align-items: center;
         width: 100%;
-        gap: 0.9rem;
+        gap: 0.85rem;
     }
 
     .hero-actions a,
     .hero-actions button {
         width: 100%;
-        max-width: 300px;
+        max-width: 280px;
         text-align: center;
         justify-content: center;
     }
@@ -3639,27 +3638,72 @@ a {
         justify-content: center;
     }
 
-    .hero-props {
-        display: none;
+    /* Cards-field — relative flow, below the text */
+    #cards-field {
+        position: relative;
+        inset: auto;
+        order: 2;
+        width: 100%;
+        height: 240px;
+        overflow: hidden;
+        pointer-events: none;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        margin-top: 1.5rem;
     }
 
+    /* Hero scene — side-by-side: cards left, phone right */
+    .hero-scene {
+        width: auto;
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        justify-content: center;
+        gap: 20px;
+        padding: 0;
+    }
+
+    /* Player card images — scaled down */
+    .hero-props {
+        display: block;
+        position: relative;
+        width: 120px;
+        height: 240px;
+        margin-left: 0;
+        flex-shrink: 0;
+    }
+
+    .hero-prop-wrap {
+        width: 68px;
+    }
+
+    .hero-prop-wrap--curry {
+        top: 0;
+        left: 0;
+        transform: perspective(900px) rotateY(28deg) rotateX(10deg) rotateZ(-15deg);
+    }
+
+    .hero-prop-wrap--lebron {
+        top: 118px;
+        left: 20px;
+        transform: perspective(900px) rotateY(-26deg) rotateX(-8deg) rotateZ(13deg);
+    }
+
+    /* Phone — beside the cards */
     .hero-phone-wrap {
-        order: 2;
-        margin-top: 0;
+        flex-shrink: 0;
+        margin-top: 10px;
     }
 
     .hero-phone {
-        width: min(220px, 58vw);
-        transform: rotateY(-8deg) rotateX(6deg) rotateZ(-2deg) scale(1);
+        width: 100px;
+        transform: rotateY(-8deg) rotateX(5deg) rotateZ(-2deg);
     }
 
     .hero-phone-glow {
-        width: 300px;
-        height: 300px;
-    }
-
-    #cards-field {
-        display: none;
+        width: 180px;
+        height: 180px;
     }
 
     /* ── FEATURES — slide layout ── */
@@ -3744,6 +3788,7 @@ a {
         flex-direction: column;
         align-items: flex-start;
         gap: 1.2rem;
+        padding: 2rem 5vw;
     }
 
     .footer-links {
