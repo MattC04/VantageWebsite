@@ -88,7 +88,7 @@ export default async function handler(req, res) {
 
       // Send welcome email to new users (fire-and-forget, don't block response)
       // For referral joins newCode is null — use refCode (the room they're joining) as the squad URL
-      const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://vantage.com";
+      const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://vantagedfs.com";
       const emailSquadCode = isReferral ? refCode : newCode;
       sendWaitlistWelcome({
         toEmail: normalizedEmail,
