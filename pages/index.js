@@ -110,10 +110,11 @@ function EnergyAura({ colors: c, tier, hovered }) {
 
 function PlayerCard({ name="LeBron James", team="LAL", teamFull="Los Angeles Lakers", season="2025–2026", sport="basketball", imageUrl=null, teamLogoUrl=null, betsPlaced=47, wins=34, wagered=2350, tier="gold", progress=0.65, rank=47 }) {
   const [hovered, setHovered] = useState(false);
-  const [flipped, setFlipped] = useState(false);
+  const [showStats, setShowStats] = useState(false);
   const cardRef = useRef(null);
   const [tilt, setTilt] = useState({ x:0, y:0 });
   const [shinePos, setShinePos] = useState({ x:50, y:50 });
+  const effectiveHovered = hovered || showStats;
 
   const t = TIERS[tier] || TIERS.bronze;
   const tierIdx = TIER_ORDER.indexOf(tier);
@@ -139,14 +140,12 @@ function PlayerCard({ name="LeBron James", team="LAL", teamFull="Los Angeles Lak
       <div ref={cardRef} onMouseMove={onMove}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => { setHovered(false); setTilt({ x:0, y:0 }); setShinePos({ x:50, y:50 }); }}
-        onTouchStart={onTouchStart}
-        onTouchEnd={onTouchEnd}
-        onClick={() => setFlipped(f => !f)}
+        onClick={() => setShowStats(s => !s)}
         style={{
           position:"relative", width:280, height:420, transformStyle:"preserve-3d", WebkitTransformStyle:"preserve-3d",
           transition: hovered ? "transform 0.1s ease-out, -webkit-transform 0.1s ease-out" : "transform 0.6s ease-out, -webkit-transform 0.6s ease-out",
-          transform: `rotateX(${flipped ? 0 : tilt.x}deg) rotateY(${flipped ? 180 : tilt.y}deg)`,
-          WebkitTransform: `rotateX(${flipped ? 0 : tilt.x}deg) rotateY(${flipped ? 180 : tilt.y}deg)`,
+          transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
+          WebkitTransform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
           cursor:"pointer", userSelect:"none", fontFamily:"'Plus Jakarta Sans', sans-serif",
         }}
       >
@@ -154,7 +153,7 @@ function PlayerCard({ name="LeBron James", team="LAL", teamFull="Los Angeles Lak
         <div style={{
           position:"absolute", width:280, height:420, borderRadius:16, padding:3,
           background: t.border, backgroundSize: t.prismatic ? "400% 400%" : undefined,
-          animation: t.prismatic ? "prismaticShift 4s ease infinite" : hovered && !flipped ? `borderPulse-${tier} 2s ease infinite` : undefined,
+          animation: t.prismatic ? "prismaticShift 4s ease infinite" : effectiveHovered ? `borderPulse-${tier} 2s ease infinite` : undefined,
           backfaceVisibility:"hidden", WebkitBackfaceVisibility:"hidden",
           boxShadow: hovered ? `0 20px 50px rgba(0,0,0,0.5), 0 0 40px ${t.glow}` : `0 4px 20px rgba(0,0,0,0.5)`,
         }}>
@@ -251,23 +250,23 @@ function PlayerCard({ name="LeBron James", team="LAL", teamFull="Los Angeles Lak
               display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", paddingTop:18,
               transform:`translate(${px*3}px, ${py*3}px)`, transition: hovered ? "none" : "transform 0.5s ease",
             }}>
-              <div style={{ textAlign:"center", marginBottom:2, transition:slide, transform: hovered ? "translateX(16px)" : "translateX(0)" }}>
+              <div style={{ textAlign:"center", marginBottom:2, transition:slide, transform: effectiveHovered ? "translateX(16px)" : "translateX(0)" }}>
                 <div style={{ fontSize: name.length > 20 ? 17 : name.length > 15 ? 19 : 22, fontWeight:800, color:"rgba(255,255,255,0.95)", letterSpacing:-0.3, lineHeight:1.1, textShadow:`0 0 20px ${t.glow}`, padding:"0 16px" }}>{name}</div>
                 <div style={{ fontSize:11, fontWeight:600, letterSpacing:2, color:t.accent, opacity:0.5, marginTop:4 }}>{team}</div>
               </div>
 
-              <div style={{ marginTop:-6, marginBottom:-6, transition:slide, transform: hovered ? `translateX(32px) scale(1.04) translate(${px*2}px, ${py*2}px)` : "translateX(0) scale(1)" }}>
+              <div style={{ marginTop:-6, marginBottom:-6, transition:slide, transform: effectiveHovered ? `translateX(32px) scale(1.04) translate(${px*2}px, ${py*2}px)` : "translateX(0) scale(1)" }}>
                 {imageUrl ? (
                   <div style={{ position:"relative", width:180, height:180, display:"flex", alignItems:"center", justifyContent:"center" }}>
-                    <div style={{ position:"absolute", inset:0, zIndex:1 }}><EnergyAura colors={t.auraColors} tier={tier} hovered={hovered}/></div>
+                    <div style={{ position:"absolute", inset:0, zIndex:1 }}><EnergyAura colors={t.auraColors} tier={tier} hovered={effectiveHovered}/></div>
                     <img src={imageUrl} alt={name}
                       onError={(e) => { e.target.style.display="none"; }}
                       style={{ position:"absolute", top:"50%", left:"50%", transform:"translate(-50%,-50%) translateZ(2px)", WebkitTransform:"translate(-50%,-50%) translateZ(2px)", width:120, height:120, borderRadius:"50%", objectFit:"cover", zIndex:10 }}/>
                   </div>
-                ) : <EnergyAura colors={t.auraColors} tier={tier} hovered={hovered}/>}
+                ) : <EnergyAura colors={t.auraColors} tier={tier} hovered={effectiveHovered}/>}
               </div>
 
-              <div style={{ transition:slide, transform: hovered ? "translateX(16px)" : "translateX(0)" }}>
+              <div style={{ transition:slide, transform: effectiveHovered ? "translateX(16px)" : "translateX(0)" }}>
                 <span style={{ fontSize:12, fontWeight:600, letterSpacing:1.5, color:"rgba(255,255,255,0.3)" }}>{season}</span>
               </div>
 
@@ -287,8 +286,8 @@ function PlayerCard({ name="LeBron James", team="LAL", teamFull="Los Angeles Lak
             <div style={{
               position:"absolute", left:0, top:44, bottom:65, width:115, padding:"12px 16px",
               display:"flex", flexDirection:"column", justifyContent:"center", gap:14,
-              zIndex:10, pointerEvents: hovered ? "auto" : "none",
-              opacity: hovered ? 1 : 0, transform: hovered ? "translateX(0)" : "translateX(-20px)",
+              zIndex:10, pointerEvents: effectiveHovered ? "auto" : "none",
+              opacity: effectiveHovered ? 1 : 0, transform: effectiveHovered ? "translateX(0)" : "translateX(-20px)",
               transition:"opacity 0.35s ease 0.08s, transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94) 0.08s",
             }}>
               {[["BETS", betsPlaced], ["WINS", wins], ["WAGERED", `$${wagered.toLocaleString()}`]].map(([l, v]) => (
@@ -311,47 +310,6 @@ function PlayerCard({ name="LeBron James", team="LAL", teamFull="Los Angeles Lak
           </div>
         </div>
 
-        {/* BACK FACE */}
-        <div style={{
-          position:"absolute", width:280, height:420, borderRadius:16, padding:3,
-          background: t.border, backgroundSize: t.prismatic ? "400% 400%" : undefined,
-          animation: t.prismatic ? "prismaticShift 4s ease infinite" : undefined,
-          backfaceVisibility:"hidden", WebkitBackfaceVisibility:"hidden",
-          transform:"rotateY(180deg)", WebkitTransform:"rotateY(180deg)",
-          boxShadow:`0 4px 20px rgba(0,0,0,0.5)`,
-        }}>
-          <div style={{ position:"relative", width:274, height:414, borderRadius:13, background:t.inner, overflow:"hidden", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:18 }}>
-            <div style={{ position:"absolute", inset:0, opacity:0.05, backgroundImage:`url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h3v3H0zM3 3h3v3H3z' fill='%23fff' fill-opacity='0.4'/%3E%3C/svg%3E")`, backgroundSize:"4px 4px" }}/>
-            <div style={{ position:"absolute", top:6, left:6, right:6, bottom:6, border:`1px solid ${t.accent}12`, borderRadius:8 }}/>
-            <svg width="70" height="70" viewBox="0 0 28 28" fill="none" style={{ filter:`drop-shadow(0 0 20px ${t.glow})` }}>
-              <path d="M4 6L14 24L24 6" stroke={t.accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" opacity="0.8"/>
-              <path d="M8 6L14 18L20 6" stroke={t.accent} strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" opacity="0.25"/>
-            </svg>
-            <div style={{ fontSize:12, fontWeight:800, letterSpacing:6, color:t.accent, opacity:0.6 }}>VANTAGE</div>
-            <div style={{ fontSize:8, fontWeight:600, letterSpacing:4, color:t.accent, opacity:0.3 }}>COLLECTIBLES</div>
-            <div style={{ width:50, height:1, background:`linear-gradient(90deg, transparent, ${t.accent}30, transparent)` }}/>
-            <div style={{ textAlign:"center", lineHeight:1.6 }}>
-              <div style={{ fontSize:18, fontWeight:800, color:"rgba(255,255,255,0.85)" }}>{name}</div>
-              <div style={{ fontSize:12, fontWeight:600, color:t.accent, opacity:0.5 }}>{teamFull}</div>
-              <div style={{ fontSize:11, fontWeight:600, color:"rgba(255,255,255,0.3)", marginTop:4 }}>{season}</div>
-            </div>
-            <div style={{ width:50, height:1, background:`linear-gradient(90deg, transparent, ${t.accent}20, transparent)` }}/>
-            <div style={{ display:"flex", gap:28 }}>
-              {[["BETS", betsPlaced], ["WINS", wins], ["WIN%", `${Math.round(wins / betsPlaced * 100)}%`]].map(([l, v]) => (
-                <div key={l} style={{ textAlign:"center" }}>
-                  <div style={{ fontSize:8, fontWeight:600, letterSpacing:1.5, color:t.accent, opacity:0.4 }}>{l}</div>
-                  <div style={{ fontSize:20, fontWeight:800, color:"rgba(255,255,255,0.85)" }}>{v}</div>
-                </div>
-              ))}
-            </div>
-            <div style={{ display:"flex", alignItems:"center", gap:16, marginTop:4 }}>
-              <span style={{ fontSize:16, fontWeight:900, color:t.accent, opacity:0.5, fontFamily:"monospace" }}>RANK #{rank}</span>
-              <div style={{ padding:"4px 14px", borderRadius:6, border:`1px solid ${t.accent}30`, background:`${t.accent}08` }}>
-                <span style={{ fontSize:10, fontWeight:700, letterSpacing:2, color:t.accent }}>{t.label}</span>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );

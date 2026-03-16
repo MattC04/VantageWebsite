@@ -221,6 +221,7 @@ function startMainAnimations() {
   lenis.on("scroll", ScrollTrigger.update);
   gsap.ticker.add((t) => lenis.raf(t * 1000));
   gsap.ticker.lagSmoothing(0);
+  lenis.scrollTo(0, { immediate: true });
 
   /* ── Cursor grid + spotlight ── */
   const spotlight = document.getElementById("cursor-spotlight");
