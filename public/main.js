@@ -479,14 +479,10 @@ function startMainAnimations() {
       btn.disabled = true;
 
       try {
-        // Pick up any referral code from URL (?ref=xxx)
-        const refCode = window.__VANTAGE_REF_CODE__ ||
-          new URLSearchParams(window.location.search).get("ref") || "";
-
         const res = await fetch("/api/waitlist/join", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, share_code: refCode || undefined }),
+          body: JSON.stringify({ email }),
         });
 
         const data = await res.json();

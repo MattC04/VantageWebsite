@@ -782,16 +782,12 @@ function startMainAnimations() {
       try {
         const useJoinApi =
           typeof window !== "undefined" && !!window.__VANTAGE_JOIN_API__;
-        const refCode = new URLSearchParams(window.location.search).get("ref");
 
         if (useJoinApi) {
           const res = await fetch("/api/waitlist/join", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              email,
-              ...(refCode ? { share_code: refCode } : {}),
-            }),
+            body: JSON.stringify({ email }),
           });
 
           const json = await res.json().catch(() => ({}));
@@ -800,18 +796,9 @@ function startMainAnimations() {
               json.error || "Something went wrong. Please try again.",
             );
 
-          if (json.share_code) {
-            try {
-              localStorage.setItem("vantage_email", email.toLowerCase());
-              localStorage.setItem("vantage_share_code", json.share_code);
-            } catch {}
-
-            const squadBtn = document.getElementById("view-squad-btn");
-            if (squadBtn) {
-              squadBtn.href = `/squad/${json.share_code}`;
-              squadBtn.style.display = "inline-block";
-            }
-          }
+          try {
+            localStorage.setItem("vantage_email", email.toLowerCase());
+          } catch {}
         } else {
           await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
             to_email: email,
