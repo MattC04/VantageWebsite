@@ -562,7 +562,7 @@ export default function Home() {
                 </span>
               </a>
               <span className="hero-count">
-                <strong>100+</strong> on the list
+                <strong>121</strong> on the list
               </span>
             </div>
           </div>
