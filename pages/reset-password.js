@@ -5,16 +5,18 @@ import { supabaseAnon } from "../lib/supabase";
 export default function ResetPassword() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [status, setStatus] = useState("loading"); // loading | ready | submitting | success | error
+  const [status, setStatus] = useState("loading"); // loading | mobile | ready | submitting | success | error
   const [errorMessage, setErrorMessage] = useState("");
-  const [mobileRedirect, setMobileRedirect] = useState(false);
 
-  // Store parsed tokens so establishSession can be called from the fallback button
+  // Store parsed tokens so establishSession can be called from button clicks
   const tokensRef = useRef(null);
+  const deepLinkRef = useRef("");
 
   async function establishSession() {
     const tokens = tokensRef.current;
     if (!tokens) return;
+
+    setStatus("loading");
 
     let sessionError = null;
 
@@ -48,6 +50,10 @@ export default function ResetPassword() {
     }
   }
 
+  function openInApp() {
+    window.location.href = deepLinkRef.current;
+  }
+
   useEffect(() => {
     async function init() {
       // Supabase may deliver tokens as hash fragment OR query params depending
@@ -72,23 +78,20 @@ export default function ResetPassword() {
         }
       }
 
-      // Store tokens for later use by establishSession
+      // Store tokens for later use
       tokensRef.current = { accessToken, refreshToken, tokenHash };
 
-      // Mobile users: attempt deep link, keep spinner showing
+      // Build deep link URL for the "Open in app" button
+      if (accessToken) {
+        deepLinkRef.current = `vantage://reset-password#${hash}`;
+      } else if (tokenHash) {
+        deepLinkRef.current = `vantage://reset-password?token_hash=${tokenHash}&type=recovery`;
+      }
+
+      // Mobile users: show choice screen (no auto-redirect to avoid iOS dialog issues)
       const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
       if (isMobile) {
-        setMobileRedirect(true);
-
-        if (accessToken) {
-          window.location.href = `vantage://reset-password#${hash}`;
-        } else if (tokenHash) {
-          window.location.href = `vantage://reset-password?token_hash=${tokenHash}&type=recovery`;
-        }
-
-        // Don't auto-fallback — the iOS "Open in app?" dialog is non-blocking,
-        // so any state update here would dismiss it. Let the user tap the
-        // fallback link manually if the app doesn't open.
+        setStatus("mobile");
         return;
       }
 
@@ -145,17 +148,25 @@ export default function ResetPassword() {
           {status === "loading" && (
             <div className="rp-center">
               <div className="rp-spinner" />
-              <p className="rp-sub">
-                {mobileRedirect ? "Opening the Vantage app…" : "Verifying your reset link…"}
+              <p className="rp-sub">Verifying your reset link…</p>
+            </div>
+          )}
+
+          {status === "mobile" && (
+            <div className="rp-center">
+              <h2 className="rp-heading">Reset Your Password</h2>
+              <p className="rp-sub" style={{ marginBottom: "1.5rem" }}>
+                Choose how you'd like to reset your password.
               </p>
-              {mobileRedirect && (
-                <button
-                  className="rp-link"
-                  onClick={() => establishSession()}
-                >
-                  Use web form instead
-                </button>
-              )}
+              <button className="rp-btn" onClick={openInApp}>
+                Open in Vantage App
+              </button>
+              <button
+                className="rp-link"
+                onClick={() => establishSession()}
+              >
+                Reset password on this page instead
+              </button>
             </div>
           )}
 

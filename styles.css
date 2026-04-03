@@ -4185,13 +4185,17 @@ h6,
 .rp-link {
     background: none;
     border: none;
-    color: var(--accent);
+    color: var(--ivory-muted);
     font-family: var(--font);
     font-size: 0.8rem;
     cursor: pointer;
-    margin-top: 1rem;
+    margin-top: 1.25rem;
     text-decoration: underline;
     display: inline-block;
+}
+
+.rp-link:hover {
+    color: var(--accent);
 }
 
 .rp-icon {
