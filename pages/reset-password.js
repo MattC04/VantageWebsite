@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { supabaseAnon } from "../lib/supabase";
 
 export default function ResetPassword() {
@@ -7,31 +7,48 @@ export default function ResetPassword() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [status, setStatus] = useState("loading"); // loading | ready | submitting | success | error
   const [errorMessage, setErrorMessage] = useState("");
-  const sessionReady = useRef(false);
 
   useEffect(() => {
-    const {
-      data: { subscription },
-    } = supabaseAnon.auth.onAuthStateChange((event) => {
-      if (event === "PASSWORD_RECOVERY") {
-        sessionReady.current = true;
-        setStatus("ready");
-      }
-    });
+    async function init() {
+      const hash = window.location.hash.substring(1);
+      const params = new URLSearchParams(hash);
+      const accessToken = params.get("access_token");
+      const refreshToken = params.get("refresh_token");
+      const type = params.get("type");
 
-    const timeout = setTimeout(() => {
-      if (!sessionReady.current) {
+      if (!accessToken || !refreshToken || type !== "recovery") {
         setStatus("error");
         setErrorMessage(
           "This reset link has expired or is invalid. Please request a new one from the Vantage app."
         );
+        return;
       }
-    }, 5000);
 
-    return () => {
-      subscription.unsubscribe();
-      clearTimeout(timeout);
-    };
+      // Mobile users: redirect to the app's deep link
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      if (isMobile) {
+        window.location.href = `vantage://reset-password#${hash}`;
+        return;
+      }
+
+      // Desktop: establish session with the recovery tokens
+      const { error: sessionError } = await supabaseAnon.auth.setSession({
+        access_token: accessToken,
+        refresh_token: refreshToken,
+      });
+
+      if (sessionError) {
+        setStatus("error");
+        setErrorMessage(
+          "This reset link has expired or is invalid. Please request a new one from the Vantage app."
+        );
+        return;
+      }
+
+      setStatus("ready");
+    }
+
+    init();
   }, []);
 
   function validate() {
