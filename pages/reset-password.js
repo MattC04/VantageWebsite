@@ -35,18 +35,44 @@ export default function ResetPassword() {
       // Mobile users: redirect to the app deep link
       const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
       if (isMobile) {
-        if (accessToken) {
-          window.location.replace(`vantage://reset-password#${hash}`);
-        } else if (tokenHash) {
-          window.location.replace(
-            `vantage://reset-password?token_hash=${tokenHash}&type=recovery`
-          );
+        let didHide = false;
+
+        function onVisibilityChange() {
+          if (document.visibilityState === "hidden") {
+            didHide = true;
+            cleanup();
+          }
         }
 
-        // Fall back to web form if the app doesn't open within 1.5s
-        setTimeout(async () => {
-          await establishSession();
-        }, 1500);
+        function onFocus() {
+          if (!didHide) {
+            cleanup();
+            establishSession();
+          }
+        }
+
+        function cleanup() {
+          document.removeEventListener("visibilitychange", onVisibilityChange);
+          window.removeEventListener("focus", onFocus);
+        }
+
+        document.addEventListener("visibilitychange", onVisibilityChange);
+        window.addEventListener("focus", onFocus);
+
+        if (accessToken) {
+          window.location.href = `vantage://reset-password#${hash}`;
+        } else if (tokenHash) {
+          window.location.href = `vantage://reset-password?token_hash=${tokenHash}&type=recovery`;
+        }
+
+        // Safety net if neither event fires
+        setTimeout(() => {
+          if (!didHide) {
+            cleanup();
+            establishSession();
+          }
+        }, 10000);
+
         return;
       }
 
