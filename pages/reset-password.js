@@ -10,42 +10,81 @@ export default function ResetPassword() {
 
   useEffect(() => {
     async function init() {
+      // Supabase may deliver tokens as hash fragment OR query params depending
+      // on browser/redirect behavior. Check both.
       const hash = window.location.hash.substring(1);
-      const params = new URLSearchParams(hash);
-      const accessToken = params.get("access_token");
-      const refreshToken = params.get("refresh_token");
-      const type = params.get("type");
+      const hashParams = new URLSearchParams(hash);
+      const queryParams = new URLSearchParams(window.location.search);
 
-      if (!accessToken || !refreshToken || type !== "recovery") {
-        setStatus("error");
-        setErrorMessage(
-          "This reset link has expired or is invalid. Please request a new one from the Vantage app."
-        );
-        return;
+      const accessToken = hashParams.get("access_token") || queryParams.get("access_token");
+      const refreshToken = hashParams.get("refresh_token") || queryParams.get("refresh_token");
+      const type = hashParams.get("type") || queryParams.get("type");
+      const tokenHash = queryParams.get("token_hash");
+
+      // No tokens at all — invalid link
+      if (!type || type !== "recovery") {
+        if (!tokenHash) {
+          setStatus("error");
+          setErrorMessage(
+            "This reset link has expired or is invalid. Please request a new one from the Vantage app."
+          );
+          return;
+        }
       }
 
-      // Mobile users: redirect to the app's deep link
+      // Mobile users: redirect to the app deep link
       const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
       if (isMobile) {
-        window.location.href = `vantage://reset-password#${hash}`;
+        if (accessToken) {
+          window.location.replace(`vantage://reset-password#${hash}`);
+        } else if (tokenHash) {
+          window.location.replace(
+            `vantage://reset-password?token_hash=${tokenHash}&type=recovery`
+          );
+        }
+
+        // Fall back to web form if the app doesn't open within 1.5s
+        setTimeout(async () => {
+          await establishSession();
+        }, 1500);
         return;
       }
 
-      // Desktop: establish session with the recovery tokens
-      const { error: sessionError } = await supabaseAnon.auth.setSession({
-        access_token: accessToken,
-        refresh_token: refreshToken,
-      });
+      // Desktop: establish session immediately
+      await establishSession();
 
-      if (sessionError) {
-        setStatus("error");
-        setErrorMessage(
-          "This reset link has expired or is invalid. Please request a new one from the Vantage app."
-        );
-        return;
+      async function establishSession() {
+        let sessionError = null;
+
+        if (accessToken && refreshToken) {
+          const result = await supabaseAnon.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken,
+          });
+          sessionError = result.error;
+        } else if (tokenHash) {
+          const result = await supabaseAnon.auth.verifyOtp({
+            token_hash: tokenHash,
+            type: "recovery",
+          });
+          sessionError = result.error;
+        } else {
+          setStatus("error");
+          setErrorMessage(
+            "This reset link has expired or is invalid. Please request a new one from the Vantage app."
+          );
+          return;
+        }
+
+        if (sessionError) {
+          setStatus("error");
+          setErrorMessage(
+            "This reset link has expired or is invalid. Please request a new one from the Vantage app."
+          );
+        } else {
+          setStatus("ready");
+        }
       }
-
-      setStatus("ready");
     }
 
     init();
