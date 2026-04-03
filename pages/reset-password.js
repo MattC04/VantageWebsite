@@ -71,7 +71,7 @@ export default function ResetPassword() {
             cleanup();
             establishSession();
           }
-        }, 10000);
+        }, 1500);
 
         return;
       }
