@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { supabaseAnon } from "../lib/supabase";
 
 export default function ResetPassword() {
@@ -7,6 +7,46 @@ export default function ResetPassword() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [status, setStatus] = useState("loading"); // loading | ready | submitting | success | error
   const [errorMessage, setErrorMessage] = useState("");
+  const [mobileRedirect, setMobileRedirect] = useState(false);
+
+  // Store parsed tokens so establishSession can be called from the fallback button
+  const tokensRef = useRef(null);
+
+  async function establishSession() {
+    const tokens = tokensRef.current;
+    if (!tokens) return;
+
+    let sessionError = null;
+
+    if (tokens.accessToken && tokens.refreshToken) {
+      const result = await supabaseAnon.auth.setSession({
+        access_token: tokens.accessToken,
+        refresh_token: tokens.refreshToken,
+      });
+      sessionError = result.error;
+    } else if (tokens.tokenHash) {
+      const result = await supabaseAnon.auth.verifyOtp({
+        token_hash: tokens.tokenHash,
+        type: "recovery",
+      });
+      sessionError = result.error;
+    } else {
+      setStatus("error");
+      setErrorMessage(
+        "This reset link has expired or is invalid. Please request a new one from the Vantage app."
+      );
+      return;
+    }
+
+    if (sessionError) {
+      setStatus("error");
+      setErrorMessage(
+        "This reset link has expired or is invalid. Please request a new one from the Vantage app."
+      );
+    } else {
+      setStatus("ready");
+    }
+  }
 
   useEffect(() => {
     async function init() {
@@ -32,32 +72,13 @@ export default function ResetPassword() {
         }
       }
 
-      // Mobile users: redirect to the app deep link
+      // Store tokens for later use by establishSession
+      tokensRef.current = { accessToken, refreshToken, tokenHash };
+
+      // Mobile users: attempt deep link, keep spinner showing
       const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
       if (isMobile) {
-        let didHide = false;
-
-        function onVisibilityChange() {
-          if (document.visibilityState === "hidden") {
-            didHide = true;
-            cleanup();
-          }
-        }
-
-        function onFocus() {
-          if (!didHide) {
-            cleanup();
-            establishSession();
-          }
-        }
-
-        function cleanup() {
-          document.removeEventListener("visibilitychange", onVisibilityChange);
-          window.removeEventListener("focus", onFocus);
-        }
-
-        document.addEventListener("visibilitychange", onVisibilityChange);
-        window.addEventListener("focus", onFocus);
+        setMobileRedirect(true);
 
         if (accessToken) {
           window.location.href = `vantage://reset-password#${hash}`;
@@ -65,52 +86,14 @@ export default function ResetPassword() {
           window.location.href = `vantage://reset-password?token_hash=${tokenHash}&type=recovery`;
         }
 
-        // Safety net if neither event fires
-        setTimeout(() => {
-          if (!didHide) {
-            cleanup();
-            establishSession();
-          }
-        }, 1500);
-
+        // Don't auto-fallback — the iOS "Open in app?" dialog is non-blocking,
+        // so any state update here would dismiss it. Let the user tap the
+        // fallback link manually if the app doesn't open.
         return;
       }
 
       // Desktop: establish session immediately
       await establishSession();
-
-      async function establishSession() {
-        let sessionError = null;
-
-        if (accessToken && refreshToken) {
-          const result = await supabaseAnon.auth.setSession({
-            access_token: accessToken,
-            refresh_token: refreshToken,
-          });
-          sessionError = result.error;
-        } else if (tokenHash) {
-          const result = await supabaseAnon.auth.verifyOtp({
-            token_hash: tokenHash,
-            type: "recovery",
-          });
-          sessionError = result.error;
-        } else {
-          setStatus("error");
-          setErrorMessage(
-            "This reset link has expired or is invalid. Please request a new one from the Vantage app."
-          );
-          return;
-        }
-
-        if (sessionError) {
-          setStatus("error");
-          setErrorMessage(
-            "This reset link has expired or is invalid. Please request a new one from the Vantage app."
-          );
-        } else {
-          setStatus("ready");
-        }
-      }
     }
 
     init();
@@ -162,7 +145,17 @@ export default function ResetPassword() {
           {status === "loading" && (
             <div className="rp-center">
               <div className="rp-spinner" />
-              <p className="rp-sub">Verifying your reset link…</p>
+              <p className="rp-sub">
+                {mobileRedirect ? "Opening the Vantage app…" : "Verifying your reset link…"}
+              </p>
+              {mobileRedirect && (
+                <button
+                  className="rp-link"
+                  onClick={() => establishSession()}
+                >
+                  Use web form instead
+                </button>
+              )}
             </div>
           )}
 
