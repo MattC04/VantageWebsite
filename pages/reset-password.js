@@ -43,10 +43,10 @@ export default function ResetPassword() {
           );
         }
 
-        // Fall back to web form if the app doesn't open within 1.5s
+        // Fall back to web form if the app doesn't open within 10s
         setTimeout(async () => {
           await establishSession();
-        }, 1500);
+        }, 10000);
         return;
       }
 
