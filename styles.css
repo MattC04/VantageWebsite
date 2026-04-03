@@ -4070,27 +4070,28 @@ h6,
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--black);
+    background: radial-gradient(ellipse at center, rgba(201, 171, 110, 0.06) 0%, #201a16 70%);
     padding: 2rem 1rem;
 }
 
 .rp-card {
-    background: var(--surface);
-    border: 1px solid var(--border-light);
+    background: #2a2520;
+    border: 1px solid rgba(201, 171, 110, 0.15);
     border-radius: var(--r-lg);
     padding: 2.5rem 2rem;
-    max-width: 400px;
+    max-width: 420px;
     width: 100%;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(201, 171, 110, 0.05);
 }
 
 .rp-logo {
     display: block;
-    width: 48px;
-    margin: 0 auto 1.5rem;
+    width: 56px;
+    margin: 0 auto 1.75rem;
 }
 
 .rp-heading {
-    font-size: 1.25rem;
+    font-size: 1.25rem !important;
     font-weight: 700;
     color: var(--ivory);
     text-align: center;
@@ -4119,10 +4120,10 @@ h6,
 
 .rp-input {
     width: 100%;
-    background: var(--surface-2);
-    border: 1px solid var(--border-light);
-    border-radius: var(--r-sm);
-    padding: 0.8rem 1rem;
+    background: #1a1612;
+    border: 1px solid #3a3530;
+    border-radius: var(--r-md);
+    padding: 0.85rem 1rem;
     font-family: var(--font);
     font-size: 0.9rem;
     color: var(--ivory);
@@ -4136,7 +4137,7 @@ h6,
 
 .rp-input:focus {
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(201, 171, 110, 0.08);
+    box-shadow: 0 0 0 3px rgba(201, 171, 110, 0.12);
 }
 
 .rp-input:disabled {
@@ -4148,6 +4149,37 @@ h6,
     color: var(--red);
     text-align: center;
     margin-bottom: 0.75rem;
+}
+
+.rp-btn {
+    width: 100%;
+    padding: 0.85rem 1.5rem;
+    margin-top: 0.5rem;
+    background: var(--accent);
+    color: #1a1612;
+    font-family: var(--font);
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    border: none;
+    border-radius: var(--r-md);
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+}
+
+.rp-btn:hover {
+    background: #d4b87a;
+    transform: translateY(-1px);
+}
+
+.rp-btn:active {
+    transform: translateY(0);
+}
+
+.rp-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
 }
 
 .rp-icon {

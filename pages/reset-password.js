@@ -160,18 +160,9 @@ export default function ResetPassword() {
 
                 <button
                   type="submit"
-                  className="blob-btn blob-btn--full"
+                  className="rp-btn"
                   disabled={status === "submitting"}
-                  style={{ marginTop: "0.5rem" }}
                 >
-                  <span className="blob-btn__inner">
-                    <span className="blob-btn__blobs">
-                      <span className="blob-btn__blob" />
-                      <span className="blob-btn__blob" />
-                      <span className="blob-btn__blob" />
-                      <span className="blob-btn__blob" />
-                    </span>
-                  </span>
                   {status === "submitting" ? "Updating…" : "Reset Password"}
                 </button>
               </form>
