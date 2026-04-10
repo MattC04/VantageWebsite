@@ -3,6 +3,13 @@ const EMAILJS_SERVICE_ID  = "service_k2qc7us";
 const EMAILJS_TEMPLATE_ID = "template_xbaufb8";
 
 (function initIntro() {
+  history.scrollRestoration = 'manual';
+  if (window.location.hash) history.replaceState(null, '', window.location.pathname + window.location.search);
+  document.documentElement.scrollTop = 0;
+  document.body.scrollTop = 0;
+  window.scrollTo(0, 0);
+  document.body.style.overflow = 'hidden';
+  document.documentElement.style.overflow = 'hidden';
   const canvas = document.getElementById("intro-canvas");
   const ctx = canvas.getContext("2d");
   const logoEl = document.getElementById("intro-logo");
@@ -193,6 +200,11 @@ const EMAILJS_TEMPLATE_ID = "template_xbaufb8";
         setTimeout(() => {
           introEl.remove();
           sweep.remove();
+          document.body.style.overflow = '';
+          document.documentElement.style.overflow = '';
+          document.documentElement.scrollTop = 0;
+          document.body.scrollTop = 0;
+          window.scrollTo(0, 0);
           siteEl.style.transition = "none";
           siteEl.style.opacity = "1";
           siteEl.classList.add("entering");
@@ -219,6 +231,7 @@ function startMainAnimations() {
   lenis.on("scroll", ScrollTrigger.update);
   gsap.ticker.add((t) => lenis.raf(t * 1000));
   gsap.ticker.lagSmoothing(0);
+  lenis.scrollTo(0, { immediate: true });
 
   /* ── Cursor grid + spotlight ── */
   const spotlight = document.getElementById("cursor-spotlight");
@@ -385,6 +398,13 @@ function startMainAnimations() {
     y: -60, autoAlpha: 0, ease: "none",
   });
 
+  // Player cards — fade in on scroll (React component handles tilt/hover)
+  gsap.fromTo(".pc-card-wrap",
+    { opacity: 0, y: 20 },
+    { opacity: 1, y: 0, stagger: 0.18, duration: 0.9, ease: "power2.out",
+      scrollTrigger: { trigger: "#slide-cards", start: "top 82%", toggleActions: "play none none none" } }
+  );
+
   // Waitlist section divider line draws
   const wl = document.getElementById("waitlist");
   if (wl) {
@@ -437,7 +457,7 @@ function startMainAnimations() {
     autoAlpha: 0, y: 18, stagger: 0.1, duration: 0.6, ease: "power2.out",
   });
 
-  /* ── Form submission — calls /api/waitlist/join, redirects to squad page ── */
+  /* ── Form submission — calls /api/waitlist/join ── */
   const form = document.getElementById("waitlist-form");
   const successEl = document.getElementById("form-success");
 
@@ -459,14 +479,10 @@ function startMainAnimations() {
       btn.disabled = true;
 
       try {
-        // Pick up any referral code from URL (?ref=xxx)
-        const refCode = window.__VANTAGE_REF_CODE__ ||
-          new URLSearchParams(window.location.search).get("ref") || "";
-
         const res = await fetch("/api/waitlist/join", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, share_code: refCode || undefined }),
+          body: JSON.stringify({ email }),
         });
 
         const data = await res.json();
@@ -477,15 +493,10 @@ function startMainAnimations() {
           return;
         }
 
-        // Save email + share_code so squad page can identify the owner
+        // Save email for future use
         try {
           localStorage.setItem("vantage_email", email.toLowerCase().trim());
-          if (data.share_code) localStorage.setItem("vantage_share_code", data.share_code);
         } catch {}
-
-        const squadUrl = "/squad/" + data.share_code;
-        const viewBtn = document.getElementById("view-squad-btn");
-        if (viewBtn) viewBtn.href = squadUrl;
 
         shootBasketball();
         gsap.to(form, {
@@ -494,7 +505,6 @@ function startMainAnimations() {
             form.hidden = true;
             successEl.hidden = false;
             gsap.from(successEl, { opacity: 0, y: 20, duration: 0.6, ease: "back.out(1.5)" });
-            setTimeout(() => { window.location.href = squadUrl; }, 2400);
           },
         });
 
