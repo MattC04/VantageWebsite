@@ -15,6 +15,11 @@ export default function Home() {
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteStatus, setInviteStatus] = useState("idle"); // idle | joining | joined | error
   const [inviteJoinError, setInviteJoinError] = useState("");
+  const [inviteSelfEmail, setInviteSelfEmail] = useState("");
+  const [inviteEditMemberId, setInviteEditMemberId] = useState(null);
+  const [inviteEditEmail, setInviteEditEmail] = useState("");
+  const [inviteEditStatus, setInviteEditStatus] = useState("idle"); // idle | saving | saved | error
+  const [inviteEditError, setInviteEditError] = useState("");
 
   const fetchInviteData = useCallback(async () => {
     if (!refCode) return;
@@ -63,10 +68,36 @@ export default function Home() {
     };
   }, []);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const saved = localStorage.getItem("vantage_email");
+      if (saved) setInviteSelfEmail(saved.toLowerCase().trim());
+    } catch {}
+  }, []);
+
   const inviteMembers = inviteData?.members || [];
+  const inviteOwnerEmail = inviteData?.owner_email || "";
   const invitePeopleCount = Math.min(ROOM_CAPACITY, 1 + inviteMembers.length);
   const inviteRoomFull = inviteMembers.length >= MAX_REFERRALS;
   const rewardTiers = [2, 4, 6, 8];
+  const inviteRoster = [
+    ...(inviteOwnerEmail
+      ? [
+          {
+            id: `owner-${refCode}`,
+            email: inviteOwnerEmail,
+            slot: 1,
+            isOwner: true,
+          },
+        ]
+      : []),
+    ...inviteMembers.map((m, idx) => ({
+      ...m,
+      slot: idx + 2,
+      isOwner: false,
+    })),
+  ];
 
   const handleInviteJoin = async (e) => {
     e.preventDefault();
@@ -94,10 +125,65 @@ export default function Home() {
       }
 
       setInviteStatus("joined");
+      const normalized = inviteEmail.toLowerCase().trim();
+      setInviteSelfEmail(normalized);
+      try {
+        localStorage.setItem("vantage_email", normalized);
+      } catch {}
       fetchInviteData();
     } catch {
       setInviteJoinError("Network error. Please try again.");
       setInviteStatus("error");
+    }
+  };
+
+  const handleInviteEditSave = async (e) => {
+    e.preventDefault();
+    if (
+      !inviteEditMemberId ||
+      !inviteEditEmail ||
+      inviteEditStatus === "saving"
+    )
+      return;
+
+    setInviteEditStatus("saving");
+    setInviteEditError("");
+
+    try {
+      const res = await fetch("/api/waitlist/change-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          share_code: refCode,
+          member_id: inviteEditMemberId,
+          new_email: inviteEditEmail,
+          current_email: inviteSelfEmail,
+        }),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        setInviteEditError(json.error || "Could not update email.");
+        setInviteEditStatus("error");
+        return;
+      }
+
+      const normalized = inviteEditEmail.toLowerCase().trim();
+      setInviteSelfEmail(normalized);
+      try {
+        localStorage.setItem("vantage_email", normalized);
+      } catch {}
+
+      setInviteEditStatus("saved");
+      setTimeout(() => {
+        setInviteEditMemberId(null);
+        setInviteEditEmail("");
+        setInviteEditStatus("idle");
+        setInviteEditError("");
+      }, 900);
+      fetchInviteData();
+    } catch {
+      setInviteEditError("Network error. Please try again.");
+      setInviteEditStatus("error");
     }
   };
 
@@ -279,6 +365,93 @@ export default function Home() {
                 {inviteError && (
                   <p className="invite-entry-error">{inviteError}</p>
                 )}
+                <div className="invite-member-list-wrap">
+                  <p className="invite-member-label">Squad emails</p>
+                  {inviteRoster.length === 0 ? (
+                    <p className="invite-member-empty">No guest emails yet.</p>
+                  ) : (
+                    <ul className="invite-member-list">
+                      {inviteRoster.map((m) => {
+                        const isSelf =
+                          inviteSelfEmail &&
+                          m.email.toLowerCase() === inviteSelfEmail;
+                        const isEditing = inviteEditMemberId === m.id;
+
+                        return (
+                          <li key={m.id} className="invite-member-row">
+                            {isEditing ? (
+                              <form
+                                className="invite-member-edit"
+                                onSubmit={handleInviteEditSave}
+                              >
+                                <input
+                                  type="email"
+                                  value={inviteEditEmail}
+                                  onChange={(e) =>
+                                    setInviteEditEmail(e.target.value)
+                                  }
+                                  required
+                                  disabled={inviteEditStatus === "saving"}
+                                />
+                                <div className="invite-member-edit-actions">
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setInviteEditMemberId(null);
+                                      setInviteEditEmail("");
+                                      setInviteEditStatus("idle");
+                                      setInviteEditError("");
+                                    }}
+                                  >
+                                    Cancel
+                                  </button>
+                                  <button
+                                    type="submit"
+                                    disabled={inviteEditStatus === "saving"}
+                                  >
+                                    {inviteEditStatus === "saving"
+                                      ? "Saving..."
+                                      : "Save"}
+                                  </button>
+                                </div>
+                                {inviteEditError && (
+                                  <p className="invite-entry-error">
+                                    {inviteEditError}
+                                  </p>
+                                )}
+                              </form>
+                            ) : (
+                              <>
+                                <div className="invite-member-main">
+                                  <span className="invite-member-slot">
+                                    {m.slot}/8
+                                  </span>
+                                  <span className="invite-member-email">
+                                    {m.email}
+                                  </span>
+                                </div>
+                                {isSelf && !m.isOwner && (
+                                  <button
+                                    type="button"
+                                    className="invite-member-edit-btn"
+                                    onClick={() => {
+                                      setInviteEditMemberId(m.id);
+                                      setInviteEditEmail(m.email);
+                                      setInviteEditStatus("idle");
+                                      setInviteEditError("");
+                                    }}
+                                  >
+                                    Edit
+                                  </button>
+                                )}
+                              </>
+                            )}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
+                </div>
                 <p className="invite-room-code">Room: {refCode}</p>
               </div>
             </div>
@@ -346,7 +519,7 @@ export default function Home() {
                   </div>
                   <img
                     className="hero-prop-img"
-                    src="/assets/curry prop.png"
+                    src="/assets/curry-prop.png"
                     alt="Curry prop"
                   />
                 </div>
@@ -368,7 +541,7 @@ export default function Home() {
                   </div>
                   <img
                     className="hero-prop-img"
-                    src="/assets/Lebron prop.png"
+                    src="/assets/lebron-prop.png"
                     alt="LeBron prop"
                   />
                 </div>
@@ -494,8 +667,8 @@ export default function Home() {
                   <div className="slide-phone-frame">
                     <div className="slide-phone-notch"></div>
                     <img
-                      src="/assets/phonepicture.png"
-                      alt="Squad Room UI"
+                      src="/assets/sweatscreen.png"
+                      alt="Live play-by-play feed"
                       className="slide-phone-img"
                     />
                   </div>
@@ -524,12 +697,12 @@ export default function Home() {
                   <div className="slide-cards-stack">
                     <img
                       className="slide-card--curry"
-                      src="/assets/curry prop.png"
+                      src="/assets/curry-prop.png"
                       alt="Curry card"
                     />
                     <img
                       className="slide-card--lebron"
-                      src="/assets/Lebron prop.png"
+                      src="/assets/lebron-prop.png"
                       alt="LeBron card"
                     />
                   </div>

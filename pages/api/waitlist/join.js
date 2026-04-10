@@ -47,6 +47,8 @@ export default async function handler(req, res) {
 
   const db = getServiceClient();
   const isReferral = !!(refCode && typeof refCode === "string");
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://vantage.com";
+  let sentWelcomeEmail = false;
 
   try {
     // Find or create the user
@@ -88,13 +90,13 @@ export default async function handler(req, res) {
 
       // Send welcome email to new users (fire-and-forget, don't block response)
       // For referral joins newCode is null — use refCode (the room they're joining) as the squad URL
-      const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://vantage.com";
       const emailSquadCode = isReferral ? refCode : newCode;
       sendWaitlistWelcome({
         toEmail: normalizedEmail,
         toName: normalizedEmail.split("@")[0],
         squadUrl: `${baseUrl}/squad/${emailSquadCode}`,
       }).catch((err) => console.error("Email send error:", err));
+      sentWelcomeEmail = true;
     }
 
     if (isReferral) {
@@ -157,6 +159,15 @@ export default async function handler(req, res) {
         await db
           .from("referrals")
           .insert({ inviter_id: owner.id, invitee_id: userId });
+      }
+
+      // Send welcome email for referral joins even if user already existed.
+      if (!sentWelcomeEmail) {
+        sendWaitlistWelcome({
+          toEmail: normalizedEmail,
+          toName: normalizedEmail.split("@")[0],
+          squadUrl: `${baseUrl}/squad/${refCode}`,
+        }).catch((err) => console.error("Email send error:", err));
       }
 
       // Always redirect referral joins to the owner's room
