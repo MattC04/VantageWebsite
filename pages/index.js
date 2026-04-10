@@ -1,5 +1,6 @@
 import Head from "next/head";
 import { useState, useRef, useCallback, useEffect } from "react";
+import { useRouter } from "next/router";
 
 /* ══════════════════════════════════════════════════════════════
    PLAYER CARD COMPONENTS
@@ -316,7 +317,6 @@ function PlayerCard({ name="LeBron James", team="LAL", teamFull="Los Angeles Lak
 }
 
 export default function Home() {
-<<<<<<< HEAD
   const ROOM_CAPACITY = 8;
   const MAX_REFERRALS = ROOM_CAPACITY - 1;
 
@@ -362,9 +362,6 @@ export default function Home() {
     const interval = setInterval(fetchInviteData, 4_000);
     return () => clearInterval(interval);
   }, [router.isReady, refCode, fetchInviteData]);
-
-=======
->>>>>>> 69dd99dc97efd114455227e5a3cf8f87b1657ade
   useEffect(() => {
     // Load main.js animations after component mounts
     // We use a dynamic import approach since main.js uses browser globals
@@ -384,7 +381,6 @@ export default function Home() {
     };
   }, []);
 
-<<<<<<< HEAD
   useEffect(() => {
     if (typeof window === "undefined") return;
     try {
@@ -503,9 +499,6 @@ export default function Home() {
       setInviteEditStatus("error");
     }
   };
-
-=======
->>>>>>> 69dd99dc97efd114455227e5a3cf8f87b1657ade
   return (
     <>
       <Head>
@@ -602,7 +595,6 @@ export default function Home() {
           </svg>
         </nav>
 
-<<<<<<< HEAD
         {refCode && (
           <section id="invite-entry">
             <div className="invite-entry-inner">
@@ -778,8 +770,6 @@ export default function Home() {
           </section>
         )}
 
-=======
->>>>>>> 69dd99dc97efd114455227e5a3cf8f87b1657ade
         {/* HERO */}
         <section id="hero">
           <div id="ticker-wrap" aria-hidden="true">
@@ -995,13 +985,8 @@ export default function Home() {
                   <div className="slide-phone-frame">
                     <div className="slide-phone-notch"></div>
                     <img
-<<<<<<< HEAD
                       src="/assets/sweatscreen.png"
                       alt="Live play-by-play feed"
-=======
-                      src="/sweatscreen.png"
-                      alt="Sweat screen live play-by-play"
->>>>>>> 69dd99dc97efd114455227e5a3cf8f87b1657ade
                       className="slide-phone-img"
                     />
                   </div>
@@ -1048,18 +1033,6 @@ export default function Home() {
                 </div>
                 <div className="slide-visual slide-visual--cards">
                   <div className="slide-cards-stack">
-<<<<<<< HEAD
-                    <img
-                      className="slide-card--curry"
-                      src="/assets/curry-prop.png"
-                      alt="Curry card"
-                    />
-                    <img
-                      className="slide-card--lebron"
-                      src="/assets/lebron-prop.png"
-                      alt="LeBron card"
-                    />
-=======
                     <div className="pc-card-wrap">
                       <PlayerCard
                         name="Anthony Edwards"
@@ -1086,7 +1059,6 @@ export default function Home() {
                         tier="diamond" progress={0.58} rank={2}
                       />
                     </div>
->>>>>>> 69dd99dc97efd114455227e5a3cf8f87b1657ade
                   </div>
                 </div>
               </div>
